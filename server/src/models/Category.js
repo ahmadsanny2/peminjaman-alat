@@ -1,15 +1,18 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const categorySchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true
+const categorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+    },
   },
-  description: {
-    type: String
-  }
-}, { timestamps: true });
+  { timestamps: true },
+);
 
-export default categorySchema
+export default categorySchema;

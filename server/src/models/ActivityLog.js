@@ -1,25 +1,28 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
-const activityLogSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true 
+const activityLogSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    action: {
+      type: String,
+      required: true,
+    },
+    details: {
+      type: String,
+      required: true,
+    },
+    ipAddress: {
+      type: String,
+      default: "",
+    },
   },
-  action: {
-    type: String,
-    required: true 
+  {
+    timestamps: { createdAt: true, updatedAt: false },
   },
-  details: {
-    type: String, 
-    required: true
-  },
-  ipAddress: {
-    type: String, 
-    default: ''
-  }
-}, {
-  timestamps: { createdAt: true, updatedAt: false } 
-});
+);
 
-export default activityLogSchema
+export default activityLogSchema;

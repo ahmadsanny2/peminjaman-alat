@@ -1,25 +1,27 @@
-import express from 'express'
-import router from './routes/api.js'
-import cors from 'cors'
-import dotenv from 'dotenv'
-import connectDB from './config/db.js'
+import express from "express";
+import router from "./routes/api.js";
+import cors from "cors";
+import dotenv from "dotenv";
+import connectDB from "./config/db.js";
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
-const host = 'localhost'
-const port = process.env.PORT || 5000
+const app = express();
+const host = "localhost";
+const port = process.env.PORT || 5000;
 
-app.use(express.json())
+app.use(express.json());
 
-app.use(cors({
-    origin: '*'
-}))
+app.use(
+    cors({
+        origin: "*",
+    }),
+);
 
-connectDB()
+connectDB();
 
-app.use('/api', router)
+app.use("/api", router);
 
 app.listen(port, () => {
-    console.log(`Server is running at http://${host}:${port}`)
-})
+    console.log(`Server is running at http://${host}:${port}`);
+});
