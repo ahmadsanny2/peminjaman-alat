@@ -9,12 +9,12 @@ const toolSchema = new mongoose.Schema({
   code: {
     type: String,
     required: true,
-    unique: true, // Kode inventaris unik (Barcode/QR)
+    unique: true, 
     uppercase: true
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category', // Relasi ke Category
+    ref: 'Category', 
     required: true
   },
   stock: {
@@ -24,11 +24,11 @@ const toolSchema = new mongoose.Schema({
     default: 0
   },
   location: {
-    type: String, // Lokasi penyimpanan (misal: Rak A2)
+    type: String, 
     default: '-'
   },
   image: {
-    type: String, // URL atau path gambar
+    type: String, 
     default: 'default-tool.png'
   }
 }, { timestamps: true });

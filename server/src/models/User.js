@@ -15,25 +15,25 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, 'Password wajib diisi'],
-    select: false // Password tidak akan dikirim saat query default (Keamanan)
+    select: false 
   },
   role: {
     type: String,
-    enum: ['admin', 'petugas', 'peminjam'], // Validasi ketat sesuai tabel fitur
+    enum: ['admin', 'petugas', 'peminjam'], 
     required: true
   },
-  // Field khusus untuk siswa/peminjam
+  
   nis: {
     type: String,
     unique: true,
-    sparse: true // Mengizinkan nilai null/unik hanya jika field ini ada
+    sparse: true 
   },
   classInfo: {
-    type: String, // Contoh: "XII RPL 1"
+    type: String, 
     required: function () { return this.role === 'peminjam'; }
   }
 }, {
-  timestamps: true // Otomatis membuat createdAt dan updatedAt
+  timestamps: true 
 });
 
 export default mongoose.model('User', userSchema)

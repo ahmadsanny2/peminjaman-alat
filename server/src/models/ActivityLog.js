@@ -4,22 +4,22 @@ const activityLogSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true // Siapa yang melakukan aksi
+    required: true 
   },
   action: {
     type: String,
-    required: true // Contoh: "CREATE_TOOL", "APPROVE_LOAN", "LOGIN"
+    required: true 
   },
   details: {
-    type: String, // Deskripsi naratif. Contoh: "Menambahkan alat baru: Obeng Set"
+    type: String, 
     required: true
   },
   ipAddress: {
-    type: String, // Opsional: untuk keamanan tambahan
+    type: String, 
     default: ''
   }
 }, {
-  timestamps: { createdAt: true, updatedAt: false } // Hanya butuh waktu pembuatan
+  timestamps: { createdAt: true, updatedAt: false } 
 });
 
 export default activityLogSchema

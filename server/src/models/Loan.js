@@ -6,7 +6,7 @@ const loanSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  // Petugas yang menyetujui peminjaman (Fitur: Menyetujui Peminjaman)
+
   officer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -35,7 +35,7 @@ const loanSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
-  // Kondisi alat saat dikembalikan (untuk catatan kerusakan dsb)
+
   returnCondition: {
     type: String,
     default: 'good'
