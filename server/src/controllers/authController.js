@@ -5,7 +5,15 @@ import jwt from "jsonwebtoken";
 export default {
     // FITUR: Registrasi Pengguna Baru
     async register(req, res) {
-        const { fullName, username, password, confirmPassword, role, nis, classInfo } = req.body;
+        const {
+            fullName,
+            username,
+            password,
+            confirmPassword,
+            role,
+            nis,
+            classInfo
+        } = req.body;
 
         try {
             // 1. Validasi Input Dasar

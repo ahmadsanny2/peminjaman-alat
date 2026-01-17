@@ -17,11 +17,6 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password wajib diisi'],
     select: false // Password tidak akan dikirim saat query default (Keamanan)
   },
-  confirmPassword: {
-    type: String,
-    required: [true, 'Password wajib diisi'],
-    select: false // Password tidak akan dikirim saat query default (Keamanan)
-  },
   role: {
     type: String,
     enum: ['admin', 'petugas', 'peminjam'], // Validasi ketat sesuai tabel fitur
@@ -41,4 +36,4 @@ const userSchema = new mongoose.Schema({
   timestamps: true // Otomatis membuat createdAt dan updatedAt
 });
 
-export default userSchema
+export default mongoose.model('User', userSchema)
