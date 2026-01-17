@@ -58,4 +58,60 @@ export default {
             });
         }
     },
+
+    // FITUR: Login Pengguna
+    async login(req, res) {
+        const { username, password } = req.body;
+
+        try {
+            // 1. Cari User berdasarkan Username
+            // Kita perlu .select('+password') karena field password di set { select: false } di Schema
+            const user = await User.findOne({ username }).select('+password');
+
+            if (!user) {
+                return res.status(401).json({ // 401 Unauthorized
+                    message: "Username atau password salah."
+                });
+            }
+
+            // 2. Verifikasi Password (Bandingkan input dengan hash di DB)
+            const isMatch = await bcrypt.compare(password, user.password);
+
+            if (!isMatch) {
+                return res.status(401).json({
+                    message: "Username atau password salah."
+                });
+            }
+
+            // 3. Generate JSON Web Token (JWT)
+            // Payload berisi ID dan Role untuk keperluan otorisasi di middleware nanti
+            const payload = {
+                id: user._id,
+                role: user.role
+            };
+
+            const token = jwt.sign(payload, process.env.JWT_SECRET, {
+                expiresIn: '1d' // Token berlaku 1 hari
+            });
+
+            // 4. Response Sukses dengan Token
+            res.status(200).json({
+                message: "Login berhasil",
+                token: token,
+                user: {
+                    id: user._id,
+                    username: user.username,
+                    role: user.role,
+                    fullName: user.fullName
+                }
+            });
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: "Terjadi kesalahan server saat login",
+                error: error.message
+            });
+        }
+    }
 }
