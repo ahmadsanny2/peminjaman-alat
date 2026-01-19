@@ -4,14 +4,19 @@ export default {
     // 1. CREATE: Tambah Kategori
     async create(req, res) {
         try {
+
             const { name, description } = req.body;
 
-            const newCategory = await Category.create({ name, description });
+            const newCategory = await Category.create({
+                name,
+                description
+            });
 
             res.status(201).json({
                 message: "Kategori berhasil dibuat",
                 data: newCategory,
             });
+
         } catch (error) {
             // Error handling jika nama kembar (karena unique: true di schema)
             if (error.code === 11000) {
