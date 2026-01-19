@@ -36,4 +36,4 @@ const toolSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default toolSchema;
+export default mongoose.model('Tool', toolSchema)
