@@ -10,10 +10,11 @@ router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
 
 // Tool
-router.post("/admin/dashboard/tools/add-tool", toolController.create);
 router.get("/admin/dashboard/tools", toolController.getAll);
+router.post("/admin/dashboard/tools/add-tool", toolController.create);
 
 // Category
+router.get("/admin/dashboard/categories", categoryController.getAll);
 router.post("/admin/dashboard/categories/add-category", categoryController.create);
 
 export default router;
