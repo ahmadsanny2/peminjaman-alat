@@ -22,18 +22,6 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "petugas", "peminjam"],
       required: true,
     },
-
-    nis: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-    classInfo: {
-      type: String,
-      required: function () {
-        return this.role === "peminjam";
-      },
-    },
   },
   {
     timestamps: true,
