@@ -61,7 +61,6 @@ export default {
     async delete(req, res) {
         try {
             const { id } = req.params;
-            // TODO: Sebaiknya cek dulu apakah ada Alat yang memakai kategori ini sebelum dihapus
             await Category.findByIdAndDelete(id);
             res.status(200).json({ message: "Kategori dihapus" });
         } catch (error) {
