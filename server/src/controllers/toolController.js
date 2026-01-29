@@ -4,7 +4,7 @@ import Category from '../models/Category.js'; // Import untuk validasi kategori
 export default {
     // 1. CREATE: Menambahkan Alat Baru
     async create(req, res) {
-        const { name, code, category, stock, location, image } = req.body;
+        const { name, category, stock, image } = req.body;
 
         try {
             // Validasi 1: Cek apakah Kategori valid (Referential Integrity)
@@ -15,21 +15,11 @@ export default {
                 });
             }
 
-            // Validasi 2: Cek Uniqness Kode Alat
-            const codeExists = await Tool.findOne({ code });
-            if (codeExists) {
-                return res.status(409).json({ // 409 Conflict
-                    message: "Kode inventaris alat sudah digunakan."
-                });
-            }
-
             // Proses Penyimpanan
             const newTool = await Tool.create({
                 name,
-                code,
                 category, // Menyimpan ObjectId kategori
                 stock,
-                location,
                 image
             });
 
