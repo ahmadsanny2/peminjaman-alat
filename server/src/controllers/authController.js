@@ -10,8 +10,6 @@ export default {
             password,
             confirmPassword,
             role,
-            nis,
-            classInfo,
         } = req.body;
 
         try {
@@ -36,8 +34,6 @@ export default {
                 username,
                 password: hashedPassword,
                 role,
-                nis: role === "peminjam" ? nis : undefined,
-                classInfo: role === "peminjam" ? classInfo : undefined,
             });
 
             res.status(201).json({
