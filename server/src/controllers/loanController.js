@@ -49,5 +49,21 @@ export default {
                 message: error.message
             })
         }
+    },
+
+    async getMyLoans(req, res) {
+        try {
+            const myLoans = await Loan.find({ borrower: req.user.id })
+                .populate('tool', 'name image')
+                .sort({ createdAt: -1 })
+
+            res.status(200).json({
+                data: myLoans
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: error.message
+            })
+        }
     }
 }
