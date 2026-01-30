@@ -22,5 +22,6 @@ router.get("/admin/dashboard/categories", categoryController.getAll);
 router.post("/admin/dashboard/categories/add-category", categoryController.create);
 
 router.post('/loans/request', checkRole(['peminjam']), loanController.createLoan)
+router.get('/loans/my-loans', loanController.getMyLoans)
 
 export default router;
