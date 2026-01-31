@@ -26,4 +26,4 @@ const toolSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.model('Tool', toolSchema)
+export default mongoose.model("Tool", toolSchema);
