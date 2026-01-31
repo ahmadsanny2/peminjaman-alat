@@ -4,13 +4,7 @@ import jwt from "jsonwebtoken";
 
 export default {
     async register(req, res) {
-        const {
-            fullName,
-            username,
-            password,
-            confirmPassword,
-            role,
-        } = req.body;
+        const { fullName, username, password, confirmPassword, role } = req.body;
 
         try {
             if (password !== confirmPassword) {
