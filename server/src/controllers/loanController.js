@@ -109,5 +109,44 @@ export default {
                 message: error.message
             })
         }
+    },
+
+    async returnLoan(req, res) {
+        const { id } = req.params
+
+        try {
+            const loan = await Loan.findById(id)
+            if (!loan) {
+                return res.status(404).json({
+                    message: "Pinjaman tidak ditemukan."
+                })
+            }
+
+            if (loan.status !== 'approved') {
+                return res.status(400).json({
+                    message: "Barang ini belum dipinjam atau sudah dikembalikan."
+                })
+            }
+
+            loan.status = 'returned'
+            loan.actualReturnDate = new Date()
+
+            const tool = await Tool.findById(loan.tool)
+            if (tool) {
+                tool.stock += 1
+                await tool.save()
+            }
+
+            await loan.save()
+
+            res.status(200).json({
+                message: "Barang berhasil dikembalikan. Stok telah dipulihkan.",
+                data: loan
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: error.message
+            })
+        }
     }
 };
