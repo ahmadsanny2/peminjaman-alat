@@ -72,99 +72,99 @@ export default {
         const officerId = req.user.id;
 
         try {
-            const loan = await Loan.findById(id)
+            const loan = await Loan.findById(id);
             if (!loan) {
                 return res.status(404).json({
-                    message: "Pinjaman tidak ditemukan."
-                })
+                    message: "Pinjaman tidak ditemukan.",
+                });
             }
 
-            if (loan.status !== 'pending') {
+            if (loan.status !== "pending") {
                 return res.status(400).json({
-                    message: "Hanya peminjaman berstatus 'pending' yang bisa disetujui."
-                })
+                    message: "Hanya peminjaman berstatus 'pending' yang bisa disetujui.",
+                });
             }
 
-            const tool = await Tool.findById(loan.tool)
+            const tool = await Tool.findById(loan.tool);
             if (!tool || tool.stock < 1) {
                 return res.status(400).json({
-                    message: "Stok alat habis, tidak bisa menyetujui."
-                })
+                    message: "Stok alat habis, tidak bisa menyetujui.",
+                });
             }
 
-            loan.status = 'approved'
-            loan.officer = officerId
+            loan.status = "approved";
+            loan.officer = officerId;
 
-            tool.stock -= 1
+            tool.stock -= 1;
 
-            await loan.save()
-            await tool.save()
+            await loan.save();
+            await tool.save();
 
             res.status(200).json({
                 message: "Peminjaman disetujui dan stok alat telah diperbarui.",
-                data: loan
-            })
+                data: loan,
+            });
         } catch (error) {
             res.status(500).json({
-                message: error.message
-            })
+                message: error.message,
+            });
         }
     },
 
     async returnLoan(req, res) {
-        const { id } = req.params
+        const { id } = req.params;
 
         try {
-            const loan = await Loan.findById(id)
+            const loan = await Loan.findById(id);
             if (!loan) {
                 return res.status(404).json({
-                    message: "Pinjaman tidak ditemukan."
-                })
+                    message: "Pinjaman tidak ditemukan.",
+                });
             }
 
-            if (loan.status !== 'approved') {
+            if (loan.status !== "approved") {
                 return res.status(400).json({
-                    message: "Barang ini belum dipinjam atau sudah dikembalikan."
-                })
+                    message: "Barang ini belum dipinjam atau sudah dikembalikan.",
+                });
             }
 
-            loan.status = 'returned'
-            loan.actualReturnDate = new Date()
+            loan.status = "returned";
+            loan.actualReturnDate = new Date();
 
-            const tool = await Tool.findById(loan.tool)
+            const tool = await Tool.findById(loan.tool);
             if (tool) {
-                tool.stock += 1
-                await tool.save()
+                tool.stock += 1;
+                await tool.save();
             }
 
-            await loan.save()
+            await loan.save();
 
             res.status(200).json({
                 message: "Barang berhasil dikembalikan. Stok telah dipulihkan.",
-                data: loan
-            })
+                data: loan,
+            });
         } catch (error) {
             res.status(500).json({
-                message: error.message
-            })
+                message: error.message,
+            });
         }
     },
 
     async getAllLoans(req, res) {
         try {
             const loans = await Loan.find()
-                .populate('borrower', 'fullName')
-                .populate('tool', 'name')
-                .populate('officer', 'fullName')
-                .sort({ createdAt: -1 })
+                .populate("borrower", "fullName")
+                .populate("tool", "name")
+                .populate("officer", "fullName")
+                .sort({ createdAt: -1 });
 
             res.status(200).json({
-                data: loans
-            })
+                data: loans,
+            });
         } catch (error) {
             res.status(500).json({
-                message: error.message
-            })
+                message: error.message,
+            });
         }
-    }
+    },
 };
