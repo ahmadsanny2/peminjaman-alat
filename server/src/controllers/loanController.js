@@ -66,4 +66,48 @@ export default {
             });
         }
     },
+
+    async approveLoan(req, res) {
+        const { id } = req.params;
+        const officerId = req.user.id;
+
+        try {
+            const loan = await Loan.findById(id)
+            if (!loan) {
+                return res.status(404).json({
+                    message: "Pinjaman tidak ditemukan."
+                })
+            }
+
+            if (loan.status !== 'pending') {
+                return res.status(400).json({
+                    message: "Hanya peminjaman berstatus 'pending' yang bisa disetujui."
+                })
+            }
+
+            const tool = await Tool.findById(loan.tool)
+            if (!tool || tool.stock < 1) {
+                return res.status(400).json({
+                    message: "Stok alat habis, tidak bisa menyetujui."
+                })
+            }
+
+            loan.status = 'approved'
+            loan.officer = officerId
+
+            tool.stock -= 1
+
+            await loan.save()
+            await tool.save()
+
+            res.status(200).json({
+                message: "Peminjaman disetujui dan stok alat telah diperbarui.",
+                data: loan
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: error.message
+            })
+        }
+    }
 };
