@@ -148,5 +148,23 @@ export default {
                 message: error.message
             })
         }
+    },
+
+    async getAllLoans(req, res) {
+        try {
+            const loans = await Loan.find()
+                .populate('borrower', 'fullName')
+                .populate('tool', 'name')
+                .populate('officer', 'fullName')
+                .sort({ createdAt: -1 })
+
+            res.status(200).json({
+                data: loans
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: error.message
+            })
+        }
     }
 };
