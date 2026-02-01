@@ -29,5 +29,6 @@ router.post(
     loanController.createLoan,
 );
 router.get("/loans/my-loans", loanController.getMyLoans);
+router.put('/loans/:id/approve', checkRole(['petugas', 'admin']), loanController.approveLoan)
 
 export default router;
