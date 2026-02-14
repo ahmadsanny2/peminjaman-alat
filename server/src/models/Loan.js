@@ -1,48 +1,29 @@
-import mongoose from "mongoose";
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
 
-const loanSchema = new mongoose.Schema(
-  {
-    borrower: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
-    officer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-    tool: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Tool",
-      required: true,
+const Loan = sequelize.define('Loan', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
     },
     status: {
-      type: String,
-      enum: ["pending", "approved", "rejected", "returned", "overdue"],
-      default: "pending",
+        type: DataTypes.ENUM('pending', 'approved', 'rejected', 'returned'),
+        defaultValue: 'pending'
     },
     borrowDate: {
-      type: Date,
-      required: true,
-      default: Date.now,
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     },
     expectedReturnDate: {
-      type: Date,
-      required: true,
+        type: DataTypes.DATE,
+        allowNull: false
     },
     actualReturnDate: {
-      type: Date,
-      default: null,
-    },
+        type: DataTypes.DATE
+    }
+}, {
+    tableName: 'loans'
+});
 
-    returnCondition: {
-      type: String,
-      default: "good",
-    },
-  },
-  { timestamps: true },
-);
-
-export default mongoose.model("Loan", loanSchema);
+export default Loan;
