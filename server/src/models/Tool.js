@@ -1,26 +1,31 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
 
-const Tool = sequelize.define('Tool', {
-    id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+const Tool = sequelize.define(
+    "Tool",
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        stock: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        image: {
+            type: DataTypes.STRING,
+            defaultValue: "default.png",
+        },
     },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
+    {
+        tableName: "tools",
     },
-    stock: {
-        type: DataTypes.INTEGER,
-        allowNull: false, defaultValue: 0
-    },
-    image: {
-        type: DataTypes.STRING,
-        defaultValue: 'default.png'
-    }
-}, {
-    tableName: 'tools'
-});
+);
 
 export default Tool;
