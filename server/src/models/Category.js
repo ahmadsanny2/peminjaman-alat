@@ -1,22 +1,26 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.js";
 
-const Category = sequelize.define('Category', {
-    id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+const Category = sequelize.define(
+    "Category",
+    {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            unique: true,
+        },
+        description: {
+            type: DataTypes.TEXT,
+        },
     },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+    {
+        tableName: "categories",
     },
-    description: {
-        type: DataTypes.TEXT
-    }
-}, {
-    tableName: 'categories'
-});
+);
 
 export default Category;
