@@ -44,7 +44,8 @@ export default {
             })
         } catch (error) {
             res.status(500).json({
-                message: "An error occurred while registering the user"
+                message: "An error occurred while registering the user",
+                error:error.message
             })
         }
     },
