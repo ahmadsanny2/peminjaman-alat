@@ -1,27 +1,34 @@
 import express from "express";
-import router from "./routes/api.js";
 import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
+import { sequelize } from "./models/index.js";
+import router from "./routes/api.js";
 
 dotenv.config();
 
 const app = express();
-const host = "localhost";
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(
-    cors({
-        origin: "*",
-    }),
-);
+const startServer = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log("Database connection successfully");
 
-connectDB();
+        await sequelize.sync();
+        console.log("Database synchronized successfully");
 
-app.use("/api", router);
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    } catch (error) {
+        console.error("Database connection failed:", error);
+    }
+};
 
-app.listen(port, () => {
-    console.log(`Server is running at http://${host}:${port}`);
-});
+app.use("/api", router)
+
+startServer()
