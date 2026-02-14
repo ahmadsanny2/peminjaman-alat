@@ -1,20 +1,22 @@
-// src/models/Category.js
-import mongoose from "mongoose"; // Ubah require menjadi import
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
 
-const categorySchema = new mongoose.Schema(
-  {
+const Category = sequelize.define('Category', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
     name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     description: {
-      type: String,
-    },
-  },
-  { timestamps: true },
-);
+        type: DataTypes.TEXT
+    }
+}, {
+    tableName: 'categories'
+});
 
-// Ubah module.exports menjadi export default
-export default mongoose.model("Category", categorySchema);
+export default Category;
