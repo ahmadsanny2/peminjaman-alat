@@ -1,29 +1,26 @@
-import mongoose from "mongoose";
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/db.js';
 
-const toolSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: [true, "Nama alat wajib diisi"],
-      trim: true,
+const Tool = sequelize.define('Tool', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
     },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
     },
     stock: {
-      type: Number,
-      required: true,
-      min: [0, "Stok tidak boleh negatif"],
-      default: 0,
+        type: DataTypes.INTEGER,
+        allowNull: false, defaultValue: 0
     },
     image: {
-      type: String,
-      default: "default-tool.png",
-    },
-  },
-  { timestamps: true },
-);
+        type: DataTypes.STRING,
+        defaultValue: 'default.png'
+    }
+}, {
+    tableName: 'tools'
+});
 
-export default mongoose.model("Tool", toolSchema);
+export default Tool;
