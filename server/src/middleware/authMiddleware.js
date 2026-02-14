@@ -5,7 +5,7 @@ export const verifyToken = (req, res, next) => {
     const token = authHeader && authHeader.split(' ')[1]
 
     if (!token) return res.status(401).json({
-        message: "Akses ditolak. Token autentikasi tidak ditemukan."
+        message: "Access Denied. Token not provided."
     })
 
     try {
@@ -14,7 +14,8 @@ export const verifyToken = (req, res, next) => {
         next()
     } catch (error) {
         res.status(403).json({
-            message: "Integritas token tidak valid atau sesi telah kedaluwarsa."
+            message: "Token not valid. Access denied.",
+            error: error.message
         })
     }
 }
@@ -23,7 +24,7 @@ export const checkRole = (allowedRoles) => {
     return (req, res, next) => {
         if (!allowedRoles.includes(req.user.role)) {
             return res.status(403).json({
-                message: "Pelanggaran hak akses. Anda tidak memiliki otorisasi untuk fitur ini."
+                message: "Forbidden. You don't have permission to access this resource."
             })
         }
         next()
