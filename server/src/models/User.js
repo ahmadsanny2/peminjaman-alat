@@ -11,15 +11,16 @@ const User = sequelize.define(
     },
     username: {
       type: DataTypes.STRING,
-      allowNull: false, unique: true
+      allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     fullName: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
     },
     role: {
       type: DataTypes.ENUM("admin", "petugas", "peminjam"),
