@@ -75,10 +75,43 @@ export default {
             res.status(200).json({
                 message: "Tool retrieved successfully",
                 data: tool,
-            })
+            });
         } catch (error) {
             res.status(500).json({
                 message: "Error retrieving tool",
+                error: error.message,
+            });
+        }
+    },
+
+    async updateTool(req, res) {
+        try {
+            const { id } = req.params;
+            const tool = await Tool.findByPk(id);
+
+            if (!tool) {
+                return res.status(404).json({
+                    message: "Tool not found",
+                });
+            }
+
+            if (req.body.categoryId) {
+                const categoryExists = await Category.findByPk(req.body.categoryId);
+                if (!categoryExists) {
+                    res.status(404).json({
+                        message: "Category not found",
+                    });
+                }
+            }
+
+            await tool.update(req.body);
+            res.status(200).json({
+                message: "Tool updated successfully",
+                data: tool,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Error updating tool",
                 error: error.message,
             });
         }
