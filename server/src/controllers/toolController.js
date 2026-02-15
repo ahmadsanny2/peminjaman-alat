@@ -116,4 +116,27 @@ export default {
             });
         }
     },
+
+    async deleteTool(req, res) {
+        try {
+            const { id } = req.params;
+            const tool = await Tool.findByPk(id);
+
+            if (!tool) {
+                return res.status(404).json({
+                    message: "Tool not found",
+                });
+            }
+
+            await tool.destroy();
+            res.status(200).json({
+                message: "Tool deleted successfully",
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Error deleting tool",
+                error: error.message,
+            });
+        }
+    }
 };
