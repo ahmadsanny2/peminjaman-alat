@@ -14,5 +14,10 @@ router.use(verifyToken);
 
 // Categories
 router.get("/categories", categoryController.getAllCategories);
+router.post(
+    "/categories/add-category",
+    checkRole(["admin"]),
+    categoryController.createCategory,
+);
 
 export default router;
