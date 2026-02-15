@@ -30,4 +30,26 @@ export default {
             });
         }
     },
+
+    async getAllTools(req, res) {
+        try {
+            const tools = await Tool.findAll({
+                include: [{
+                    model: Category,
+                    attributes: ['id', 'name']
+                }],
+                order: [['createdAt', 'DESC']]
+            })
+
+            res.status(200).json({
+                message: "Tools retrieved successfully",
+                data: tools
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "Error retrieving tools",
+                error: error.message
+            })
+        }
+    }
 };
