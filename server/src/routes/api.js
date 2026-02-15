@@ -1,8 +1,8 @@
 import express from "express";
 import authController from "../controllers/authController.js";
 import categoryController from "../controllers/categoryController.js";
-// import { checkRole } from '../middleware/roleMiddleware.js'
-import { verifyToken, checkRole } from "../middleware/authMiddleware.js";
+import { checkRole } from '../middleware/roleMiddleware.js'
+import { verifyToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
