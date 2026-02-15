@@ -34,22 +34,53 @@ export default {
     async getAllTools(req, res) {
         try {
             const tools = await Tool.findAll({
-                include: [{
-                    model: Category,
-                    attributes: ['id', 'name']
-                }],
-                order: [['createdAt', 'DESC']]
-            })
+                include: [
+                    {
+                        model: Category,
+                        attributes: ["id", "name"],
+                    },
+                ],
+                order: [["createdAt", "DESC"]],
+            });
 
             res.status(200).json({
                 message: "Tools retrieved successfully",
-                data: tools
-            })
+                data: tools,
+            });
         } catch (error) {
             res.status(500).json({
                 message: "Error retrieving tools",
-                error: error.message
-            })
+                error: error.message,
+            });
         }
-    }
+    },
+
+    async getToolById(req, res) {
+        try {
+            const tool = await Tool.findByPk(id, {
+                include: [
+                    {
+                        model: Category,
+                        attributes: ["id", "name"],
+                    },
+                ],
+            });
+
+            if (!tool) {
+                return res.status(404).json({
+                    message: "Tool not found",
+                });
+            }
+
+            res.status(200).json({
+                message: "Tool retrieved successfully",
+                data: tool,
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "Error retrieving tool",
+                error: error.message,
+            });
+        }
+    },
 };
