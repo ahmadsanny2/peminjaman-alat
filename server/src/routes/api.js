@@ -24,5 +24,10 @@ router.put(
     checkRole(["admin"]),
     categoryController.updateCategory,
 );
+router.delete(
+    "/categories/delete-category/:id",
+    checkRole(["admin"]),
+    categoryController.deleteCategory,
+);
 
 export default router;
