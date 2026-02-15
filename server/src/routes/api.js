@@ -19,5 +19,10 @@ router.post(
     checkRole(["admin"]),
     categoryController.createCategory,
 );
+router.put(
+    "/categories/update-category/:id",
+    checkRole(["admin"]),
+    categoryController.updateCategory,
+);
 
 export default router;
