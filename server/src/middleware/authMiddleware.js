@@ -1,32 +1,22 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-    const authHeader = req.header('Authorization')
-    const token = authHeader && authHeader.split(' ')[1]
+    const authHeader = req.header("Authorization");
+    const token = authHeader && authHeader.split(" ")[1];
 
-    if (!token) return res.status(401).json({
-        message: "Access Denied. Token not provided."
-    })
+    if (!token)
+        return res.status(401).json({
+            message: "Access Denied. Token not provided.",
+        });
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        req.user = decoded
-        next()
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
     } catch (error) {
         res.status(403).json({
             message: "Token not valid. Access denied.",
-            error: error.message
-        })
+            error: error.message,
+        });
     }
-}
-
-export const checkRole = (allowedRoles) => {
-    return (req, res, next) => {
-        if (!allowedRoles.includes(req.user.role)) {
-            return res.status(403).json({
-                message: "Forbidden. You don't have permission to access this resource."
-            })
-        }
-        next()
-    }
-}
+};
