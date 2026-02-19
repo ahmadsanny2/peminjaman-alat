@@ -171,5 +171,37 @@ export default {
         }
     },
 
-   
+    async getAllLoans(req, res) {
+        try {
+            const loan = await Loan.findAll({
+                include: [
+                    {
+                        model: Tool,
+                        attributes: ["name"],
+                    },
+                    {
+                        model: User,
+                        as: "borrower",
+                        attributes: ["fullName", "username"],
+                    },
+                    {
+                        model: User,
+                        as: "officer",
+                        attributes: ["fullName"],
+                    },
+                ],
+                order: [["createdAt", "DESC"]],
+            });
+
+            res.status(200).json({
+                message: "All loans retrieved successfully",
+                data: loan,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Error fetching loans",
+                error: error.message,
+            });
+        }
+    },
 };
