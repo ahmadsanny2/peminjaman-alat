@@ -50,4 +50,60 @@ export default {
             });
         }
     },
+
+    async approveLoan(req, res) {
+        const { id } = req.params;
+        const officerId = req.user.id;
+
+        const transaction = await sequelize.transaction();
+
+        try {
+            const loan = await Loan.findByPk(id, { transaction });
+            if (!loan) {
+                await transaction.rollback();
+                return res.status(404).json({
+                    message: "Loan not found",
+                });
+            }
+
+            if (loan.status !== "pending") {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Loan is not pending",
+                });
+            }
+
+            const tool = await Tool.findByPk(loan.toolId, { transaction });
+            if (!tool || tool.stock < 1) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Tool is not available",
+                });
+            }
+
+            await loan.update(
+                {
+                    status: "approved",
+                    officerId,
+                },
+                { transaction },
+            );
+            await tool.decrement("stock", { by: 1, transaction });
+
+            await transaction.commit();
+
+            res.status(200).json({
+                message: "Loan approved successfully",
+                data: loan,
+            });
+        } catch (error) {
+            await transaction.rollback();
+            res.status(500).json({
+                message: "Error approving loan",
+                error: error.message,
+            });
+        }
+    },
+
+   
 };
