@@ -105,5 +105,46 @@ export default {
         }
     },
 
+    async returnLoan(req, res) {
+        const { id } = req.params;
+        const transaction = await sequelize.transaction();
+
+        try {
+            const loan = await Loan.findByPk(id, { transaction });
+            if (!loan || loan.status !== "approved") {
+                await transaction.rollback();
+                return res.status(404).json({
+                    message: "Loan not found or not approved",
+                });
+            }
+
+            const tool = await Tool.findByPk(loan.toolId, { transaction });
+
+            await loan.update(
+                {
+                    status: "returned",
+                    actualReturnDate: new Date(),
+                },
+                { transaction },
+            );
+
+            if (tool) {
+                await tool.increment("stock", { by: 1, transaction });
+            }
+
+            await transaction.commit();
+            res.status(200).json({
+                message: "Loan returned successfully",
+                data: loan,
+            });
+        } catch (error) {
+            await transaction.rollback();
+            res.status(500).json({
+                message: "Error returning loan",
+                error: error.message,
+            });
+        }
+    },
+
    
 };
