@@ -1,6 +1,22 @@
 import { Category } from "../models/index.js";
 
 export default {
+    async getAllCategories(req, res) {
+        try {
+            const categories = await Category.findAll({
+                order: [["createdAt", "DESC"]],
+            })
+
+            res.status(200).json({
+                data: categories
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "An error occurred while retrieving categories",
+                error: error.message
+            })
+        }
+    },
     async createCategory(req, res) {
         try {
             const { name, description } = req.body
@@ -23,23 +39,6 @@ export default {
 
             res.status(500).json({
                 message: "An error occurred while creating the category",
-                error: error.message
-            })
-        }
-    },
-
-    async getAllCategories(req, res) {
-        try {
-            const categories = await Category.findAll({
-                order: [["createdAt", "DESC"]],
-            })
-
-            res.status(200).json({
-                data: categories
-            })
-        } catch (error) {
-            res.status(500).json({
-                message: "An error occurred while retrieving categories",
                 error: error.message
             })
         }
