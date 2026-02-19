@@ -57,6 +57,7 @@ export default {
 
     async getToolById(req, res) {
         try {
+            const { id } = req.params;
             const tool = await Tool.findByPk(id, {
                 include: [
                     {
@@ -98,7 +99,7 @@ export default {
             if (req.body.categoryId) {
                 const categoryExists = await Category.findByPk(req.body.categoryId);
                 if (!categoryExists) {
-                    res.status(404).json({
+                    return res.status(404).json({
                         message: "Category not found",
                     });
                 }
@@ -138,5 +139,5 @@ export default {
                 error: error.message,
             });
         }
-    }
+    },
 };
