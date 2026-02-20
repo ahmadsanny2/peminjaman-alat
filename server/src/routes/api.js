@@ -41,6 +41,30 @@ router.post("/tools", checkRole(["admin"]), toolController.createTools);
 router.put("/tools/:id", checkRole(["admin"]), toolController.updateTool);
 router.delete("/tools/:id", checkRole(["admin"]), toolController.deleteTool);
 
-
+router.post(
+    "/loans/request",
+    checkRole(["peminjam"]),
+    loanController.createLoans,
+);
+router.get(
+    "/loans/my-loans",
+    checkRole(["peminjam"]),
+    loanController.getMyLoans,
+);
+router.get(
+    "/loans",
+    checkRole(["admin", "petugas"]),
+    loanController.getAllLoans,
+);
+router.put(
+    "/loans/:id/approve",
+    checkRole(["admin", "petugas"]),
+    loanController.approveLoan,
+);
+router.put(
+    "/loans/:id/return",
+    checkRole(["admin", "petugas"]),
+    loanController.returnLoan,
+);
 
 export default router;
