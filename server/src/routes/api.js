@@ -36,6 +36,11 @@ router.delete(
     categoryController.deleteCategory,
 );
 
+router.get("/tools", toolController.getAllTools);
+router.post("/tools", checkRole(["admin"]), toolController.createTools);
+router.put("/tools/:id", checkRole(["admin"]), toolController.updateTool);
+router.delete("/tools/:id", checkRole(["admin"]), toolController.deleteTool);
+
 
 
 export default router;
