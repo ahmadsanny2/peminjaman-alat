@@ -16,4 +16,9 @@ router.post("/auth/login", authController.login);
 
 router.use(verifyToken);
 
+router.get("/users", checkRole(["admin"]), userController.getAllUsers);
+router.put("/users/:id/role", checkRole(["admin"]), userController.updateRole);
+
+
+
 export default router;
