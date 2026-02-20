@@ -19,6 +19,23 @@ router.use(verifyToken);
 router.get("/users", checkRole(["admin"]), userController.getAllUsers);
 router.put("/users/:id/role", checkRole(["admin"]), userController.updateRole);
 
+router.get("/categories", categoryController.getAllCategories);
+router.post(
+    "/categories",
+    checkRole(["admin"]),
+    categoryController.createCategory,
+);
+router.put(
+    "/categories/:id",
+    checkRole(["admin"]),
+    categoryController.updateCategory,
+);
+router.delete(
+    "/categories/:id",
+    checkRole(["admin"]),
+    categoryController.deleteCategory,
+);
+
 
 
 export default router;
