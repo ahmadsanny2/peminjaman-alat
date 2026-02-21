@@ -13,5 +13,5 @@ export const toolSchema = z.object({
             message: "Stock must be at least 0.",
         }),
     ),
-    image: z.string().optional,
+    // image: z.string().optional,
 });
