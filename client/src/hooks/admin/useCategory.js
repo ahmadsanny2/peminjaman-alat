@@ -56,5 +56,11 @@ export function useCategory() {
         }
     };
 
-    
+    const handleEdit = (category) => {
+        setFormData({ name: category.name, description: category.description });
+        setIsEditing(true);
+        setEditId(category.id);
+    };
+
+   
 }
