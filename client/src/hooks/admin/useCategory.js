@@ -62,5 +62,28 @@ export function useCategory() {
         setEditId(category.id);
     };
 
-   
+    const handleDelete = async (id) => {
+        if (!confirm("Yakin ingin menghapus kategori ini?")) return;
+
+        try {
+            await api.delete(`/categories/${id}`);
+            fetchCategories();
+        } catch (err) {
+            console.error(err);
+            alert("Gagal menghapus kategori");
+        }
+    };
+
+    return {
+        categories,
+        formData,
+        isEditing,
+        isSubmitting,
+        error,
+        handleChange,
+        handleSubmit,
+        handleEdit,
+        handleDelete,
+        resetForm,
+    };
 }
