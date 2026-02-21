@@ -36,5 +36,25 @@ export function useCategory() {
         setEditId(null);
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!formData.name) return alert("Nama kategori wajib diisi");
+
+        setIsSubmitting(true);
+        const url = isEditing ? `/categories/${editId}` : `/categories`;
+        const method = isEditing ? "PUT" : "POST";
+
+        try {
+            await api({ method, url, data: formData });
+            resetForm();
+            fetchCategories();
+        } catch (err) {
+            console.error(err);
+            alert("Gagal menyimpan kategori");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     
 }
