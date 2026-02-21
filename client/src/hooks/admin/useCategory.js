@@ -30,5 +30,11 @@ export function useCategory() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const resetForm = () => {
+        setFormData({ name: "", description: "" });
+        setIsEditing(false);
+        setEditId(null);
+    };
+
     
 }
