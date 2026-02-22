@@ -94,7 +94,17 @@ export function useTool() {
         }
     };
 
-   
+    const handleEdit = (tool) => {
+        setFormData({
+            name: tool.name,
+            stock: tool.stock,
+            categoryId: tool.categoryId,
+        });
+        setIsEditing(true);
+        setEditId(tool.id);
+    };
+
+    
 
     return {
         tools,
