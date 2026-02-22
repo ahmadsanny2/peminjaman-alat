@@ -47,7 +47,28 @@ export const useLoanManagement = () => {
         }
     };
 
-    
+    const returnLoan = async (loanId) => {
+        if (
+            !window.confirm(
+                "Validasi pengembalian barang? Sistem akan memulihkan kuantitas stok inventaris.",
+            )
+        )
+            return;
+
+        setIsProcessing(true);
+        setError("");
+        try {
+            await api.put(`/loans/${loanId}/return`);
+            await fetchLoans();
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                "Kegagalan struktural saat mencatat rekaman pengembalian alat.",
+            );
+        } finally {
+            setIsProcessing(false);
+        }
+    };
 
     return {
         loans,
