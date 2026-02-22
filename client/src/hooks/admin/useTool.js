@@ -55,6 +55,16 @@ export function useTool() {
         }));
     };
 
+    const resetForm = () => {
+        setFormData({
+            name: "",
+            stock: "",
+            categoryId: "",
+        });
+        setIsEditing(false);
+        setEditId(null);
+    };
+
     
 
     return {
