@@ -104,7 +104,17 @@ export function useTool() {
         setEditId(tool.id);
     };
 
-    
+    const handleDelete = async (id) => {
+        if (!confirm("Yakin ingin menghapus tool ini?")) return;
+
+        try {
+            await api.delete(`/tools/${id}`);
+            fetchTools();
+        } catch (err) {
+            console.error(err);
+            alert("Gagal menghapus tool");
+        }
+    };
 
     return {
         tools,
