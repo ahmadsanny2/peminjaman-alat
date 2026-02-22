@@ -25,7 +25,29 @@ export const useLoanManagement = () => {
         fetchLoans();
     }, [fetchLoans]);
 
-   
+    const approveLoan = async (loanId) => {
+        if (
+            !window.confirm(
+                "Setujui permohonan ini? Sistem akan mengkalkulasi ulang dan memotong stok alat secara otomatis.",
+            )
+        )
+            return;
+
+        setIsProcessing(true);
+        setError("");
+        try {
+            await api.put(`/loans/${loanId}/approve`);
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                "Terjadi anomali saat memberikan otorisasi persetujuan.",
+            );
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    
 
     return {
         loans,
