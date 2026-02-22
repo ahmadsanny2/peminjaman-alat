@@ -29,9 +29,19 @@ export function useTool() {
     };
 
     
+    const fetchCategories = async () => {
+        try {
+            const res = await api.get("/categories");
+            setCategories(res.data.data);
+        } catch (err) {
+            console.error(err);
+            setError("Gagal memuat kategori");
+        }
+    };
 
     useEffect(() => {
         fetchTools();
+        fetchCategories();
     }, []);
 
     
