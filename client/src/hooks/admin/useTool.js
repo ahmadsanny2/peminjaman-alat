@@ -65,7 +65,36 @@ export function useTool() {
         setEditId(null);
     };
 
-    
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!formData.name || !formData.categoryId) {
+            return alert("Nama dan kategori wajib diisi");
+        }
+
+        setIsSubmitting(true);
+
+        const url = isEditing ? `/tools/${editId}` : `/tools`;
+        const method = isEditing ? "put" : "post";
+
+        try {
+            await api({
+                method,
+                url,
+                data: formData,
+            });
+
+            resetForm();
+            fetchTools();
+        } catch (err) {
+            console.error(err);
+            alert("Gagal menyimpan tool");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+   
 
     return {
         tools,
