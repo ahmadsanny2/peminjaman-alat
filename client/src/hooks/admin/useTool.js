@@ -44,6 +44,17 @@ export function useTool() {
         fetchCategories();
     }, []);
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]:
+                name === "stock"
+                    ? Number(value)
+                    : value,
+        }));
+    };
+
     
 
     return {
