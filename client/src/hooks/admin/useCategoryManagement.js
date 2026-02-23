@@ -70,7 +70,7 @@ export function useCategory() {
             fetchCategories();
         } catch (err) {
             console.error(err);
-            alert("Gagal menghapus kategori");
+            alert("Gagal menghapus kategori!");
         }
     };
 
