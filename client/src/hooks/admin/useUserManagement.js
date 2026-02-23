@@ -7,7 +7,6 @@ export const useUserManagement = () => {
     const [isUpdating, setIsUpdating] = useState(false);
     const [error, setError] = useState('');
 
-    // Akuisisi agregat data entitas pengguna
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
         try {
@@ -25,21 +24,7 @@ export const useUserManagement = () => {
         fetchUsers();
     }, [fetchUsers]);
 
-    // Eksekusi Pembaruan Otoritas (Role Update)
-    const updateRole = async (userId, newRole) => {
-        if (!window.confirm(`Konfirmasi ekskalasi hak istimewa: Ubah otorisasi pengguna menjadi ${newRole.toUpperCase()}?`)) return;
-
-        setIsUpdating(true);
-        setError('');
-        try {
-            await api.put(`/users/${userId}/role`, { role: newRole });
-            await fetchUsers(); // Sinkronisasi ulang tabel secara empiris
-        } catch (err) {
-            setError(err.response?.data?.message || 'Terjadi anomali saat memodifikasi hak akses pengguna.');
-        } finally {
-            setIsUpdating(false);
-        }
-    };
+   
 
     return {
         users,
