@@ -15,7 +15,6 @@ export const useDashboardStats = () => {
         const fetchAggregatedData = async () => {
             setIsLoading(true);
             try {
-                // Mengeksekusi permintaan asinkron secara paralel untuk efisiensi jaringan
                 const [categoriesRes, toolsRes, loansRes] = await Promise.all([
                     api.get('/categories'),
                     api.get('/tools'),
@@ -26,11 +25,9 @@ export const useDashboardStats = () => {
                 const tools = toolsRes.data.data;
                 const loans = loansRes.data.data;
 
-                // Komputasi metrik transaksional
                 const pendingCount = loans.filter(loan => loan.status === 'pending').length;
                 const activeCount = loans.filter(loan => loan.status === 'approved').length;
 
-                // Memperbarui state dengan data kuantitatif yang telah dikalkulasi
                 setStats({
                     totalCategories: categories.length,
                     totalTools: tools.length,
@@ -39,8 +36,8 @@ export const useDashboardStats = () => {
                 });
 
             } catch (err) {
-                console.error("Kesalahan agregasi:", err);
-                setError("Gagal melakukan sinkronisasi data statistik dengan peladen utama.");
+                console.error("Error saat load data:", err);
+                setError("Data belum bisa ditampilkan. Coba lagi sebentar ya.");
             } finally {
                 setIsLoading(false);
             }
