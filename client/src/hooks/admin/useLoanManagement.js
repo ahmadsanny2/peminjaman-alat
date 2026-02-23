@@ -15,7 +15,7 @@ export const useLoanManagement = () => {
             setLoans(response.data.data);
             setError("");
         } catch (err) {
-            setError("Gagal mengekstraksi riwayat transaksional dari peladen utama.");
+            setError("Data riwayat peminjaman gagal dimuat. Coba lagi ya.");
         } finally {
             setIsLoading(false);
         }
@@ -26,12 +26,7 @@ export const useLoanManagement = () => {
     }, [fetchLoans]);
 
     const approveLoan = async (loanId) => {
-        if (
-            !window.confirm(
-                "Setujui permohonan ini? Sistem akan mengkalkulasi ulang dan memotong stok alat secara otomatis.",
-            )
-        )
-            return;
+        if (!window.confirm("Yakin mau setujui peminjaman ini?")) return;
 
         setIsProcessing(true);
         setError("");
@@ -40,7 +35,7 @@ export const useLoanManagement = () => {
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                "Terjadi anomali saat memberikan otorisasi persetujuan.",
+                "Gagal menyetujui peminjaman. Coba lagi ya.",
             );
         } finally {
             setIsProcessing(false);
@@ -48,12 +43,7 @@ export const useLoanManagement = () => {
     };
 
     const returnLoan = async (loanId) => {
-        if (
-            !window.confirm(
-                "Validasi pengembalian barang? Sistem akan memulihkan kuantitas stok inventaris.",
-            )
-        )
-            return;
+        if (!window.confirm("Yakin barang sudah dikembalikan?")) return;
 
         setIsProcessing(true);
         setError("");
@@ -63,7 +53,7 @@ export const useLoanManagement = () => {
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                "Kegagalan struktural saat mencatat rekaman pengembalian alat.",
+                "Pengembalian belum berhasil diproses. Silakan coba lagi.",
             );
         } finally {
             setIsProcessing(false);
