@@ -73,7 +73,11 @@ export const useBorrower = () => {
         setError('');
     };
 
-    
+    const closeRequestForm = () => {
+        setSelectedTool(null);
+        reset();
+        setError('');
+    };
 
     return {
         catalog,
