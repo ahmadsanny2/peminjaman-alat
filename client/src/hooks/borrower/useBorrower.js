@@ -66,7 +66,14 @@ export const useBorrower = () => {
         }
     };
 
-   
+    const openRequestForm = (tool) => {
+        setSelectedTool(tool);
+        setValue('toolId', tool.id);
+        setValue('expectedReturnDate', '');
+        setError('');
+    };
+
+    
 
     return {
         catalog,
