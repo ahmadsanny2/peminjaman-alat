@@ -21,14 +21,14 @@ export function proxy(request) {
         if (user.role === "admin")
             return NextResponse.redirect(new URL("/admin", request.url));
         if (user.role === "petugas")
-            return NextResponse.redirect(new URL("/petugas", request.url));
-        return NextResponse.redirect(new URL("/peminjam", request.url));
+            return NextResponse.redirect(new URL("/officer", request.url));
+        return NextResponse.redirect(new URL("/borrower", request.url));
     }
 
     const isProtectedPath =
         pathname.startsWith("/admin") ||
-        pathname.startsWith("/petugas") ||
-        pathname.startsWith("/peminjam");
+        pathname.startsWith("/officer") ||
+        pathname.startsWith("/borrower");
 
     if (isProtectedPath && (!token || !user)) {
         return NextResponse.redirect(new URL("/login", request.url));
@@ -38,10 +38,10 @@ export function proxy(request) {
         if (pathname.startsWith("/admin") && user.role !== "admin") {
             return NextResponse.redirect(new URL("/login", request.url));
         }
-        if (pathname.startsWith("/petugas") && user.role !== "petugas") {
+        if (pathname.startsWith("/officer") && user.role !== "petugas") {
             return NextResponse.redirect(new URL("/login", request.url));
         }
-        if (pathname.startsWith("/peminjam") && user.role !== "peminjam") {
+        if (pathname.startsWith("/borrower") && user.role !== "peminjam") {
             return NextResponse.redirect(new URL("/login", request.url));
         }
     }
@@ -54,7 +54,7 @@ export const config = {
         "/login",
         "/register",
         "/admin/:path*",
-        "/petugas/:path*",
-        "/peminjam/:path*",
+        "/officer/:path*",
+        "/borrower/:path*",
     ],
 };
