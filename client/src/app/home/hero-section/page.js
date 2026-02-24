@@ -1,14 +1,4 @@
-import { Watch } from "lucide-react";
-import { Play } from "lucide-react";
-import { Check } from "lucide-react";
-import { ToolCase } from "lucide-react";
-import { CheckCircle } from "lucide-react";
-import { Users } from "lucide-react";
-import { Wrench } from "lucide-react";
-import { Toolbox } from "lucide-react";
-import { PlayCircle } from "lucide-react";
-import { WatchIcon } from "lucide-react";
-import { ArrowRight } from "lucide-react";
+import { CheckCircle, ArrowRight, Users } from "lucide-react";
 import Link from "next/link";
 
 const Hero = () => {
