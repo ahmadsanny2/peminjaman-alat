@@ -37,7 +37,7 @@ export const useRegister = () => {
         } catch (error) {
             const errorMessage =
                 error.response?.data?.message ||
-                "An error occurred during registration";
+                "Terjadi kesalahan saat proses pendaftaran. Coba lagi ya.";
             setServerError(errorMessage);
         } finally {
             setIsLoading(false);
