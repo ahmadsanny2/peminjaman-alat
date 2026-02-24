@@ -15,7 +15,7 @@ export const useLoanManagement = () => {
             setLoans(response.data.data);
             setError("");
         } catch (err) {
-            setError("Data riwayat peminjaman gagal dimuat. Coba lagi ya.");
+            setError("Data riwayat peminjaman gagal dimuat! Coba lagi ya.");
         } finally {
             setIsLoading(false);
         }
@@ -32,10 +32,11 @@ export const useLoanManagement = () => {
         setError("");
         try {
             await api.put(`/loans/${loanId}/approve`);
+            await fetchLoans();
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                "Gagal menyetujui peminjaman. Coba lagi ya.",
+                "Gagal menyetujui peminjaman! Coba lagi ya.",
             );
         } finally {
             setIsProcessing(false);
@@ -53,7 +54,7 @@ export const useLoanManagement = () => {
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                "Pengembalian belum berhasil diproses. Silakan coba lagi.",
+                "Pengembalian belum berhasil diproses! Coba lagi ya.",
             );
         } finally {
             setIsProcessing(false);
