@@ -50,7 +50,7 @@ export function useCategory() {
             fetchCategories();
         } catch (err) {
             console.error(err);
-            alert("Gagal menyimpan kategori");
+            alert("Gagal menyimpan kategori! Coba lagi ya.");
         } finally {
             setIsSubmitting(false);
         }
@@ -70,7 +70,7 @@ export function useCategory() {
             fetchCategories();
         } catch (err) {
             console.error(err);
-            alert("Gagal menghapus kategori!");
+            alert("Gagal menghapus kategori! Coba lagi ya.");
         }
     };
 
