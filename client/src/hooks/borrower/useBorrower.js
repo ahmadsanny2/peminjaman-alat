@@ -46,7 +46,27 @@ export const useBorrower = () => {
         fetchData();
     }, [fetchData]);
 
-    
+    const executeRequest = async (data) => {
+        setIsSubmitting(true);
+        setError('');
+
+        try {
+            await api.post('/loans/request', data);
+
+            closeRequestForm();
+            await fetchData();
+            alert('Permintaan peminjaman berhasil dikirim. Silakan cek statusnya di menu Riwayat ya.');
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                'Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.'
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+   
 
     return {
         catalog,
