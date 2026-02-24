@@ -19,7 +19,6 @@ export default function Sidebar({ className = "" }) {
     const [userRole, setUserRole] = useState("");
     const [userName, setUserName] = useState("");
 
-    // Mengekstraksi identitas dan otoritas dari penyimpanan persisten
     useEffect(() => {
         const userCookie = Cookies.get("user");
         if (userCookie) {
@@ -29,7 +28,6 @@ export default function Sidebar({ className = "" }) {
         }
     }, []);
 
-    // Matriks Navigasi Berbasis Otoritas (RBAC Matrix)
     const menuConfig = {
         admin: [
             {
@@ -89,10 +87,8 @@ export default function Sidebar({ className = "" }) {
         ],
     };
 
-    // Alokasi menu secara dinamis; mengembalikan array kosong jika peran belum terdeteksi
     const activeMenu = menuConfig[userRole] || [];
 
-    // Fungsi terminasi sesi (Logout)
     const handleLogout = () => {
         Cookies.remove("token");
         Cookies.remove("user");
@@ -103,7 +99,6 @@ export default function Sidebar({ className = "" }) {
         <aside
             className={`bg-slate-900 w-64 text-slate-300 min-h-screen flex flex-col shadow-xl border-r border-gray-800 ${className}`}
         >
-            {/* Header Identitas Sistem */}
             <div className="h-16 flex items-center justify-center border-b border-slate-200">
                 <h1 className="text-white font-bold text-lg tracking-wider">
                     Peminjaman Alat
@@ -119,7 +114,6 @@ export default function Sidebar({ className = "" }) {
                 </span>
             </div>
 
-            {/* Modul Navigasi Utama */}
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1 px-3">
                     {activeMenu.map((item, index) => {
@@ -143,7 +137,6 @@ export default function Sidebar({ className = "" }) {
                 </ul>
             </nav>
 
-            {/* Modul Terminasi Sesi */}
             <div className="p-4 border-t border-slate-700">
                 <button
                     onClick={handleLogout}
