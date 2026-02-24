@@ -17,7 +17,6 @@ export function useTool() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    
     const fetchTools = async () => {
         try {
             const res = await api.get("/tools");
@@ -28,7 +27,6 @@ export function useTool() {
         }
     };
 
-    
     const fetchCategories = async () => {
         try {
             const res = await api.get("/categories");
@@ -48,10 +46,7 @@ export function useTool() {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
-            [name]:
-                name === "stock"
-                    ? Number(value)
-                    : value,
+            [name]: name === "stock" ? Number(value) : value,
         }));
     };
 
@@ -88,7 +83,7 @@ export function useTool() {
             fetchTools();
         } catch (err) {
             console.error(err);
-            alert("Gagal menyimpan tool");
+            alert("Gagal menyimpan tool! Coba lagi ya.");
         } finally {
             setIsSubmitting(false);
         }
@@ -112,7 +107,7 @@ export function useTool() {
             fetchTools();
         } catch (err) {
             console.error(err);
-            alert("Gagal menghapus tool");
+            alert("Gagal menghapus tool! Coba lagi ya.");
         }
     };
 
