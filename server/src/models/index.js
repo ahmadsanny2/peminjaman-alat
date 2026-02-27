@@ -3,12 +3,11 @@ import User from "./User.js";
 import Category from "./Category.js";
 import Tool from "./Tool.js";
 import Loan from "./Loan.js";
+import ActivityLog from "./ActivityLog.js";
 
-// Relasi Kategori dan Alat (One-to-Many)
 Category.hasMany(Tool, { foreignKey: "categoryId" });
 Tool.belongsTo(Category, { foreignKey: "categoryId" });
 
-// Relasi Peminjaman dengan Alat dan Pengguna
 User.hasMany(Loan, { foreignKey: "borrowerId", as: "borrowings" });
 Loan.belongsTo(User, { foreignKey: "borrowerId", as: "borrower" });
 
@@ -18,4 +17,7 @@ Loan.belongsTo(User, { foreignKey: "officerId", as: "officer" });
 Tool.hasMany(Loan, { foreignKey: "toolId" });
 Loan.belongsTo(Tool, { foreignKey: "toolId" });
 
-export { sequelize, User, Category, Tool, Loan };
+User.hasMany(ActivityLog, { foreignKey: "userId", as: "activities" });
+ActivityLog.belongsTo(User, { foreignKey: "userId", as: "actor" });
+
+export { sequelize, User, Category, Tool, Loan, ActivityLog };
