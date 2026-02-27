@@ -12,6 +12,16 @@ export default {
                 });
             }
 
+            const toolExist = await Tool.findOne({
+                where: { name: name }
+            })
+
+            if (toolExist) {
+                return res.status(409).json({
+                    message: "Name tool must be unique"
+                })
+            }
+
             const newTool = await Tool.create({
                 name,
                 stock,
