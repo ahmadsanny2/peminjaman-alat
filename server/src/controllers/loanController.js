@@ -1,4 +1,5 @@
 import { Loan, Tool, User, sequelize } from "../models/index.js";
+import { recordActivity } from '../utils/logger.js'; // <-- Tambahkan baris ini
 
 export default {
     async createLoans(req, res) {
@@ -90,6 +91,12 @@ export default {
             );
             await tool.decrement("stock", { by: 1, transaction });
 
+            await recordActivity(
+                req.user.id,
+                'VALIDASI_PINJAMAN',
+                `Petugas/Admin menyetujui peminjaman alat '${tool.name}' untuk dokumen ID: ${loan.id}`
+            );
+
             await transaction.commit();
 
             res.status(200).json({
@@ -133,6 +140,13 @@ export default {
             }
 
             await transaction.commit();
+
+            await recordActivity(
+                req.user.id,
+                'VALIDASI_KEMBALI',
+                `${req.user.fullName} memvalidasi kembali peminjaman alat '${tool.name}' untuk ID transaksi: ${loan.id}`
+            );
+
             res.status(200).json({
                 message: "Loan returned successfully",
                 data: loan,
