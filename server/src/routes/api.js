@@ -8,6 +8,7 @@ import userController from "../controllers/userController.js";
 
 import { verifyToken } from "../middleware/authMiddleware.js";
 import { checkRole } from "../middleware/roleMiddleware.js";
+import activityController from "../controllers/activityController.js";
 
 const router = express.Router();
 
@@ -66,5 +67,7 @@ router.put(
     checkRole(["admin", "petugas"]),
     loanController.returnLoan,
 );
+
+router.get('/logs', checkRole(['admin']), activityController.getLogs);
 
 export default router;
