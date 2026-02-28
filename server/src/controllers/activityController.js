@@ -13,7 +13,7 @@ export default {
             res.status(200).json({ data: logs });
         } catch (error) {
             res.status(500).json({
-                message: "Kegagalan ekstraksi rekam jejak sistem.",
+                message: "Failed to retrieve user activity log data.",
                 error: error.message,
             });
         }
