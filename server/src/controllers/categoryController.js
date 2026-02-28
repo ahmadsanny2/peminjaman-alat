@@ -1,6 +1,5 @@
 import { Category } from "../models/index.js";
 import { recordActivity } from "../utils/logger.js";
-import { Op } from "sequelize";
 
 export default {
     async getAllCategories(req, res) {
