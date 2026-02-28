@@ -1,19 +1,33 @@
 import { Category } from "../models/index.js";
-import { recordActivity } from "../utils/logger.js"; // <-- Tambahkan baris ini
+import { recordActivity } from "../utils/logger.js";
+import { Op } from "sequelize";
 
 export default {
     async getAllCategories(req, res) {
         try {
-            const categories = await Category.findAll({
+            let { page = 1, limit = 5 } = req.query;
+
+            page = parseInt(page);
+            limit = parseInt(limit);
+
+            const offset = (page - 1) * limit;
+
+            const { count, rows } = await Category.findAndCountAll({
+                limit,
+                offset,
                 order: [["createdAt", "DESC"]],
             });
 
             res.status(200).json({
-                data: categories,
-            });
+                message: "Successfully get category data.",
+                totalItems: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                data: rows
+            })
         } catch (error) {
             res.status(500).json({
-                message: "An error occurred while retrieving categories",
+                message: "Failed to retrieve category data.",
                 error: error.message,
             });
         }
