@@ -23,8 +23,8 @@ export default {
                 totalItems: count,
                 totalPages: Math.ceil(count / limit),
                 currentPage: page,
-                data: rows
-            })
+                data: rows,
+            });
         } catch (error) {
             res.status(500).json({
                 message: "Failed to retrieve category data.",
