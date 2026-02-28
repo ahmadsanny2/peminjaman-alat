@@ -14,6 +14,10 @@ const Tool = sequelize.define(
             allowNull: false,
             unique: true
         },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         stock: {
             type: DataTypes.INTEGER,
             allowNull: false,
