@@ -9,6 +9,7 @@ import userController from "../controllers/userController.js";
 import { verifyToken } from "../middleware/authMiddleware.js";
 import { checkRole } from "../middleware/roleMiddleware.js";
 import activityController from "../controllers/activityController.js";
+import upload from "../middleware/uploadsMiddleware.js";
 
 const router = express.Router();
 
@@ -38,8 +39,8 @@ router.delete(
 );
 
 router.get("/tools", toolController.getAllTools);
-router.post("/tools", checkRole(["admin"]), toolController.createTools);
-router.put("/tools/:id", checkRole(["admin"]), toolController.updateTool);
+router.post("/tools", checkRole(["admin"]), upload.single("image"), toolController.createTools);
+router.put("/tools/:id", checkRole(["admin"]), upload.single("image"), toolController.updateTool);
 router.delete("/tools/:id", checkRole(["admin"]), toolController.deleteTool);
 
 router.post(
@@ -61,6 +62,11 @@ router.put(
     "/loans/:id/approve",
     checkRole(["admin", "petugas"]),
     loanController.approveLoan,
+);
+router.put(
+    "/loans/:id/reject",
+    checkRole(["admin", "petugas"]),
+    loanController.rejectLoan,
 );
 router.put(
     "/loans/:id/return",
