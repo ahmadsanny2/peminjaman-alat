@@ -25,8 +25,7 @@ const Tool = sequelize.define(
         },
         image: {
             type: DataTypes.STRING,
-            defaultValue: "default.png",
-        },
+        }
     },
     {
         tableName: "tools",
