@@ -48,15 +48,6 @@ export default {
 
     async getAllTools(req, res) {
         try {
-            // const tools = await Tool.findAll({
-            //     include: [
-            //         {
-            //             model: Category,
-            //             attributes: ["id", "name"],
-            //         },
-            //     ],
-            //     order: [["createdAt", "DESC"]],
-            // });
 
             let { page, limit } = req.query;
 
