@@ -1,8 +1,10 @@
 import { Tool, Category } from "../models/index.js";
+import fs from "fs";
+import path from "path";
 
 export default {
     async createTools(req, res) {
-        const { name, stock, image, categoryId } = req.body;
+        const { name, description, stock, image, categoryId } = req.body;
 
         try {
             const categoryExists = await Category.findByPk(categoryId);
@@ -13,19 +15,22 @@ export default {
             }
 
             const toolExist = await Tool.findOne({
-                where: { name: name }
-            })
+                where: { name: name },
+            });
 
             if (toolExist) {
                 return res.status(409).json({
-                    message: "Name tool must be unique"
-                })
+                    message: "Name tool must be unique",
+                });
             }
+
+            const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
             const newTool = await Tool.create({
                 name,
+                description,
                 stock,
-                image,
+                image: imagePath,
                 categoryId,
             });
 
@@ -43,7 +48,19 @@ export default {
 
     async getAllTools(req, res) {
         try {
-            const tools = await Tool.findAll({
+            // const tools = await Tool.findAll({
+            //     include: [
+            //         {
+            //             model: Category,
+            //             attributes: ["id", "name"],
+            //         },
+            //     ],
+            //     order: [["createdAt", "DESC"]],
+            // });
+
+            let { page, limit } = req.query;
+
+            const queryOptions = {
                 include: [
                     {
                         model: Category,
@@ -51,11 +68,26 @@ export default {
                     },
                 ],
                 order: [["createdAt", "DESC"]],
+            }
+
+            if (page && limit) {
+                page = parseInt(page);
+                limit = parseInt(limit);
+
+                queryOptions.limit = limit
+                queryOptions.offset = (page - 1) * limit;
+            }
+
+            const { count, rows } = await Tool.findAndCountAll({
+                ...queryOptions
             });
 
             res.status(200).json({
                 message: "Tools retrieved successfully",
-                data: tools,
+                totalItems: count,
+                totalPages: limit ? Math.ceil(count / limit) : 1,
+                currentPage: page ? page : 1,
+                data: rows,
             });
         } catch (error) {
             res.status(500).json({
@@ -115,7 +147,28 @@ export default {
                 }
             }
 
-            await tool.update(req.body);
+            let imagePath = tool.image;
+
+            if (req.file) {
+                if (tool.image) {
+                    const oldPath = path.join("public", tool.image);
+                    if (fs.existsSync(oldPath)) {
+                        fs.unlinkSync(oldPath);
+                    }
+                }
+                imagePath = `/uploads/${req.file.filename}`;
+            }
+
+            const updateData = {
+                name: req.body.name,
+                description: req.body.description,
+                stock: req.body.stock,
+                categoryId: req.body.categoryId,
+                image: imagePath,
+            };
+
+            await tool.update(updateData);
+
             res.status(200).json({
                 message: "Tool updated successfully",
                 data: tool,
@@ -137,6 +190,13 @@ export default {
                 return res.status(404).json({
                     message: "Tool not found",
                 });
+            }
+
+            if (tool.image) {
+                const filePath = path.join("public", tool.image);
+                if (fs.existsSync(filePath)) {
+                    fs.unlinkSync(filePath);
+                }
             }
 
             await tool.destroy();
