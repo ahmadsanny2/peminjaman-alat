@@ -4,17 +4,20 @@ import { recordActivity } from "../utils/logger.js";
 export default {
     async getAllCategories(req, res) {
         try {
-            let { page = 1, limit = 5 } = req.query;
+            let { page, limit } = req.query;
 
-            page = parseInt(page);
-            limit = parseInt(limit);
+            const queryOptions = {}
 
-            const offset = (page - 1) * limit;
+            if (page && limit) {
+                page = parseInt(page);
+                limit = parseInt(limit);
+
+                queryOptions.limit = limit
+                queryOptions.offset = (page - 1) * limit;
+            }
 
             const { count, rows } = await Category.findAndCountAll({
-                limit,
-                offset,
-                order: [["createdAt", "DESC"]],
+                ...queryOptions
             });
 
             res.status(200).json({
