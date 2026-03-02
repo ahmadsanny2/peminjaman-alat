@@ -1,7 +1,66 @@
 import { Loan, Tool, User, sequelize } from "../models/index.js";
-import { recordActivity } from "../utils/logger.js"; // <-- Tambahkan baris ini
+import { recordActivity } from "../utils/logger.js";
 
 export default {
+    async getAllLoans(req, res) {
+        try {
+            const loan = await Loan.findAll({
+                include: [
+                    {
+                        model: Tool,
+                        attributes: ["name"],
+                    },
+                    {
+                        model: User,
+                        as: "borrower",
+                        attributes: ["fullName", "username"],
+                    },
+                    {
+                        model: User,
+                        as: "officer",
+                        attributes: ["fullName"],
+                    },
+                ],
+                order: [["createdAt", "DESC"]],
+            });
+
+            res.status(200).json({
+                message: "All loans retrieved successfully",
+                data: loan,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Error fetching loans",
+                error: error.message,
+            });
+        }
+    },
+
+    async getMyLoans(req, res) {
+        try {
+            const myLoans = await Loan.findAll({
+                where: { borrowerId: req.user.id },
+                include: [
+                    {
+                        model: Tool,
+                        attributes: ["id", "name", "image"],
+                    },
+                ],
+                order: [["createdAt", "DESC"]],
+            });
+
+            res.status(200).json({
+                message: "My loans retrieved successfully",
+                data: myLoans,
+            });
+        } catch (error) {
+            res.status(500).json({
+                message: "Error fetching loans",
+                error: error.message,
+            });
+        }
+    },
+
     async createLoans(req, res) {
         const { toolId, expectedReturnDate } = req.body;
         const borrowerId = req.user.id;
@@ -39,6 +98,12 @@ export default {
                 expectedReturnDate,
                 status: "pending",
             });
+
+            await recordActivity(
+                req.user.id,
+                "LOAN APPLICATION",
+                `${req.user.fullName} telah melakukan pengajuan peminjaman alat. Nama alat: ${tool.name}`,
+            );
 
             return res.status(201).json({
                 message: "Loan request created successfully",
@@ -91,13 +156,13 @@ export default {
             );
             await tool.decrement("stock", { by: 1, transaction });
 
+            await transaction.commit();
+
             await recordActivity(
                 req.user.id,
-                "VALIDASI_PINJAMAN",
-                `${req.user.fullName} menyetujui peminjaman alat '${tool.name}' untuk dokumen ID: ${loan.id}`,
+                "APPROVE LOAN",
+                `${req.user.fullName} telah menyetujui peminjaman alat '${tool.name}' untuk ID transaksi: ${loan.id}`,
             );
-
-            await transaction.commit();
 
             res.status(200).json({
                 message: "Loan approved successfully",
@@ -113,57 +178,63 @@ export default {
     },
 
     async rejectLoan(req, res) {
-        const { id } = req.params
-        const officerId = req.user.id
+        const { id } = req.params;
+        const officerId = req.user.id;
 
-        const transaction = await sequelize.transaction()
+        const transaction = await sequelize.transaction();
 
         try {
-            const loan = await Loan.findByPk(id, { transaction })
+            const loan = await Loan.findByPk(id, { transaction });
 
             if (!loan) {
-                await transaction.rollback()
+                await transaction.rollback();
                 res.status(404).json({
-                    message: "Loan not found"
-                })
+                    message: "Loan not found",
+                });
             }
 
             if (!loan.status === "pending") {
-                await transaction.rollback()
+                await transaction.rollback();
                 res.status(400).json({
-                    message: "Loan is not pending"
-                })
+                    message: "Loan is not pending",
+                });
             }
 
-            const tool = await Tool.findByPk(loan.toolId, { transaction })
+            const tool = await Tool.findByPk(loan.toolId, { transaction });
             if (!tool || tool.stock < 1) {
-                await transaction.rollback()
+                await transaction.rollback();
                 res.status(400).json({
-                    message: "Tool is not available"
-                })
+                    message: "Tool is not available",
+                });
             }
 
             await loan.update(
                 {
                     status: "rejected",
-                    officerId
+                    officerId,
                 },
                 {
-                    transaction
-                }
-            )
+                    transaction,
+                },
+            );
 
-            await transaction.commit()
+            await transaction.commit();
+
+            await recordActivity(
+                req.user.id,
+                "REJECT LOAN APPLICATION",
+                `${req.user.fullName} telah menolak pengajuan peminjaman alat. Nama alat: ${tool.name}`,
+            );
 
             res.status(201).json({
-                message: "Loan request is rejected"
-            })
+                message: "Loan request is rejected",
+            });
         } catch (error) {
-            await transaction.rollback()
+            await transaction.rollback();
             res.status(500).json({
                 message: "Error reject loan",
-                error: error.message
-            })
+                error: error.message,
+            });
         }
     },
 
@@ -198,8 +269,8 @@ export default {
 
             await recordActivity(
                 req.user.id,
-                "VALIDASI_KEMBALI",
-                `${req.user.fullName} memvalidasi kembali peminjaman alat '${tool.name}' untuk ID transaksi: ${loan.id}`,
+                "RETURN LOAN",
+                `${req.user.fullName} telah memvalidasi pengembalian peminjaman alat. Nama alat: ${tool.name}`,
             );
 
             res.status(200).json({
@@ -210,65 +281,6 @@ export default {
             await transaction.rollback();
             res.status(500).json({
                 message: "Error returning loan",
-                error: error.message,
-            });
-        }
-    },
-
-    async getMyLoans(req, res) {
-        try {
-            const myLoans = await Loan.findAll({
-                where: { borrowerId: req.user.id },
-                include: [
-                    {
-                        model: Tool,
-                        attributes: ["id", "name", "image"],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
-            });
-
-            res.status(200).json({
-                message: "My loans retrieved successfully",
-                data: myLoans,
-            });
-        } catch (error) {
-            res.status(500).json({
-                message: "Error fetching loans",
-                error: error.message,
-            });
-        }
-    },
-
-    async getAllLoans(req, res) {
-        try {
-            const loan = await Loan.findAll({
-                include: [
-                    {
-                        model: Tool,
-                        attributes: ["name"],
-                    },
-                    {
-                        model: User,
-                        as: "borrower",
-                        attributes: ["fullName", "username"],
-                    },
-                    {
-                        model: User,
-                        as: "officer",
-                        attributes: ["fullName"],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
-            });
-
-            res.status(200).json({
-                message: "All loans retrieved successfully",
-                data: loan,
-            });
-        } catch (error) {
-            res.status(500).json({
-                message: "Error fetching loans",
                 error: error.message,
             });
         }
