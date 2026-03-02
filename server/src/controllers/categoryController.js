@@ -34,6 +34,7 @@ export default {
             });
         }
     },
+    
     async createCategory(req, res) {
         try {
             const { name, description } = req.body;
@@ -45,7 +46,7 @@ export default {
 
             await recordActivity(
                 req.user.id,
-                "TAMBAH KATEGORI",
+                "ADD CATEGORY",
                 `${req.user.fullName} telah menambahkan kategori baru: ${name}`,
             );
 
@@ -80,6 +81,12 @@ export default {
 
             await category.update(req.body);
 
+            await recordActivity(
+                req.user.id,
+                "UPDATE CATEGORY",
+                `${req.user.fullName} telah memperbarui kategori. ID kategori: ${category.id}`
+            )
+
             res.status(200).json({
                 message: "Category updated successfully",
                 data: category,
@@ -105,6 +112,12 @@ export default {
             }
 
             await category.destroy();
+
+            await recordActivity(
+                req.user.id,
+                "DELETE CATEGORY",
+                `${req.user.fullName} telah menghapus kategori. ID kategori: ${category.id}`
+            )
 
             res.status(200).json({
                 message: "Category deleted successfully",
