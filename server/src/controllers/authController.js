@@ -1,6 +1,7 @@
 import { User } from "../models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { recordActivity } from "../utils/logger.js";
 
 export default {
     async register(req, res) {
@@ -38,6 +39,12 @@ export default {
                 password: hashedPassword,
                 role,
             });
+
+            await recordActivity(
+                newUser.id,
+                "REGISTER",
+                `${newUser.fullName} telah mendaftar ke sistem.`
+            )
 
             res.status(201).json({
                 message: "User registered successfully",
@@ -85,6 +92,12 @@ export default {
             const token = jwt.sign(payload, process.env.JWT_SECRET, {
                 expiresIn: "1d",
             });
+
+            await recordActivity(
+                user.id,
+                "LOGIN",
+                `${user.fullName} telah masuk ke sistem.`
+            )
 
             res.status(200).json({
                 message: "Login successfully",
