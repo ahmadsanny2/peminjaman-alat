@@ -1,4 +1,5 @@
 import { User } from "../models/index.js";
+import { recordActivity } from "../utils/logger.js"
 
 export default {
     async getAllUsers(req, res) {
@@ -46,6 +47,12 @@ export default {
             }
 
             await user.update({ role });
+
+            await recordActivity(
+                req.user.id,
+                "UPDATE ROLE",
+                `${req.user.fullName} telah memperbarui role untuk users ${user.fullName}`
+            )
 
             res.status(200).json({
                 message: "Role successfully updated.",
