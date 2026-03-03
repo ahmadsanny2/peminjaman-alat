@@ -11,6 +11,7 @@ import {
     ClipboardList,
     LogOut,
     Tags,
+    ActivitySquare,
 } from "lucide-react";
 
 export default function Sidebar({ className = "" }) {
@@ -19,6 +20,7 @@ export default function Sidebar({ className = "" }) {
     const [userRole, setUserRole] = useState("");
     const [userName, setUserName] = useState("");
 
+    // User Cookie
     useEffect(() => {
         const userCookie = Cookies.get("user");
         if (userCookie) {
@@ -28,6 +30,7 @@ export default function Sidebar({ className = "" }) {
         }
     }, []);
 
+    // Sidebar Menu
     const menuConfig = {
         admin: [
             {
@@ -54,6 +57,11 @@ export default function Sidebar({ className = "" }) {
                 title: "Transaksi Peminjaman",
                 path: "/admin/loan-transactions",
                 icon: <ClipboardList size={20} />,
+            },
+            {
+                title: "Log Aktivitas",
+                path: "/admin/activity-logs",
+                icon: <ActivitySquare size={20} />,
             },
         ],
         petugas: [
@@ -89,6 +97,7 @@ export default function Sidebar({ className = "" }) {
 
     const activeMenu = menuConfig[userRole] || [];
 
+    // Handle Logout
     const handleLogout = () => {
         Cookies.remove("token");
         Cookies.remove("user");
@@ -99,12 +108,15 @@ export default function Sidebar({ className = "" }) {
         <aside
             className={`bg-slate-900 w-64 text-slate-300 min-h-screen flex flex-col shadow-xl border-r border-gray-800 ${className}`}
         >
+
+            {/* Header */}
             <div className="h-16 flex items-center justify-center border-b border-slate-200">
                 <h1 className="text-white font-bold text-lg tracking-wider">
                     Peminjaman Alat
                 </h1>
             </div>
 
+            {/* Username and Role */}
             <div className="p-4 text-center">
                 <p className="text-lg font-bold text-slate-100 truncate">
                     {userName || "Memuat..."}
@@ -114,18 +126,18 @@ export default function Sidebar({ className = "" }) {
                 </span>
             </div>
 
+            {/* Menu */}
             <nav className="flex-1 overflow-y-auto py-4">
                 <ul className="space-y-1 px-3">
                     {activeMenu.map((item, index) => {
-                        const isActive =
-                            pathname === item.path || pathname.startsWith(`${item.path}/`);
+                        const isActive = pathname === item.path;
                         return (
                             <li key={index}>
                                 <Link
                                     href={item.path}
                                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isActive
-                                            ? "bg-blue-600 text-white font-medium shadow-md"
-                                            : "hover:bg-slate-800 hover:text-white"
+                                        ? "bg-blue-600 text-white font-medium shadow-md"
+                                        : "hover:bg-slate-800 hover:text-white"
                                         }`}
                                 >
                                     {item.icon}
@@ -137,6 +149,7 @@ export default function Sidebar({ className = "" }) {
                 </ul>
             </nav>
 
+            {/* Logout Button */}
             <div className="p-4 border-t border-slate-700">
                 <button
                     onClick={handleLogout}
@@ -146,6 +159,7 @@ export default function Sidebar({ className = "" }) {
                     <span className="text-sm font-medium">Logout</span>
                 </button>
             </div>
+            
         </aside>
     );
 }
