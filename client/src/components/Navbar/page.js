@@ -16,6 +16,7 @@ import { useState } from "react";
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
 
+  // List Menu
   const listMenu = [
     {
       name: "Home",
