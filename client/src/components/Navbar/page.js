@@ -1,7 +1,15 @@
 "use client";
 
-import { Package } from "lucide-react";
-import { Menu, Layers, Home, Users, Workflow, Info } from "lucide-react";
+import {
+  Menu,
+  Package,
+  X,
+  Layers,
+  Home,
+  Users,
+  Workflow,
+  Info,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -41,11 +49,14 @@ const Navbar = () => {
       id="navbar"
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
     >
+
       <div className="bg-white lg:flex  lg:justify-between lg:items-center container mx-auto px-5 lg:px-10 lg:py-5">
+
+        {/* Header */}
         <div className="flex items-center justify-between h-16 lg:h-20">
           <Link href="#" className="flex items-center space-x-2">
             <div className="bg-linear-to-r from-emerald-500 to-emerald-600 p-2 rounded-xl">
-              <Package color="white"/>
+              <Package color="white" />
             </div>
             <span className="text-xl font-bold text-navy-900">PinjamKu</span>
           </Link>
@@ -54,10 +65,11 @@ const Navbar = () => {
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
             onClick={() => setNavbar(!navbar)}
           >
-            <Menu />
+            {navbar ? <X /> : <Menu />}
           </button>
         </div>
 
+        {/* Navbar Menu */}
         <ul
           className={`${navbar ? "" : "hidden"} lg:flex items-center space-x-8 p-2`}
         >
@@ -76,6 +88,7 @@ const Navbar = () => {
           })}
         </ul>
 
+        {/* Register and Login Button */}
         <div className="hidden lg:flex items-center space-x-4">
           <Link
             href="/login"
@@ -90,7 +103,9 @@ const Navbar = () => {
             Daftar
           </Link>
         </div>
+
       </div>
+
     </nav>
   );
 };
