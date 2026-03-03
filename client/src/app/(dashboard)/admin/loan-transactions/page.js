@@ -4,6 +4,8 @@ import { useLoanManagement } from "@/hooks/admin/useLoanManagement";
 import { ClipboardList, CheckCircle, Undo2, AlertCircle, XCircle } from "lucide-react";
 
 export default function LoanManagementPage() {
+
+    // Loan Management Data
     const {
         loans,
         isLoading,
@@ -14,6 +16,7 @@ export default function LoanManagementPage() {
         returnLoan,
     } = useLoanManagement();
 
+    // Format Date
     const formatDate = (dateString) => {
         if (!dateString) return "-";
         return new Date(dateString).toLocaleDateString("id-ID", {
@@ -23,6 +26,7 @@ export default function LoanManagementPage() {
         });
     };
 
+    // Status Badge
     const StatusBadge = ({ status }) => {
         const config = {
             pending: {
@@ -58,6 +62,8 @@ export default function LoanManagementPage() {
 
     return (
         <div className="space-y-6">
+
+            {/* Header */}
             <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
                 <ClipboardList className="text-yellow-600" size={32} />
                 <div>
@@ -65,6 +71,7 @@ export default function LoanManagementPage() {
                 </div>
             </div>
 
+            {/* Error Response */}
             {error && (
                 <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 text-sm flex items-start gap-3">
                     <AlertCircle className="mt-0.5 text-red-500" size={18} />
@@ -72,8 +79,11 @@ export default function LoanManagementPage() {
                 </div>
             )}
 
+            {/* Main Content */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
+
+                    {/* Table Data Loan Transaction History */}
                     <table className="w-full text-left text-sm text-slate-600">
                         <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                             <tr>
@@ -172,8 +182,10 @@ export default function LoanManagementPage() {
                             )}
                         </tbody>
                     </table>
+
                 </div>
             </div>
+            
         </div>
     );
 }
