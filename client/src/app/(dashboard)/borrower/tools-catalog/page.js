@@ -8,8 +8,11 @@ import {
     CheckCircle2,
     AlertCircle,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function CatalogPage() {
+
+    // Catalog Tools Data
     const {
         catalog,
         isLoading,
@@ -21,55 +24,82 @@ export default function CatalogPage() {
         onSubmit,
         openRequestForm,
         closeRequestForm,
+        today,
+        maxDay
     } = useBorrower();
 
-    let contentCatalog = ""
+    let contentCatalog = "";
 
     if (isLoading) {
+
+        // Is Loading Response
         contentCatalog = (
             <div className="flex justify-center p-10 text-slate-500 animate-pulse font-medium">
-                Mensinkronisasi katalog inventaris dengan peladen...
+                Sedang memuat data...
             </div>
-        )
+        );
+
     } else if (catalog.length === 0) {
+
         contentCatalog = (
             <div className="text-center p-10 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-500">
-                Katalog kosong. Belum ada spesifikasi alat yang diregistrasikan oleh
-                administrator.
+                Belum ada alat yang bisa dipinjam.
             </div>
-        )
+        );
+
     } else {
+
+        // Catalog Tools
         contentCatalog = (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
                 {catalog.map((tool) => (
                     <div
                         key={tool.id}
-                        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md"
+                        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md gap-5"
                     >
-                        <div className="p-5 flex-1 border-b border-slate-100">
-                            <div className="text-xs font-semibold text-blue-600 bg-blue-50 inline-block px-2 py-1 rounded mb-3">
-                                {tool.Category?.name || "Tanpa Kategori"}
+                        <div className="flex flex-col flex-1 border-b border-slate-100 gap-2">
+                            <div className="">
+                                <Image
+                                    src={`http://localhost:5000${tool.image}`}
+                                    alt={tool.name}
+                                    width={500}
+                                    height={500}
+                                    className="flex w-full h-72 rounded-lg"
+                                    unoptimized
+                                />
                             </div>
-                            <h3 className="text-lg font-bold text-slate-800 mb-2 leading-tight">
-                                {tool.name}
-                            </h3>
+                            <div className="px-5">
+                                <div className="text-xs font-semibold text-blue-600 bg-blue-50 inline-block px-2 py-1 rounded mb-3">
+                                    {tool.Category?.name || "Tanpa Kategori"}
+                                </div>
+                                <h3 className="text-lg font-bold text-slate-800 mb-2 leading-tight">
+                                    {tool.name}
+                                </h3>
 
-                            <div className="flex items-center gap-2 mt-4 text-sm">
-                                <span className="text-slate-500">Stok:</span>
-                                <span
-                                    className={`font-bold ${tool.stock > 0 ? "text-emerald-600" : "text-red-500"}`}
-                                >
-                                    {tool.stock} unit
-                                </span>
+                                <div className="">
+                                    <p className="text-slate-700">{tool.description}</p>
+                                </div>
+
+                                <div className="flex items-center gap-2 mt-4 text-sm">
+                                    <span className="text-slate-500">Stok:</span>
+                                    <span
+                                        className={`font-bold ${tool.stock > 0 ? "text-emerald-600" : "text-red-500"}`}
+                                    >
+                                        {tool.stock} unit
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
                         {selectedTool?.id === tool.id ? (
+
+                            // Application Form
                             <div className="p-5 bg-slate-50 border-t border-blue-200">
                                 <div className="flex justify-between items-center mb-3">
                                     <h4 className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
-                                        <CalendarClock size={16} className="text-blue-600" /> Form
-                                        Pengajuan
+                                        <CalendarClock size={16} className="text-blue-600" />
+                                        Form Pengajuan
                                     </h4>
                                     <button
                                         onClick={closeRequestForm}
@@ -89,7 +119,9 @@ export default function CatalogPage() {
                                         <input
                                             type="date"
                                             {...register("expectedReturnDate")}
-                                            className={`w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm ${errors.expectedReturnDate ? "border-red-500" : "border-slate-300"}`}
+                                            className={`w-full p-2 border text-black rounded focus:ring-2 focus:ring-blue-500 outline-none text-sm cursor-pointer ${errors.expectedReturnDate ? "border-red-500" : "border-slate-300"}`}
+                                            min={today}
+                                            max={maxDay}
                                             disabled={isSubmitting}
                                         />
                                         {errors.expectedReturnDate && (
@@ -114,6 +146,8 @@ export default function CatalogPage() {
                                 </form>
                             </div>
                         ) : (
+
+                            // Request Application Form Button
                             <div className="p-4 bg-slate-50">
                                 <button
                                     onClick={() => openRequestForm(tool)}
@@ -126,12 +160,16 @@ export default function CatalogPage() {
                         )}
                     </div>
                 ))}
+
             </div>
-        )
+        );
+
     }
 
     return (
         <div className="space-y-6">
+
+            {/* Header */}
             <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
                 <PackageSearch className="text-emerald-600" size={32} />
                 <div>
@@ -139,6 +177,7 @@ export default function CatalogPage() {
                 </div>
             </div>
 
+            {/* Error Response */}
             {error && (
                 <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 text-sm flex items-start gap-3">
                     <AlertCircle className="mt-0.5 text-red-500" size={18} />
@@ -146,7 +185,9 @@ export default function CatalogPage() {
                 </div>
             )}
 
+            {/* Main Content */}
             {contentCatalog}
+
         </div>
     );
 }
