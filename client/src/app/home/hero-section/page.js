@@ -95,10 +95,8 @@ const Hero = () => {
                                         <CheckCircle color="white" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-800">98.5%</p>
-                                        <p className="text-xs text-gray-500">
-                                            Tingkat Keberhasilan
-                                        </p>
+                                        <p className="text-sm font-semibold text-gray-800">100%</p>
+                                        <p className="text-xs text-gray-500">Mudah Digunakan</p>
                                     </div>
                                 </div>
                             </div>
