@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root {
+  scroll-behavior: smooth;
+}
+
 @keyframes float {
   0%,
   100% {
@@ -8,10 +12,4 @@
   50% {
     transform: translateY(-15px);
   }
-}
-
-.background{
-  background-image: url('./../../public/image/background.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
 }
