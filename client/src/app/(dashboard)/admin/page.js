@@ -1,5 +1,6 @@
 "use client";
 
+import StatCard from "@/components/StatsCard";
 import { useDashboardStats } from "@/hooks/admin/useDashboardStats";
 import {
     Tags,
@@ -11,30 +12,41 @@ import {
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
+
+    // Dashboard Statistical Data
     const { stats, isLoading, error } = useDashboardStats();
 
-    // Komponen internal untuk standardisasi representasi visual kartu metrik
-    const StatCard = ({ title, value, icon, colorClass }) => (
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4 transition-transform hover:-translate-y-1 duration-300">
-            <div className={`p-4 rounded-lg ${colorClass}`}>{icon}</div>
-            <div>
-                <p className="text-sm font-medium text-slate-500">{title}</p>
-                <h3 className="text-2xl font-bold text-slate-800">
-                    {isLoading ? (
-                        <span className="animate-pulse bg-slate-200 text-transparent rounded">
-                            000
-                        </span>
-                    ) : (
-                        value
-                    )}
-                </h3>
-            </div>
-        </div>
-    );
+    const statCardData = [
+        {
+            title: "Total Kategori",
+            value: stats.totalCategories,
+            icon: <Tags size={24} className="text-blue-600" />,
+            colorClass: "bg-blue-100",
+        },
+        {
+            title: "Total Alat",
+            value: stats.totalTools,
+            icon: <PackageSearch size={24} className="text-emerald-600" />,
+            colorClass: "bg-emerald-100",
+        },
+        {
+            title: "Menunggu Persetujuan",
+            value: stats.pendingLoans,
+            icon: <Clock size={24} className="text-amber-600" />,
+            colorClass: "bg-amber-100",
+        },
+        {
+            title: "Peminjaman Aktif",
+            value: stats.activeLoans,
+            icon: <Activity size={24} className="text-purple-600" />,
+            colorClass: "bg-purple-100",
+        },
+    ];
 
     return (
         <div className="space-y-6">
 
+            {/* Header */}
             <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
                 <LayoutDashboard className="text-blue-600" size={32} />
                 <div>
@@ -42,7 +54,7 @@ export default function AdminDashboardPage() {
                 </div>
             </div>
 
-            {/* Penanganan Galat Sinkronisasi */}
+            {/* Error Response */}
             {error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded flex items-start gap-3">
                     <AlertCircle className="text-red-500 mt-0.5" size={20} />
@@ -50,35 +62,16 @@ export default function AdminDashboardPage() {
                 </div>
             )}
 
-            {/* Matriks Kartu Statistik */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <StatCard
-                    title="Total Kategori"
-                    value={stats.totalCategories}
-                    icon={<Tags size={24} className="text-blue-600" />}
-                    colorClass="bg-blue-100"
-                />
-                <StatCard
-                    title="Total Alat"
-                    value={stats.totalTools}
-                    icon={<PackageSearch size={24} className="text-emerald-600" />}
-                    colorClass="bg-emerald-100"
-                />
-                <StatCard
-                    title="Menunggu Persetujuan"
-                    value={stats.pendingLoans}
-                    icon={<Clock size={24} className="text-amber-600" />}
-                    colorClass="bg-amber-100"
-                />
-                <StatCard
-                    title="Peminjaman Aktif"
-                    value={stats.activeLoans}
-                    icon={<Activity size={24} className="text-purple-600" />}
-                    colorClass="bg-purple-100"
-                />
+            {/* Statistical Data */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {statCardData.map((item, index) => (
+
+                    <StatCard key={index} title={item.title} colorClass={item.colorClass} value={item.value} icon={item.icon} isLoading={isLoading} />
+                ))}
             </div>
 
-            {/* Modul Instruksi Awal (Opsional untuk orientasi pengguna) */}
+
+            {/* Procedure */}
             <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mt-8">
                 <h2 className="text-lg font-bold text-slate-800 mb-4">
                     Prosedur Konfigurasi Sistem
@@ -98,6 +91,7 @@ export default function AdminDashboardPage() {
                     </li>
                 </ol>
             </div>
+
         </div>
     );
 }
