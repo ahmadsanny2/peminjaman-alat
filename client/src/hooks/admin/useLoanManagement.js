@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import api from "@/lib/api";
 
 export const useLoanManagement = () => {
@@ -8,7 +8,8 @@ export const useLoanManagement = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState("");
 
-    const fetchLoans = useCallback(async () => {
+    // Fetch Data From Server
+    const fetchLoans = async () => {
         setIsLoading(true);
         try {
             const response = await api.get("/loans");
@@ -19,12 +20,13 @@ export const useLoanManagement = () => {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    };
 
     useEffect(() => {
         fetchLoans();
-    }, [fetchLoans]);
+    }, []);
 
+    // Handle Approve Loan Form
     const approveLoan = async (loanId) => {
         if (!window.confirm("Yakin mau setujui peminjaman ini?")) return;
 
@@ -43,6 +45,26 @@ export const useLoanManagement = () => {
         }
     };
 
+    // Handle Reject Loan Form
+    const rejectLoan = async (loanId) => {
+        if (!window.confirm("Yakin mau tolak peminjaman ini?")) return;
+
+        setIsProcessing(true);
+        setError("");
+        try {
+            await api.put(`loans/${loanId}/reject`);
+            await fetchLoans();
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                "Gagal menolak peminjaman! Coba lagi ya.",
+            );
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    // Handle Return Loan Form
     const returnLoan = async (loanId) => {
         if (!window.confirm("Yakin barang sudah dikembalikan?")) return;
 
@@ -67,6 +89,7 @@ export const useLoanManagement = () => {
         isProcessing,
         error,
         approveLoan,
+        rejectLoan,
         returnLoan,
     };
 };
