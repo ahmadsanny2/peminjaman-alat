@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
 
-export function useCategory() {
+export function useCategory(page = 1, limit = 5) {
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({ name: "", description: "" });
     const [isEditing, setIsEditing] = useState(false);
@@ -11,31 +11,41 @@ export function useCategory() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    const fetchCategories = async () => {
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+
+    // Fetch Data From Server
+    const fetchCategories = useCallback(async () => {
         try {
-            const res = await api.get("/categories");
-            setCategories(res.data.data);
+            const response = await api.get(`/categories?page=${page}&limit=${limit}`);
+            
+            setCategories(response.data.data);
+            setTotalPages(response.data.totalPages || 1);
+            setTotalItems(response.data.totalItems);
         } catch (err) {
             console.error(err);
             setError("Gagal memuat kategori");
         }
-    };
+    }, [page, limit]);
 
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [fetchCategories]);
 
+    // Handle Change Form
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // Handle Reset Form
     const resetForm = () => {
         setFormData({ name: "", description: "" });
         setIsEditing(false);
         setEditId(null);
     };
 
+    // Handle Submit Form
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.name) return alert("Nama kategori wajib diisi");
@@ -56,12 +66,14 @@ export function useCategory() {
         }
     };
 
+    // Handle Edit Form
     const handleEdit = (category) => {
         setFormData({ name: category.name, description: category.description });
         setIsEditing(true);
         setEditId(category.id);
     };
 
+    // Handle Delete Form
     const handleDelete = async (id) => {
         if (!confirm("Yakin ingin menghapus kategori ini?")) return;
 
@@ -76,6 +88,8 @@ export function useCategory() {
 
     return {
         categories,
+        totalPages,
+        totalItems,
         formData,
         isEditing,
         isSubmitting,
