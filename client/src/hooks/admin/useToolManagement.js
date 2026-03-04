@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
 
-export function useTool() {
+export function useTool(page = 1, limit = 5) {
     const [tools, setTools] = useState([]);
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: "",
+        description: "",
         stock: "",
         categoryId: "",
+        image: null
     });
 
     const [isEditing, setIsEditing] = useState(false);
@@ -17,54 +19,71 @@ export function useTool() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    const fetchTools = async () => {
-        try {
-            const res = await api.get("/tools");
-            setTools(res.data.data);
-        } catch (err) {
-            console.error(err);
-            setError("Gagal memuat tools");
-        }
-    };
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
-    const fetchCategories = async () => {
+    // Fetch Data From Server
+    const fetchTools = useCallback(async () => {
         try {
-            const res = await api.get("/categories");
-            setCategories(res.data.data);
-        } catch (err) {
-            console.error(err);
-            setError("Gagal memuat kategori");
+            const [toolsRes, categoriesRes] = await Promise.all([
+                api.get(`/tools?page=${page}&limit=${limit}`),
+                api.get('/categories')
+            ])
+
+            const tools = toolsRes.data.data
+            const categories = categoriesRes.data.data
+
+            setTotalPages(toolsRes.data.totalPages || 1)
+            setTotalItems(toolsRes.data.totalItems)
+
+            setTools(tools)
+            setCategories(categories)
+        } catch (error) {
+            setError("Gagal mengambil data kategori atau alat di server.")
         }
-    };
+    }, [page, limit])
 
     useEffect(() => {
-        fetchTools();
-        fetchCategories();
-    }, []);
+        fetchTools()
+    }, [fetchTools]);
 
+    // Handle Change Form
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: name === "stock" ? Number(value) : value,
-        }));
+        const { name, value, files } = e.target;
+
+        if (name === "image") {
+            setFormData((prev) => ({
+                ...prev,
+                image: files[0]
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: name === "stock" ? Number(value) : value,
+            }));
+        }
+
     };
 
+    // Handle Reset Form
     const resetForm = () => {
         setFormData({
             name: "",
+            description: "",
             stock: "",
             categoryId: "",
+            image: null
         });
         setIsEditing(false);
         setEditId(null);
     };
 
+    // Handle Submit Form
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.categoryId) {
-            return alert("Nama dan kategori wajib diisi");
+        if (!formData.name || !formData.description || !formData.categoryId) {
+            return alert("Nama, deskripsi dan kategori wajib diisi");
         }
 
         setIsSubmitting(true);
@@ -73,32 +92,50 @@ export function useTool() {
         const method = isEditing ? "put" : "post";
 
         try {
+            const data = new FormData()
+
+            data.append("name", formData.name)
+            data.append("description", formData.description)
+            data.append("stock", formData.stock)
+            data.append("categoryId", formData.categoryId)
+
+            if (formData.image) {
+                data.append("image", formData.image)
+            }
+
             await api({
                 method,
                 url,
-                data: formData,
+                data,
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
             });
 
             resetForm();
             fetchTools();
         } catch (err) {
             console.error(err);
-            alert("Gagal menyimpan tool! Coba lagi ya.");
+            alert("Gagal menambahkan tool! Coba lagi ya.");
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    // Handle Edit Form
     const handleEdit = (tool) => {
         setFormData({
             name: tool.name,
+            description: tool.description,
             stock: tool.stock,
             categoryId: tool.categoryId,
+            image: null
         });
         setIsEditing(true);
         setEditId(tool.id);
     };
 
+    // Handle Delete Form
     const handleDelete = async (id) => {
         if (!confirm("Yakin ingin menghapus tool ini?")) return;
 
@@ -123,5 +160,7 @@ export function useTool() {
         handleEdit,
         handleDelete,
         resetForm,
+        totalPages,
+        totalItems
     };
 }
