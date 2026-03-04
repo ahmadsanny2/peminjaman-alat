@@ -24,9 +24,11 @@ export const useLogin = () => {
         setServerError("");
 
         try {
+            // Send Data To Server
             const response = await api.post("/auth/login", data);
             const { token, user } = response.data;
 
+            // Set Token and Cookies
             Cookies.set("token", token, { expires: 1 });
             Cookies.set("user", JSON.stringify(user), { expires: 1 });
 
@@ -38,9 +40,7 @@ export const useLogin = () => {
                 router.push("/borrower");
             }
         } catch (error) {
-            const errorMessage =
-                error.response?.data?.message ||
-                "Terjadi kesalahan saat masuk. Silakan coba lagi.";
+            const errorMessage = "Terjadi kesalahan saat masuk. Silakan coba lagi.";
             setServerError(errorMessage);
         } finally {
             setIsLoading(false);
