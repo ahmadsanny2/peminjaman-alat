@@ -1,17 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loanRequestSchema } from '@/schemas/loanSchema';
-import api from '@/lib/api';
+import { useState, useEffect, useCallback } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loanRequestSchema } from "@/schemas/loanSchema";
+import api from "@/lib/api";
 
 export const useBorrower = () => {
-
     const [catalog, setCatalog] = useState([]);
     const [myLoans, setMyLoans] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState('');
+    const [error, setError] = useState("");
     const [selectedTool, setSelectedTool] = useState(null);
 
     const {
@@ -19,24 +18,37 @@ export const useBorrower = () => {
         handleSubmit,
         reset,
         setValue,
-        formState: { errors }
+        formState: { errors },
     } = useForm({
-        resolver: zodResolver(loanRequestSchema)
+        resolver: zodResolver(loanRequestSchema),
     });
 
+    const [today, setToday] = useState("");
+    const [maxDay, setMaxDay] = useState("");
+
+    useEffect(() => {
+        const now = new Date();
+        setToday(now.toISOString("").split("T")[0]);
+
+        const future = new Date();
+        future.setDate(now.getDate() + 7);
+        setMaxDay(future.toISOString().split("T")[0]);
+    }, []);
+
+    // Fetch Data From Server
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
             const [toolsRes, loansRes] = await Promise.all([
-                api.get('/tools'),
-                api.get('/loans/my-loans')
+                api.get("/tools"),
+                api.get("/loans/my-loans"),
             ]);
 
             setCatalog(toolsRes.data.data);
             setMyLoans(loansRes.data.data);
-            setError('');
+            setError("");
         } catch (err) {
-            setError('Gagal mengambil data katalog atau riwayat. Coba lagi ya.');
+            setError("Gagal mengambil data katalog atau riwayat. Coba lagi ya.");
         } finally {
             setIsLoading(false);
         }
@@ -46,37 +58,42 @@ export const useBorrower = () => {
         fetchData();
     }, [fetchData]);
 
+    // Handle Loan Request
     const executeRequest = async (data) => {
         setIsSubmitting(true);
-        setError('');
+        setError("");
 
         try {
-            await api.post('/loans/request', data);
+            await api.post("/loans/request", data);
 
             closeRequestForm();
             await fetchData();
-            alert('Permintaan peminjaman berhasil dikirim. Silakan cek statusnya di menu Riwayat ya.');
+            alert(
+                "Permintaan peminjaman berhasil dikirim. Silakan cek statusnya di menu Riwayat ya.",
+            );
         } catch (err) {
             setError(
                 err.response?.data?.message ||
-                'Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.'
+                "Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.",
             );
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    // Handle Open Request Form
     const openRequestForm = (tool) => {
         setSelectedTool(tool);
-        setValue('toolId', tool.id);
-        setValue('expectedReturnDate', '');
-        setError('');
+        setValue("toolId", tool.id);
+        setValue("expectedReturnDate", "");
+        setError("");
     };
 
+    // Handle Close Request Form
     const closeRequestForm = () => {
         setSelectedTool(null);
         reset();
-        setError('');
+        setError("");
     };
 
     return {
@@ -90,6 +107,8 @@ export const useBorrower = () => {
         errors,
         onSubmit: handleSubmit(executeRequest),
         openRequestForm,
-        closeRequestForm
+        closeRequestForm,
+        today,
+        maxDay,
     };
 };
