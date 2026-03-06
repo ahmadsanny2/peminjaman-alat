@@ -25,6 +25,9 @@ export function useTool(page = 1, limit = 10) {
     // Sorting Data
     const [sort, setSort] = useState("")
 
+    // Search Data
+    const [search, setSearch] = useState("")
+
     // Show Form
     const [showForm, setShowForm] = useState(false)
 
@@ -34,7 +37,7 @@ export function useTool(page = 1, limit = 10) {
     const fetchTools = useCallback(async () => {
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
-                api.get(`/tools?sort=${sort}&category=${showToolByCategory}&page=${page}&limit=${limit}`),
+                api.get(`/tools?search=${search}&sort=${sort}&category=${showToolByCategory}&page=${page}&limit=${limit}`),
                 api.get('/categories')
             ])
 
@@ -49,7 +52,7 @@ export function useTool(page = 1, limit = 10) {
         } catch (error) {
             setError("Gagal mengambil data kategori atau alat di server.")
         }
-    }, [page, limit, sort, showToolByCategory])
+    }, [page, limit, search, sort, showToolByCategory])
 
     useEffect(() => {
         fetchTools()
