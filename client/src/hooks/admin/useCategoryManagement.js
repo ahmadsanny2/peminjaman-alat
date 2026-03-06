@@ -17,13 +17,16 @@ export function useCategory(page = 1, limit = 5) {
     // Sorting Data
     const [sort, setSort] = useState("");
 
+    // Search Data
+    const [search, setSearch] = useState("")
+
     // Show Form
     const [showForm, setShowForm] = useState(false)
 
     // Fetch Data From Server
     const fetchCategories = useCallback(async () => {
         try {
-            const response = await api.get(`/categories?sort=${sort}&page=${page}&limit=${limit}`);
+            const response = await api.get(`/categories?search=${search}&sort=${sort}&page=${page}&limit=${limit}`);
 
             setCategories(response.data.data);
             setTotalPages(response.data.totalPages || 1);
@@ -32,7 +35,7 @@ export function useCategory(page = 1, limit = 5) {
             console.error(err);
             setError("Gagal memuat kategori");
         }
-    }, [page, limit, sort]);
+    }, [page, limit, sort, search]);
 
     useEffect(() => {
         fetchCategories();
