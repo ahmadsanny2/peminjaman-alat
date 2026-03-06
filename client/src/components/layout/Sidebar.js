@@ -106,7 +106,7 @@ export default function Sidebar({ className = "" }) {
 
     return (
         <aside
-            className={`bg-slate-900 w-64 text-slate-300 min-h-screen flex flex-col shadow-xl border-r border-gray-800 ${className}`}
+            className={`bg-slate-900 w-64 z-1 text-slate-300 min-h-screen flex flex-col shadow-xl border-r border-gray-800 ${className}`}
         >
 
             {/* Header */}
