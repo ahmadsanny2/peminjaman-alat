@@ -63,6 +63,8 @@ export default function ToolManagementPage() {
 
             {/* Main Content */}
             <div className="flex flex-col gap-5">
+                {/* Filter and Search Category */}
+                <FilterAndSearchData search={(e) => setSearch(e.target.value)} sort={(e) => setSort(e.target.value)} isShowForm={handleShowForm} showByCategory={(e)=>setShowToolByCategory(e.target.value)} placeHolderName="Cari nama alat..." isCategory={true}/>
 
                 {/* Form */}
                 <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center z-50' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
