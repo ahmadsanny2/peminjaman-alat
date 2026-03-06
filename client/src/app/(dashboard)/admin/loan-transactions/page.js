@@ -31,24 +31,24 @@ export default function LoanManagementPage() {
         const config = {
             pending: {
                 color: "bg-amber-100 text-amber-700 border-amber-200",
-                label: "Pending",
+                label: "Menunggu Persetujuan",
             },
             approved: {
                 color: "bg-blue-100 text-blue-700 border-blue-200",
-                label: "Borrowed",
+                label: "Sedang dipinjam",
             },
             returned: {
                 color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-                label: "Returned",
+                label: "Telah dikembalikan",
             },
             rejected: {
                 color: "bg-red-100 text-red-700 border-red-200",
-                label: "Rejected",
+                label: "Pengajuan ditolak",
             },
         };
         const current = config[status] || {
             color: "bg-slate-100 text-slate-700",
-            label: "Status Anomali",
+            label: "Status tidak diketahui",
         };
 
         return (
@@ -87,12 +87,12 @@ export default function LoanManagementPage() {
                     <table className="w-full text-left text-sm text-slate-600">
                         <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                             <tr>
-                                <th className="px-6 py-4">Peminjam</th>
-                                <th className="px-6 py-4">Spesifikasi Alat</th>
-                                <th className="px-6 py-4">Tanggal Pengajuan</th>
-                                <th className="px-6 py-4">Proyeksi Pengembalian</th>
-                                <th className="px-6 py-4 text-center">Status</th>
-                                <th className="px-6 py-4 text-center">Aksi</th>
+                                <th className="px-6 py-4 border border-slate-200">Peminjam</th>
+                                <th className="px-6 py-4 border border-slate-200">Spesifikasi Alat</th>
+                                <th className="px-6 py-4 border border-slate-200 text-center">Tanggal Pengajuan</th>
+                                <th className="px-6 py-4 border border-slate-200 text-center">Proyeksi Pengembalian</th>
+                                <th className="px-6 py-4 border border-slate-200 text-center">Status</th>
+                                <th className="px-6 py-4 border border-slate-200 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -128,11 +128,11 @@ export default function LoanManagementPage() {
                                                 {loan.borrower?.username}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 font-medium text-slate-800">
+                                        <td className="px-6 py-4 font-medium text-slate-800 truncate max-w-sm">
                                             {loan.Tool?.name || "Nama alat tidak ada."}
                                         </td>
-                                        <td className="px-6 py-4">{formatDate(loan.borrowDate)}</td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-center">{formatDate(loan.borrowDate)}</td>
+                                        <td className="px-6 py-4 text-center">
                                             {formatDate(loan.expectedReturnDate)}
                                         </td>
                                         <td className="px-6 py-4 text-center">
