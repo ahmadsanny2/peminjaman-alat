@@ -14,11 +14,17 @@ export function useCategory(page = 1, limit = 5) {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
+    // Sorting Data
+    const [sort, setSort] = useState("");
+
+    // Show Form
+    const [showForm, setShowForm] = useState(false)
+
     // Fetch Data From Server
     const fetchCategories = useCallback(async () => {
         try {
-            const response = await api.get(`/categories?page=${page}&limit=${limit}`);
-            
+            const response = await api.get(`/categories?sort=${sort}&page=${page}&limit=${limit}`);
+
             setCategories(response.data.data);
             setTotalPages(response.data.totalPages || 1);
             setTotalItems(response.data.totalItems);
@@ -26,11 +32,15 @@ export function useCategory(page = 1, limit = 5) {
             console.error(err);
             setError("Gagal memuat kategori");
         }
-    }, [page, limit]);
+    }, [page, limit, sort]);
 
     useEffect(() => {
         fetchCategories();
     }, [fetchCategories]);
+
+    const handleShowForm = () => {
+        setShowForm(!showForm)
+    }
 
     // Handle Change Form
     const handleChange = (e) => {
@@ -43,6 +53,7 @@ export function useCategory(page = 1, limit = 5) {
         setFormData({ name: "", description: "" });
         setIsEditing(false);
         setEditId(null);
+        setShowForm(false)
     };
 
     // Handle Submit Form
@@ -71,6 +82,7 @@ export function useCategory(page = 1, limit = 5) {
         setFormData({ name: category.name, description: category.description });
         setIsEditing(true);
         setEditId(category.id);
+        setShowForm(true)
     };
 
     // Handle Delete Form
@@ -99,5 +111,9 @@ export function useCategory(page = 1, limit = 5) {
         handleEdit,
         handleDelete,
         resetForm,
+        setSort,
+        setSearch,
+        handleShowForm,
+        showForm
     };
 }
