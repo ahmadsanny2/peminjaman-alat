@@ -1,5 +1,7 @@
 "use client";
 
+import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Modal from "@/components/Modal";
 import { useTool } from "@/hooks/admin/useToolManagement";
 import {
     Edit,
@@ -34,7 +36,12 @@ export default function ToolManagementPage() {
         handleDelete,
         resetForm,
         totalPages,
-    } = useTool(page, 5);
+        setSort,
+        setSearch,
+        handleShowForm,
+        showForm,
+        setShowToolByCategory
+    } = useTool(page, 10);
 
     return (
         <div className="space-y-6">
@@ -55,151 +62,149 @@ export default function ToolManagementPage() {
             )}
 
             {/* Main Content */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-5">
 
                 {/* Form */}
-                <div className="">
-                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm sticky top-6">
-                        <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                            {isEditing ? (
-                                <>
-                                    <Edit size={18} /> Ubah Alat
-                                </>
-                            ) : (
-                                <>
-                                    <Plus size={18} /> Tambah Alat
-                                </>
-                            )}
-                        </h2>
+                <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center z-50' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
+                    <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                        {isEditing ? (
+                            <>
+                                <Edit size={18} /> Ubah Alat
+                            </>
+                        ) : (
+                            <>
+                                <Plus size={18} /> Tambah Alat
+                            </>
+                        )}
+                    </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-3 gap-2">
-                                <div className="col-span-3">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Nama Alat
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
-                                        placeholder="Masukan Nama Alat"
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-
-                                <div className="col-span-3">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Deskripsi
-                                    </label>
-                                    <textarea
-                                        type="text"
-                                        name="description"
-                                        value={formData.description}
-                                        onChange={handleChange}
-                                        className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
-                                        placeholder="Masukkan Deskripsi Alat"
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-
-                                <div className="">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Kategori
-                                    </label>
-                                    <div className="relative">
-                                        <Layers
-                                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-                                            size={16}
-                                        />
-                                        <select
-                                            name="categoryId"
-                                            value={formData.categoryId}
-                                            onChange={handleChange}
-                                            className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
-                                            disabled={isSubmitting}
-                                        >
-                                            <option value="">Pilih Kategori</option>
-                                            {categories.map((category) => (
-                                                <option key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    {error.categoryId && (
-                                        <span className="text-red-500 text-xs mt-1 block">
-                                            {errors.categoryId.message}
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Stok
-                                    </label>
-                                    <input
-                                        name="stock"
-                                        type="number"
-                                        value={formData.stock}
-                                        min={0}
-                                        onChange={handleChange}
-                                        className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
-                                        placeholder="0"
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Gambar Alat
-                                    </label>
-                                    <input
-                                        name="image"
-                                        type="file"
-                                        onChange={handleChange}
-                                        className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
-                                        placeholder="0"
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex gap-2 pt-2">
-                                <button
-                                    type="submit"
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="grid grid-cols-2 lg:grid-cols-2 gap-2">
+                            <div className="col-span-2 lg:lg:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Nama Alat
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
+                                    placeholder="Masukan Nama Alat"
                                     disabled={isSubmitting}
-                                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 cursor-pointer"
-                                >
-                                    {isEditing ? "Simpan" : "Tambah"}
-                                </button>
+                                />
+                            </div>
 
-                                {isEditing && (
-                                    <button
-                                        type="button"
-                                        onClick={resetForm}
+                            <div className="col-span-2 lg:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Deskripsi
+                                </label>
+                                <textarea
+                                    type="text"
+                                    name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
+                                    placeholder="Masukkan Deskripsi Alat"
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+
+                            <div className="max-lg:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Kategori
+                                </label>
+                                <div className="relative">
+                                    <Layers
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                        size={16}
+                                    />
+                                    <select
+                                        name="categoryId"
+                                        value={formData.categoryId}
+                                        onChange={handleChange}
+                                        className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
                                         disabled={isSubmitting}
-                                        className="px-3 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
-                                        title="Batalkan"
                                     >
-                                        <X size={20} />
-                                    </button>
+                                        <option value="">Pilih Kategori</option>
+                                        {categories.map((category) => (
+                                            <option key={category.id} value={category.id}>
+                                                {category.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {error.categoryId && (
+                                    <span className="text-red-500 text-xs mt-1 block">
+                                        {errors.categoryId.message}
+                                    </span>
                                 )}
                             </div>
-                        </form>
-                    </div>
-                </div>
 
-                {/* Table Data */}
-                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-90">
-                    <div className="overflow-x-auto">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Stok
+                                </label>
+                                <input
+                                    name="stock"
+                                    type="number"
+                                    value={formData.stock}
+                                    min={0}
+                                    onChange={handleChange}
+                                    className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
+                                    placeholder="0"
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+                            <div className="lg:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
+                                    Gambar Alat
+                                </label>
+                                <input
+                                    name="image"
+                                    type="file"
+                                    onChange={handleChange}
+                                    className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
+                                    placeholder="0"
+                                    disabled={isSubmitting}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-2 pt-2">
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 cursor-pointer"
+                            >
+                                {isEditing ? "Simpan" : "Tambah"}
+                            </button>
+
+                            {(isEditing || showForm) && (
+                                <button
+                                    type="button"
+                                    onClick={resetForm}
+                                    disabled={isSubmitting}
+                                    className="px-3 bg-red-500 rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
+                                    title="Batalkan"
+                                >
+                                    <X size={20} />
+                                </button>
+                            )}
+                        </div>
+                    </form>
+                </Modal>
+
+                {/* Table Data Tools */}
+                <div className="bg-white rounded-xl border border-slate-200 shadow-sm min-h-175">
+                    <div className="overflow-x-auto rounded-2xl">
                         <table className="w-full text-left text-sm text-slate-600">
                             <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                 <tr>
-                                    <th className="px-6 py-4">Nama Alat</th>
-                                    <th className="px-6 py-4">Deskripsi</th>
-                                    <th className="px-6 py-4">Kategori</th>
-                                    <th className="px-6 py-4">Stok</th>
-                                    <th className="px-6 py-4 text-center">Aksi</th>
+                                    <th className="px-6 py-4 border border-slate-200">Nama Alat</th>
+                                    <th className="px-6 py-4 border border-slate-200">Deskripsi</th>
+                                    <th className="px-6 py-4 border border-slate-200">Kategori</th>
+                                    <th className="px-6 py-4 border border-slate-200 text-center">Stok</th>
+                                    <th className="px-6 py-4 border border-slate-200 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -218,18 +223,18 @@ export default function ToolManagementPage() {
                                             key={tool.id}
                                             className="hover:bg-slate-50/80 transition-colors"
                                         >
-                                            <td className="px-6 py-4 truncate max-w-xs">
+                                            <td className="px-6 py-4 truncate max-w-3xs">
                                                 {tool.name}
                                             </td>
 
-                                            <td className="px-6 py-4 truncate max-w-xs">
+                                            <td className="px-6 py-4 truncate max-w-sm">
                                                 {tool.description}
                                             </td>
 
-                                            <td className="px-6 py-4 truncate max-w-xs">
+                                            <td className="px-6 py-4 truncate">
                                                 {tool.Category?.name || "-"}
                                             </td>
-                                            <td className="px-6 py-4">{tool.stock}</td>
+                                            <td className="px-6 py-4 text-center">{tool.stock}</td>
                                             <td className="px-6 py-4 text-center">
                                                 <button
                                                     onClick={() => handleEdit(tool)}
