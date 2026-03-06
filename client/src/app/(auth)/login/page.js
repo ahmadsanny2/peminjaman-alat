@@ -10,7 +10,7 @@ export default function LoginPage() {
     const { showPassword, toggleVisibility } = useShowAndHidePassword();
 
     return (
-        <div className="bg-linear-to-r from-[#1e3a5f] to-[#0f172a] min-h-screen flex items-center justify-center text-white p-5">
+        <div className="bg-linear-to-br from-[#0f172a] via-[#1e3a5f] to-[#0f172a] min-h-screen flex items-center justify-center text-white p-5">
             <div className="bg-white/10 border-2 border-white/30 flex flex-col justify-center backdrop-blur-2xl p-10 rounded-2xl w-150 h-150 gap-14">
                 <div className="flex items-center justify-center gap-2">
                     <Package className="w-14 h-14" />
