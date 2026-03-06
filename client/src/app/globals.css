@@ -4,6 +4,10 @@
   scroll-behavior: smooth;
 }
 
+#feature {
+  scroll-margin-top: calc(20vh - 100px);
+}
+
 @keyframes float {
   0%,
   100% {
