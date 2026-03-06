@@ -1,11 +1,21 @@
 "use client";
 
+import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Modal from "@/components/Modal";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
-import { Edit, Trash2, Plus, X, Tags, Edit2, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+    Edit,
+    Trash2,
+    Plus,
+    X,
+    Tags,
+    Edit2,
+    ChevronRight,
+    ChevronLeft,
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function CategoryManagementPage() {
-
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -24,11 +34,14 @@ export default function CategoryManagementPage() {
         handleEdit,
         handleDelete,
         resetForm,
-    } = useCategory(page, 5);
+        setSort,
+        setSearch,
+        handleShowForm,
+        showForm,
+    } = useCategory(page, 10);
 
     return (
         <div className="space-y-6">
-
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
                 <Tags className="text-emerald-600" size={32} />
@@ -45,12 +58,11 @@ export default function CategoryManagementPage() {
             )}
 
             {/* Main Content */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-5">
 
                 <div className="flex flex-col gap-2">
-
                     {/* Form */}
-                    <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm sticky top-6">
+                    <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
                         <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                             {isEditing ? (
                                 <>
@@ -103,38 +115,43 @@ export default function CategoryManagementPage() {
                                     {isEditing ? "Simpan" : "Tambah"}
                                 </button>
 
-                                {isEditing && (
+                                {(isEditing || showForm) && (
                                     <button
                                         type="button"
                                         onClick={resetForm}
                                         disabled={isSubmitting}
-                                        className="px-3 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors cursor-pointer"
+                                        className="px-3 bg-red-500 rounded-lg hover:bg-red-600 text-white transition-colors cursor-pointer"
                                         title="Batalkan"
                                     >
                                         <X size={20} />
                                     </button>
                                 )}
-
                             </div>
                         </form>
-                    </div>
+                    </Modal>
 
                     {/* Table Data Category */}
-                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-90">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm text-slate-600">
+                    <div className="bg-white rounded-xl border border-slate-200 shadow-sm min-h-175">
+                        <div className="overflow-x-auto rounded-xl">
+                            <table className="w-full text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr>
-
-                                        <th className="px-6 py-4">Nama Kategori</th>
-                                        <th className="px-6 py-4">Deskripsi</th>
-                                        <th className="px-6 py-4 text-center">Aksi</th>
+                                        <th className="px-6 py-4 border border-slate-200 text-left">
+                                            Nama Kategori
+                                        </th>
+                                        <th className="px-6 py-4 border border-slate-200 text-left">
+                                            Deskripsi
+                                        </th>
+                                        <th className="px-6 py-4 border border-slate-200">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
                                     {categories.length === 0 ? (
                                         <tr>
-                                            <td colSpan="3" className="px-6 py-8 text-center text-slate-500">
+                                            <td
+                                                colSpan="3"
+                                                className="px-6 py-4 text-center text-slate-500"
+                                            >
                                                 Belum ada kategori terdaftar.
                                             </td>
                                         </tr>
@@ -144,8 +161,12 @@ export default function CategoryManagementPage() {
                                                 key={category.id}
                                                 className="hover:bg-slate-50/80 transition-colors"
                                             >
-                                                <td className="px-6 py-4 truncate max-w-xs">{category.name}</td>
-                                                <td className="px-6 py-4 truncate max-w-xs">{category.description || "-"}</td>
+                                                <td className="px-6 py-4 truncate max-w-xs">
+                                                    {category.name}
+                                                </td>
+                                                <td className="px-6 py-4 truncate max-w-xs">
+                                                    {category.description || "-"}
+                                                </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <button
                                                         onClick={() => handleEdit(category)}
@@ -169,7 +190,6 @@ export default function CategoryManagementPage() {
                             </table>
                         </div>
                     </div>
-
                 </div>
 
                 {/* Pagination */}
@@ -194,9 +214,7 @@ export default function CategoryManagementPage() {
                         </button>
                     </div>
                 </div>
-
             </div>
-
         </div>
     );
 }
