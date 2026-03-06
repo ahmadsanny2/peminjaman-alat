@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
 
-export function useTool(page = 1, limit = 5) {
+export function useTool(page = 1, limit = 10) {
     const [tools, setTools] = useState([]);
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
@@ -22,11 +22,19 @@ export function useTool(page = 1, limit = 5) {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
+    // Sorting Data
+    const [sort, setSort] = useState("")
+
+    // Show Form
+    const [showForm, setShowForm] = useState(false)
+
+    const [showToolByCategory, setShowToolByCategory] = useState("")
+
     // Fetch Data From Server
     const fetchTools = useCallback(async () => {
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
-                api.get(`/tools?page=${page}&limit=${limit}`),
+                api.get(`/tools?sort=${sort}&category=${showToolByCategory}&page=${page}&limit=${limit}`),
                 api.get('/categories')
             ])
 
@@ -41,11 +49,15 @@ export function useTool(page = 1, limit = 5) {
         } catch (error) {
             setError("Gagal mengambil data kategori atau alat di server.")
         }
-    }, [page, limit])
+    }, [page, limit, sort, showToolByCategory])
 
     useEffect(() => {
         fetchTools()
     }, [fetchTools]);
+
+    const handleShowForm = () => {
+        setShowForm(!showForm)
+    }
 
     // Handle Change Form
     const handleChange = (e) => {
@@ -76,6 +88,7 @@ export function useTool(page = 1, limit = 5) {
         });
         setIsEditing(false);
         setEditId(null);
+        setShowForm(false)
     };
 
     // Handle Submit Form
@@ -133,6 +146,7 @@ export function useTool(page = 1, limit = 5) {
         });
         setIsEditing(true);
         setEditId(tool.id);
+        setShowForm(true)
     };
 
     // Handle Delete Form
@@ -161,6 +175,11 @@ export function useTool(page = 1, limit = 5) {
         handleDelete,
         resetForm,
         totalPages,
-        totalItems
+        totalItems,
+        setSort,
+        setSearch,
+        handleShowForm,
+        showForm,
+        setShowToolByCategory
     };
 }
