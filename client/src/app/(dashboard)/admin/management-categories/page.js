@@ -59,6 +59,8 @@ export default function CategoryManagementPage() {
 
             {/* Main Content */}
             <div className="flex flex-col gap-5">
+                {/* Filter and Search Category */}
+                <FilterAndSearchData search={(e) => setSearch(e.target.value)} sort={(e) => setSort(e.target.value)} isShowForm={handleShowForm} placeHolderName="Cari nama kategori..." />
 
                 <div className="flex flex-col gap-2">
                     {/* Form */}
