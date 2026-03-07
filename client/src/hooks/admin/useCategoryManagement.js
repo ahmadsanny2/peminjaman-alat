@@ -30,7 +30,7 @@ export function useCategory(page = 1, limit = 5) {
 
             setCategories(response.data.data);
             setTotalPages(response.data.totalPages || 1);
-            setTotalItems(response.data.totalItems);
+            setTotalItems(response.data.totalItems || 0);
         } catch (err) {
             console.error(err);
             setError("Gagal memuat kategori");
@@ -38,7 +38,7 @@ export function useCategory(page = 1, limit = 5) {
     }, [page, limit, sort, search]);
 
     useEffect(() => {
-        fetchCategories();
+        fetchCategories()
     }, [fetchCategories]);
 
     const handleShowForm = () => {
