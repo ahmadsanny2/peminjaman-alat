@@ -88,7 +88,7 @@ export default function UserManagementPage() {
                                                 colSpan="4"
                                                 className="px-6 py-10 text-center text-slate-500 animate-pulse"
                                             >
-                                                Mengakuisisi matriks data pengguna...
+                                                Sedang mengambil data users...
                                             </td>
                                         </tr>
                                     ) : users.length === 0 ? (
