@@ -37,7 +37,7 @@ export function useTool(page = 1, limit = 10) {
     const fetchTools = useCallback(async () => {
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
-                api.get(`/tools?search=${search}&sort=${sort}&category=${showToolByCategory}&page=${page}&limit=${limit}`),
+                api.get(`/tools`, { params: { search, sort, category: showToolByCategory, page, limit } }),
                 api.get('/categories')
             ])
 
@@ -45,7 +45,7 @@ export function useTool(page = 1, limit = 10) {
             const categories = categoriesRes.data.data
 
             setTotalPages(toolsRes.data.totalPages || 1)
-            setTotalItems(toolsRes.data.totalItems)
+            setTotalItems(toolsRes.data.totalItems || 0)
 
             setTools(tools)
             setCategories(categories)
