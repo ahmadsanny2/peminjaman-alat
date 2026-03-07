@@ -91,7 +91,7 @@ export default function LoanManagementPage() {
                                 <th className="px-6 py-4 border border-slate-200">Spesifikasi Alat</th>
                                 <th className="px-6 py-4 border border-slate-200 text-center">Tanggal Pengajuan</th>
                                 <th className="px-6 py-4 border border-slate-200 text-center">Proyeksi Pengembalian</th>
-                                <th className="px-6 py-4 border border-slate-200 text-center">Status</th>
+                                <th className="px-6 py-4 border border-slate-200 text-center">Status Peminjaman</th>
                                 <th className="px-6 py-4 border border-slate-200 text-center">Aksi</th>
                             </tr>
                         </thead>
@@ -121,8 +121,8 @@ export default function LoanManagementPage() {
                                         className="hover:bg-slate-50/80 transition-colors"
                                     >
                                         <td className="px-6 py-4">
-                                            <div className="font-medium text-slate-800">
-                                                {loan.borrower?.fullName || "Entitas Anonim"}
+                                            <div className="font-medium text-slate-800 min-w-40">
+                                                {loan.borrower?.fullName || "Identitas tidak dikenal"}
                                             </div>
                                             <div className="text-xs text-slate-400">
                                                 {loan.borrower?.username}
@@ -131,14 +131,14 @@ export default function LoanManagementPage() {
                                         <td className="px-6 py-4 font-medium text-slate-800 truncate max-w-sm">
                                             {loan.Tool?.name || "Nama alat tidak ada."}
                                         </td>
-                                        <td className="px-6 py-4 text-center">{formatDate(loan.borrowDate)}</td>
-                                        <td className="px-6 py-4 text-center">
+                                        <td className="px-6 py-4 text-center min-w-60">{formatDate(loan.borrowDate)}</td>
+                                        <td className="px-6 py-4 text-center min-w-60">
                                             {formatDate(loan.expectedReturnDate)}
                                         </td>
-                                        <td className="px-6 py-4 text-center">
+                                        <td className="px-6 py-4 text-center min-w-50">
                                             <StatusBadge status={loan.status} />
                                         </td>
-                                        <td className="px-6 py-4 text-right space-x-2">
+                                        <td className="px-6 py-4 text-center space-x-2 min-w-30">
                                             {loan.status === "pending" && (
                                                 <div className="flex items-center justify-center gap-2">
                                                     <button
