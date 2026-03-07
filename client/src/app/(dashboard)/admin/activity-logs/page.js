@@ -1,16 +1,16 @@
 "use client";
 
+import Pagination from "@/components/Pagination";
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
 import { ActivitySquare, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 export default function ActivityLogPage() {
     const searchParams = useSearchParams();
-    const router = useRouter();
 
     const page = Number(searchParams.get("page")) || 1;
 
-    const { logs, isLoading, error, totalPages } = useActivityLog(page, 10);
+    const { logs, isLoading, error, totalPages, totalItems } = useActivityLog(page, 10);
 
     const formatDateTime = (dateString) => {
         return new Date(dateString).toLocaleString("id-ID", {
@@ -110,27 +110,7 @@ export default function ActivityLogPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between px-6 py-3 border border-slate-800 rounded-2xl">
-                <span className="text-xs text-slate-500 font-medium">
-                    Halaman {page} dari {totalPages}
-                </span>
-                <div className="flex gap-2">
-                    <button
-                        disabled={page === 1}
-                        onClick={() => router.push(`?page=${page - 1}`)}
-                        className="p-1.5 rounded bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    <button
-                        disabled={page === totalPages}
-                        onClick={() => router.push(`?page=${page + 1}`)}
-                        className="p-1.5 rounded bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                </div>
-            </div>
+            <Pagination page={page} totalPages={totalPages} totalData={totalItems} />
 
         </div>
     );
