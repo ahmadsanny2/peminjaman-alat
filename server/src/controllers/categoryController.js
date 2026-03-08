@@ -1,13 +1,30 @@
+import { Op } from "sequelize";
 import { Category } from "../models/index.js";
 import { recordActivity } from "../utils/logger.js";
 
 export default {
     async getAllCategories(req, res) {
         try {
-            let { page, limit } = req.query;
-
+            let { page, limit, sort, search } = req.query;
             const queryOptions = {}
 
+            // Search Category Name
+            if (search) {
+                queryOptions.where = {
+                    name: {
+                        [Op.like]: `%${search}%`
+                    }
+                }
+            }
+
+            // Sorting Data
+            if (sort === "oldest") {
+                queryOptions.order = [["createdAt", "ASC"]]
+            } else {
+                queryOptions.order = [["createdAt", "DESC"]]
+            }
+
+            // Pagination
             if (page && limit) {
                 page = parseInt(page);
                 limit = parseInt(limit);
@@ -17,7 +34,7 @@ export default {
             }
 
             const { count, rows } = await Category.findAndCountAll({
-                ...queryOptions
+                ...queryOptions,
             });
 
             res.status(200).json({
@@ -34,7 +51,7 @@ export default {
             });
         }
     },
-    
+
     async createCategory(req, res) {
         try {
             const { name, description } = req.body;
