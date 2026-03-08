@@ -10,7 +10,17 @@ export default {
                 where: {}
             }
 
-            
+            if (sort === "oldest") {
+                queryOptions.order = [["createdAt", "ASC"]]
+            } else {
+                queryOptions.order = [["createdAt", "DESC"]]
+            }
+
+            if (showByActivity) {
+                queryOptions.where.action = {
+                    [Op.like]: `%${showByActivity}%`
+                }
+            }
 
             if (page && limit) {
                 page = parseInt(page)
