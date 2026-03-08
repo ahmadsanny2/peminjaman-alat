@@ -1,15 +1,54 @@
+import { Op } from "sequelize";
 import { User } from "../models/index.js";
 import { recordActivity } from "../utils/logger.js"
 
 export default {
     async getAllUsers(req, res) {
         try {
-            const users = await User.findAll({
-                attributes: ["id", "fullName", "username", "role", "createdAt"],
-                order: [["createdAt", "DESC"]],
+            const { search, sort, page, limit, role } = req.query
+            let queryOptions = {
+                where: {}
+            }
+
+            if (search) {
+                queryOptions.where = {
+                    fullName: {
+                        [Op.like]: `%${search}%`
+                    }
+                }
+            }
+
+            if (role) {
+                queryOptions.where.role = {
+                    [Op.like]: `%${role}%`
+                }
+            }
+
+            if (sort === "oldest") {
+                queryOptions.order = [["createdAt", "ASC"]]
+            } else {
+                queryOptions.order = [["createdAt", "DESC"]]
+            }
+
+            if (page && limit) {
+                page = parseInt(page)
+                limit = parseInt(limit)
+
+                queryOptions.limit = limit
+                queryOptions.offset = (page - 1) * limit
+            }
+
+            const { count, rows } = await User.findAndCountAll({
+                ...queryOptions,
             });
 
-            res.status(200).json({ data: users });
+            res.status(200).json({
+                message: "Successfully get users",
+                totalItems: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                data: rows
+            });
         } catch (error) {
             res.status(500).json({
                 message: "Failed to retrieve user data.",
