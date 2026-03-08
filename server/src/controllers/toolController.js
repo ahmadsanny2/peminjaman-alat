@@ -2,25 +2,46 @@ import { Tool, Category } from "../models/index.js";
 import fs from "fs";
 import path from "path";
 import { recordActivity } from "../utils/logger.js";
+import { Op } from "sequelize";
 
 export default {
     async getAllTools(req, res) {
         try {
-            let { page, limit } = req.query;
+            let { page, limit, sort, search, category } = req.query;
+            let queryOptions = {
+                where: {}
+            }
 
-            const queryOptions = {
-                include: [
-                    {
-                        model: Category,
-                        attributes: ["id", "name"],
-                    },
-                ],
-                order: [["createdAt", "DESC"]],
-            };
+            let categoryCondition = undefined
+            if (category) {
+                categoryCondition = {
+                    name: {
+                        [Op.like]: `${category}`
+                    }
+                }
+            }
 
+
+            // Search Tools Name
+            if (search) {
+                queryOptions.where = {
+                    name: {
+                        [Op.like]: `%${search}%`
+                    }
+                }
+            }
+
+            // Sorting Data
+            if (sort === "oldest") {
+                queryOptions.order = [["createdAt", "ASC"]]
+            } else {
+                queryOptions.order = [["createdAt", "DESC"]]
+            }
+
+            // Pagination
             if (page && limit) {
-                page = parseInt(page);
-                limit = parseInt(limit);
+                page = parseInt(page) || 1;
+                limit = parseInt(limit) || 1;
 
                 queryOptions.limit = limit;
                 queryOptions.offset = (page - 1) * limit;
@@ -28,6 +49,13 @@ export default {
 
             const { count, rows } = await Tool.findAndCountAll({
                 ...queryOptions,
+                include: [
+                    {
+                        model: Category,
+                        attributes: ["id", "name"],
+                        where: categoryCondition
+                    },
+                ],
             });
 
             res.status(200).json({
