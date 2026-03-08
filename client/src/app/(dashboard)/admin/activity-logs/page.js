@@ -1,5 +1,6 @@
 "use client";
 
+import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Pagination from "@/components/Pagination";
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
 import { ActivitySquare, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,7 +11,7 @@ export default function ActivityLogPage() {
 
     const page = Number(searchParams.get("page")) || 1;
 
-    const { logs, isLoading, error, totalPages, totalItems } = useActivityLog(page, 10);
+    const { logs, isLoading, error, totalPages, totalItems, setSort } = useActivityLog(page, 10);
 
     const formatDateTime = (dateString) => {
         return new Date(dateString).toLocaleString("id-ID", {
@@ -44,6 +45,8 @@ export default function ActivityLogPage() {
                         <AlertCircle size={18} className="mt-0.5" /> <span>{error}</span>
                     </div>
                 )}
+
+                <FilterAndSearchData sort={(e) => setSort(e.target.value)} isLogActivity={true} />
 
                 {/* Table Data Log Activity */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
