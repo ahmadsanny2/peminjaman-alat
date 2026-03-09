@@ -25,22 +25,22 @@ const Navbar = () => {
     },
     {
       name: "Fitur",
-      url: "/",
+      url: "#feature",
       icon: <Layers size={20} />,
     },
     {
       name: "Role Pengguna",
-      url: "/",
+      url: "#user-role",
       icon: <Users size={20} />,
     },
     {
       name: "Cara Kerja",
-      url: "/",
+      url: "#how-to-work",
       icon: <Workflow size={20} />,
     },
     {
       name: "Tentang",
-      url: "/",
+      url: "#about",
       icon: <Info size={20} />,
     },
   ];
