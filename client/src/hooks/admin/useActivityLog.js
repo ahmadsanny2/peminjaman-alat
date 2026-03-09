@@ -12,6 +12,7 @@ export const useActivityLog = (page = 1, limit = 10) => {
 
     const [sort, setSort] = useState("")
     const [showByActivity, setShowByActivity] = useState("")
+    const [dataActivity, setDataActivity] = useState([])
 
     // Fetch Data From Server
     const fetchLog = useCallback(async () => {
@@ -19,12 +20,20 @@ export const useActivityLog = (page = 1, limit = 10) => {
         try {
             const response = await api.get(`/logs`, { params: { sort, activity: showByActivity, page, limit } });
 
-            setLogs(response.data.data);
+            const rawData = response.data.data;
+
+            setLogs(rawData);
+
+            if (rawData.length > 0) {
+                const uniqueActions = [...new Set(rawData.map((l) => l.action))];
+                setDataActivity(uniqueActions);
+            }
+
             setTotalPages(response.data.totalPages || 1);
             setTotalItems(response.data.totalItems);
             setError("");
         } catch (err) {
-            setError("Gagal mengambil data log aktivitas dari server.");
+            setError("Gagal mengambil data log aktivitas dari server.", err);
         } finally {
             setIsLoading(false);
         }
@@ -34,5 +43,5 @@ export const useActivityLog = (page = 1, limit = 10) => {
         fetchLog();
     }, [fetchLog]);
 
-    return { logs, isLoading, error, totalItems, totalPages, setSort, setShowByActivity }
+    return { logs, isLoading, error, totalItems, totalPages, setSort, setShowByActivity, dataActivity }
 };
