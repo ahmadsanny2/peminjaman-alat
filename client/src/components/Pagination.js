@@ -1,8 +1,16 @@
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function Pagination({ page, totalPages, totalData = 0 }) {
     const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const createPageURL = (pageNumber) => {
+        const params = new URLSearchParams(searchParams);
+        params.set('page', pageNumber.toString());
+        return `${pathname}?${params.toString()}`;
+    }
 
     return (
         <div className="flex items-center justify-between px-6 py-3 border border-slate-800 text-xs text-slate-500  rounded-2xl">
@@ -16,16 +24,16 @@ export default function Pagination({ page, totalPages, totalData = 0 }) {
 
             <div className="flex gap-2">
                 <button
-                    disabled={page === 1}
-                    onClick={() => router.push(`?page=${page - 1}`)}
-                    className="p-1.5 rounded bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
+                    disabled={Number(page) <= 1}
+                    onClick={() => router.push(createPageURL(Number(page) - 1))}
+                    className="p-1.5 rounded bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                     <ChevronLeft size={16} />
                 </button>
                 <button
-                    disabled={page === totalPages}
-                    onClick={() => router.push(`?page=${page + 1}`)}
-                    className="p-1.5 rounded bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 disabled:opacity-50 transition-colors cursor-pointer disabled:cursor-default"
+                    disabled={Number(page) >= totalPages}
+                    onClick={() => router.push(createPageURL(Number(page) + 1))}
+                    className="p-1.5 rounded bg-white border border-slate-300 text-slate-600 hover:bg-slate-100 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                     <ChevronRight size={16} />
                 </button>
