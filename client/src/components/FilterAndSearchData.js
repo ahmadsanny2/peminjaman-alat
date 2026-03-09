@@ -1,25 +1,29 @@
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
 import { useTool } from "@/hooks/admin/useToolManagement";
-import { useUserManagement } from "@/hooks/admin/useUserManagement";
 import { Filter, Search, Plus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function FilterAndSearchData({
-    search,
     sort,
-    isShowForm,
-    placeHolderName,
-    isCategory,
     showByCategory,
-    hidden,
-    isRole,
     showByRole,
     showByActivity,
-    isLogActivity
+    hiddenFilterCategory,
+    hiddenFilterRole,
+    hiddenFilterActivity,
+    isShowForm,
+    hiddenButtonAddData,
+    hiddenSearchData,
+    search,
+    placeHolderName
 }) {
 
+    const searchParams = useSearchParams()
+
     const { categories } = useTool();
-    const { users } = useUserManagement()
-    const { logs } = useActivityLog()
+    const { dataActivity } = useActivityLog()
+
+    const userRole = ["Admin", "Petugas", "Peminjam"]
 
     return (
         <form className="bg-white/15 backdrop-blur-2xl rounded-2xl p-5 z-0 space-y-6">
@@ -43,7 +47,7 @@ export default function FilterAndSearchData({
                     </select>
                 </div>
 
-                {isCategory ? (
+                {hiddenFilterCategory ? (
                     <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
                         <select
                             className="outline-none cursor-pointer w-full"
@@ -65,7 +69,8 @@ export default function FilterAndSearchData({
                     </div>
                 ) : null}
 
-                {isRole ? (
+
+                {hiddenFilterRole ? (
                     <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
                         <select
                             className="outline-none cursor-pointer w-full"
@@ -74,20 +79,21 @@ export default function FilterAndSearchData({
                             <option className="bg-white/20 text-black" value="">
                                 Semua
                             </option>
-                            {users.map((user) => (
+                            {userRole.map((role, index) => (
                                 <option
                                     className="bg-white/20 text-black"
-                                    value={user.role}
-                                    key={user.id}
+                                    value={role}
+                                    key={index}
                                 >
-                                    {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                                    {role.charAt(0).toUpperCase() + role.slice(1)}
                                 </option>
                             ))}
                         </select>
                     </div>
                 ) : null}
 
-                {isLogActivity ? (
+
+                {hiddenFilterActivity ? (
                     <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
                         <select
                             className="outline-none cursor-pointer w-full"
@@ -96,41 +102,44 @@ export default function FilterAndSearchData({
                             <option className="bg-white/20 text-black" value="">
                                 Semua
                             </option>
-                            {logs.map((log, index) => (
+                            {dataActivity.map((action) => (
                                 <option
                                     className="bg-white/20 text-black"
-                                    value={log.action}
-                                    key={index}
+                                    value={action}
+                                    key={action}
                                 >
-                                    {log.action}
+                                    {action}
                                 </option>
                             ))}
                         </select>
                     </div>
                 ) : null}
 
-                <div className={`flex ${(isCategory || isRole || isLogActivity) ? "col-span-2" : ""} max-md:col-span-2`}>
-                    <div className={`flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 ${!hidden ? "rounded-l-2xl" : "rounded-2xl"} w-full`}>
-                        <Search />
-                        <input
-                            type="text"
-                            className="outline-none focus:border-b w-full"
-                            onChange={search}
-                            placeholder={placeHolderName}
-                        />
-                    </div>
 
-
-                    {!hidden ? (
-                        <div
-                            className="bg-blue-500 p-2 cursor-pointer max-w-fit rounded-r-2xl"
-                            onClick={isShowForm}
-                        >
-                            <Plus />
+                {hiddenSearchData ? (
+                    <div className={`flex ${(hiddenFilterCategory || hiddenFilterRole || hiddenFilterActivity) ? "col-span-2" : ""} max-md:col-span-2`}>
+                        <div className={`flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 ${hiddenButtonAddData ? "rounded-l-2xl" : "rounded-2xl"} w-full`}>
+                            <Search />
+                            <input
+                                type="text"
+                                className="outline-none focus:border-b w-full"
+                                onChange={search}
+                                placeholder={placeHolderName}
+                                defaultValue={searchParams.get('search')?.toString()}
+                            />
                         </div>
-                    ) : null}
 
-                </div>
+                        {hiddenButtonAddData ? (
+                            <div className="bg-blue-500 p-2 cursor-pointer max-w-fit rounded-r-2xl"
+                                onClick={isShowForm}
+                            >
+                                <Plus />
+                            </div>
+                        ) : null}
+
+                    </div>
+                ) : null}
+
             </div>
         </form>
     );
