@@ -1,0 +1,43 @@
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useDebouncedCallback } from "use-debounce";
+
+export function useFilterAndSearchData() {
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
+    const search = searchParams.get('search') || ''
+    const sort = searchParams.get('sort') || 'newest'
+    const page = searchParams.get('page') || '1'
+    const limit = searchParams.get('limit') || '10'
+    const role = searchParams.get('role') || ''
+    const category = searchParams.get('category') || ''
+
+    const createQueryString = (key, value) => {
+        const params = new URLSearchParams(searchParams.toString())
+
+        if (value) {
+            params.set(key, value)
+        } else {
+            params.delete(key)
+        }
+
+        if (key !== 'page') params.set('page', '1')
+
+        return params.toString()
+    }
+
+    const updateFilters = (key, value) => {
+        const queryString = createQueryString(key, value)
+        router.push(`${pathname}?${queryString}`, { scroll: false })
+    }
+
+    const handleSearch = useDebouncedCallback((term) => {
+        const queryString = createQueryString('search', term)
+        router.replace(`${pathname}?${queryString}`, { scroll: false })
+    }, 500)
+
+    return {
+        search, sort, category, role, page, limit, updateFilters, handleSearch
+    }
+}
