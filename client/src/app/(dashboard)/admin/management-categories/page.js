@@ -4,21 +4,9 @@ import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Modal from "@/components/Modal";
 import Pagination from "@/components/Pagination";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
-import {
-    Edit,
-    Trash2,
-    Plus,
-    X,
-    Tags,
-    Edit2,
-} from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { Edit, Trash2, Plus, X, Tags, Edit2 } from "lucide-react";
 
 export default function CategoryManagementPage() {
-    const searchParams = useSearchParams();
-
-    const page = Number(searchParams.get("page")) || 1;
-
     // Category Management Data
     const {
         categories,
@@ -32,18 +20,17 @@ export default function CategoryManagementPage() {
         handleEdit,
         handleDelete,
         resetForm,
-        setSort,
-        setSearch,
         handleShowForm,
         showForm,
-        totalItems
-    } = useCategory(page, 10);
+        totalItems,
+        page,
+        updateFilters,
+        handleSearch,
+    } = useCategory();
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
-
             <div className="space-y-6">
-
                 {/* Header */}
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
                     <Tags className="text-emerald-600" size={32} />
@@ -61,12 +48,26 @@ export default function CategoryManagementPage() {
 
                 {/* Content */}
                 <div className="space-y-6">
-
                     {/* Filter and Search Category */}
-                    <FilterAndSearchData search={(e) => setSearch(e.target.value)} sort={(e) => setSort(e.target.value)} isShowForm={handleShowForm} placeHolderName="Cari nama kategori..." />
+                    <FilterAndSearchData
+                        search={(e) => handleSearch(e.target.value)}
+                        sort={(e) => updateFilters("sort", e.target.value)}
+                        isShowForm={handleShowForm}
+                        placeHolderName="Cari nama kategori..."
+                        hiddenSearchData={!false}
+                        hiddenButtonAddData={!false}
+                    />
 
                     {/* Form */}
-                    <Modal customClass={showForm ? 'fixed inset-0 h-full flex items-center justify-center' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
+                    <Modal
+                        customClass={
+                            showForm
+                                ? "fixed inset-0 h-full flex items-center justify-center"
+                                : "hidden"
+                        }
+                        isOpen={handleShowForm}
+                        onClose={handleShowForm}
+                    >
                         <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                             {isEditing ? (
                                 <>
@@ -194,14 +195,11 @@ export default function CategoryManagementPage() {
                             </table>
                         </div>
                     </div>
-
                 </div>
-
             </div>
 
             {/* Pagination */}
             <Pagination page={page} totalPages={totalPages} totalData={totalItems} />
-
         </div>
     );
 }
