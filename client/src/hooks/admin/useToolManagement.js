@@ -2,17 +2,25 @@
 
 import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
-export function useTool(page = 1, limit = 10) {
+export function useTool() {
+
+    const { search, sort, category, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+
     const [tools, setTools] = useState([]);
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: "",
         description: "",
+        condition: "",
         stock: "",
         categoryId: "",
         image: null
     });
+
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
 
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
@@ -22,22 +30,16 @@ export function useTool(page = 1, limit = 10) {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
-    // Sorting Data
-    const [sort, setSort] = useState("")
-
-    // Search Data
-    const [search, setSearch] = useState("")
-
     // Show Form
     const [showForm, setShowForm] = useState(false)
 
-    const [showToolByCategory, setShowToolByCategory] = useState("")
+    const condition = ["Bagus", "Rusak"]
 
     // Fetch Data From Server
     const fetchTools = useCallback(async () => {
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
-                api.get(`/tools`, { params: { search, sort, category: showToolByCategory, page, limit } }),
+                api.get(`/tools`, { params: { search, sort, category, page, limit } }),
                 api.get('/categories')
             ])
 
@@ -46,13 +48,12 @@ export function useTool(page = 1, limit = 10) {
 
             setTotalPages(toolsRes.data.totalPages || 1)
             setTotalItems(toolsRes.data.totalItems || 0)
-
             setTools(tools)
             setCategories(categories)
         } catch (error) {
-            setError("Gagal mengambil data kategori atau alat di server.")
+            setError("Gagal mengambil data kategori atau alat di server.", error)
         }
-    }, [page, limit, search, sort, showToolByCategory])
+    }, [page, limit, search, sort, category])
 
     useEffect(() => {
         fetchTools()
@@ -80,18 +81,42 @@ export function useTool(page = 1, limit = 10) {
 
     };
 
+    const handleFileChange = (e) => {
+        // Perhatikan: e.target.files (hanya satu 'target')
+        const file = e.target.files[0];
+
+        if (file) {
+            setSelectedFile(file);
+
+            // Membuat preview URL
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviewUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+
+            // Teruskan ke fungsi handleChange bawaan Anda (jika ada)
+            if (handleChange) {
+                handleChange(e);
+            }
+        }
+    };
+
     // Handle Reset Form
     const resetForm = () => {
         setFormData({
             name: "",
             description: "",
+            condition: "",
             stock: "",
             categoryId: "",
-            image: null
+            image: null,
         });
         setIsEditing(false);
         setEditId(null);
         setShowForm(false)
+        setSelectedFile(null)
+        setPreviewUrl(null)
     };
 
     // Handle Submit Form
@@ -179,10 +204,12 @@ export function useTool(page = 1, limit = 10) {
         resetForm,
         totalPages,
         totalItems,
-        setSort,
-        setSearch,
+        category, page, limit, updateFilters, handleSearch,
         handleShowForm,
         showForm,
-        setShowToolByCategory
+        handleFileChange,
+        previewUrl,
+        selectedFile,
+        condition
     };
 }
