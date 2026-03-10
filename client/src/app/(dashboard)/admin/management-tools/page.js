@@ -13,12 +13,8 @@ import {
     Layers,
     Edit2,
 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 export default function ToolManagementPage() {
-    const searchParams = useSearchParams();
-
-    const page = Number(searchParams.get("page")) || 1;
 
     // Tools Management Data
     const {
@@ -34,13 +30,17 @@ export default function ToolManagementPage() {
         handleDelete,
         resetForm,
         totalPages,
-        setSort,
-        setSearch,
         handleShowForm,
         showForm,
-        setShowToolByCategory,
-        totalItems
-    } = useTool(page, 10);
+        totalItems,
+        updateFilters,
+        handleSearch,
+        page,
+        handleFileChange,
+        previewUrl,
+        selectedFile,
+        condition
+    } = useTool();
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
@@ -66,7 +66,16 @@ export default function ToolManagementPage() {
                 <div className="space-y-6">
 
                     {/* Filter and Search Category */}
-                    <FilterAndSearchData search={(e) => setSearch(e.target.value)} sort={(e) => setSort(e.target.value)} isShowForm={handleShowForm} showByCategory={(e) => setShowToolByCategory(e.target.value)} placeHolderName="Cari nama alat..." isCategory={true} />
+                    <FilterAndSearchData
+                        search={(e) => handleSearch(e.target.value)}
+                        sort={(e) => updateFilters('sort', e.target.value)}
+                        isShowForm={handleShowForm}
+                        showByCategory={(e) => updateFilters('category', e.target.value)}
+                        placeHolderName="Cari nama alat..."
+                        hiddenFilterCategory={!false}
+                        hiddenSearchData={!false}
+                        hiddenButtonAddData={!false}
+                    />
 
                     {/* Form */}
                     <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center z-50' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
@@ -82,9 +91,12 @@ export default function ToolManagementPage() {
                             )}
                         </h2>
 
+                        {/* Form Add or Update Tools */}
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="grid grid-cols-2 lg:grid-cols-2 gap-2">
-                                <div className="col-span-2 lg:lg:col-span-2">
+                            <div className="flex flex-col space-y-4">
+
+                                {/* Input Name Tools */}
+                                <div className="">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">
                                         Nama Alat
                                     </label>
@@ -99,13 +111,15 @@ export default function ToolManagementPage() {
                                     />
                                 </div>
 
-                                <div className="col-span-2 lg:col-span-2">
+                                {/* Input Description Tools */}
+                                <div className="">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">
                                         Deskripsi
                                     </label>
                                     <textarea
                                         type="text"
                                         name="description"
+                                        rows={5}
                                         value={formData.description}
                                         onChange={handleChange}
                                         className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
@@ -114,9 +128,10 @@ export default function ToolManagementPage() {
                                     />
                                 </div>
 
-                                <div className="max-lg:col-span-2">
+                                {/* Select Condition */}
+                                <div className="w-full">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Kategori
+                                        Kondisi
                                     </label>
                                     <div className="relative">
                                         <Layers
@@ -124,16 +139,16 @@ export default function ToolManagementPage() {
                                             size={16}
                                         />
                                         <select
-                                            name="categoryId"
-                                            value={formData.categoryId}
+                                            name="condition"
+                                            value={formData.condition}
                                             onChange={handleChange}
                                             className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
                                             disabled={isSubmitting}
                                         >
-                                            <option value="">Pilih Kategori</option>
-                                            {categories.map((category) => (
-                                                <option key={category.id} value={category.id}>
-                                                    {category.name}
+                                            <option value="">Pilih Kondisi</option>
+                                            {condition.map((con) => (
+                                                <option key={con} value={con}>
+                                                    {con}
                                                 </option>
                                             ))}
                                         </select>
@@ -145,35 +160,103 @@ export default function ToolManagementPage() {
                                     )}
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                                        Stok
-                                    </label>
-                                    <input
-                                        name="stock"
-                                        type="number"
-                                        value={formData.stock}
-                                        min={0}
-                                        onChange={handleChange}
-                                        className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
-                                        placeholder="0"
-                                        disabled={isSubmitting}
-                                    />
+                                <div className="flex gap-2">
+
+                                    {/* Select Category Tools */}
+                                    <div className="w-full">
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                                            Kategori
+                                        </label>
+                                        <div className="relative">
+                                            <Layers
+                                                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                                size={16}
+                                            />
+                                            <select
+                                                name="categoryId"
+                                                value={formData.categoryId}
+                                                onChange={handleChange}
+                                                className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
+                                                disabled={isSubmitting}
+                                            >
+                                                <option value="">Pilih Kategori</option>
+                                                {categories.map((category) => (
+                                                    <option key={category.id} value={category.id}>
+                                                        {category.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        {error.categoryId && (
+                                            <span className="text-red-500 text-xs mt-1 block">
+                                                {errors.categoryId.message}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Input Stock Tools */}
+                                    <div className="">
+                                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                                            Stok
+                                        </label>
+                                        <input
+                                            name="stock"
+                                            type="number"
+                                            value={formData.stock}
+                                            min={0}
+                                            onChange={handleChange}
+                                            className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
+                                            placeholder="0"
+                                            disabled={isSubmitting}
+                                        />
+                                    </div>
+
                                 </div>
-                                <div className="lg:col-span-2">
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+
+                                {/* Input Image Tools */}
+                                <div className="">
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Gambar Alat
                                     </label>
-                                    <input
-                                        name="image"
-                                        type="file"
-                                        onChange={handleChange}
-                                        className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
-                                        placeholder="0"
-                                        disabled={isSubmitting}
-                                    />
+                                    <div className={`relative group flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all cursor-pointer ${selectedFile ? 'border-blue-500 bg-blue-50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100'}`}>
+
+                                        <input
+                                            name="image"
+                                            type="file"
+                                            onChange={handleFileChange}
+                                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                                            disabled={isSubmitting}
+                                            accept="image/*"
+                                        />
+
+                                        <div className="flex flex-col items-center justify-center text-center p-4">
+                                            {previewUrl ? (
+                                                /* TAMPILAN SAAT FILE SUDAH TERPILIH */
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <img src={previewUrl} alt="Preview" className="h-20 w-20 object-cover rounded-lg shadow-sm mb-1" />
+                                                    <p className="text-xs font-medium text-blue-600 truncate max-w-[200px]">
+                                                        {selectedFile.name}
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-400">Klik atau drag untuk mengganti</p>
+                                                </div>
+                                            ) : (
+                                                /* TAMPILAN AWAL (KOSONG) */
+                                                <>
+                                                    <svg className="w-8 h-8 mb-3 text-slate-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                    </svg>
+                                                    <p className="text-xs text-slate-500">
+                                                        <span className="font-semibold">Klik untuk upload</span> atau drag & drop
+                                                    </p>
+                                                    <p className="text-[10px] text-slate-400">PNG, JPG atau WebP</p>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Button Save Tools */}
                             <div className="flex gap-2 pt-2">
                                 <button
                                     type="submit"
@@ -204,9 +287,11 @@ export default function ToolManagementPage() {
                             <table className="w-full text-left text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr>
+                                        <th className="px-6 py-4 border border-slate-200">No</th>
                                         <th className="px-6 py-4 border border-slate-200">Nama Alat</th>
                                         <th className="px-6 py-4 border border-slate-200">Deskripsi</th>
                                         <th className="px-6 py-4 border border-slate-200">Kategori</th>
+                                        <th className="px-6 py-4 border border-slate-200">Kondisi</th>
                                         <th className="px-6 py-4 border border-slate-200 text-center">Stok</th>
                                         <th className="px-6 py-4 border border-slate-200 text-center">Aksi</th>
                                     </tr>
@@ -218,45 +303,54 @@ export default function ToolManagementPage() {
                                                 colSpan="6"
                                                 className="px-6 py-8 text-center text-slate-500"
                                             >
-                                                Belum ada alat terdaftar.
+                                                Belum ada alat yang terdaftar.
                                             </td>
                                         </tr>
                                     ) : (
-                                        tools.map((tool) => (
-                                            <tr
-                                                key={tool.id}
-                                                className="hover:bg-slate-50/80 transition-colors"
-                                            >
-                                                <td className="px-6 py-4 truncate max-w-3xs">
-                                                    {tool.name}
-                                                </td>
+                                        tools.map((tool, index) => {
+                                            const no = index + 1 + (page - 1) * totalItems
+                                            return (
+                                                <tr
+                                                    key={tool.id}
+                                                    className="hover:bg-slate-50/80 transition-colors"
+                                                >
+                                                    <td className="px-6 py-4 truncate max-w-3xs">
+                                                        {no}
+                                                    </td>
+                                                    <td className="px-6 py-4 truncate max-w-3xs">
+                                                        {tool.name}
+                                                    </td>
 
-                                                <td className="px-6 py-4 truncate max-w-sm">
-                                                    {tool.description}
-                                                </td>
+                                                    <td className="px-6 py-4 truncate max-w-sm">
+                                                        {tool.description}
+                                                    </td>
 
-                                                <td className="px-6 py-4 truncate">
-                                                    {tool.Category?.name || "-"}
-                                                </td>
-                                                <td className="px-6 py-4 text-center">{tool.stock}</td>
-                                                <td className="px-6 py-4 text-center min-w-30">
-                                                    <button
-                                                        onClick={() => handleEdit(tool)}
-                                                        className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
-                                                        title="Edit"
-                                                    >
-                                                        <Edit2 size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(tool.id)}
-                                                        className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
-                                                        title="Hapus"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
+                                                    <td className="px-6 py-4 truncate">
+                                                        {tool.Category?.name || "-"}
+                                                    </td>
+                                                    <td className="px-6 py-4 truncate">
+                                                        {tool.condition}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">{tool.stock}</td>
+                                                    <td className="px-6 py-4 text-center min-w-30">
+                                                        <button
+                                                            onClick={() => handleEdit(tool)}
+                                                            className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit2 size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(tool.id)}
+                                                            className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
+                                                            title="Hapus"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
                                     )}
                                 </tbody>
                             </table>
