@@ -1,17 +1,13 @@
 "use client";
 
 import FilterAndSearchData from "@/components/FilterAndSearchData";
-import Modal from "@/components/Modal";
 import Pagination from "@/components/Pagination";
 import { useUserManagement } from "@/hooks/admin/useUserManagement";
 import { ShieldCheck, Users, ShieldAlert, AlertCircle } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 
 export default function UserManagementPage() {
-    const searchParams = useSearchParams()
-    const page = Number(searchParams.get("page"))
 
-    const { users, isLoading, isUpdating, error, updateRole, setSearch, handleShowForm, setSort, totalItems, totalPages, setShowByRole } =
+    const { users, isLoading, isUpdating, error, updateRole, handleShowForm, totalItems, totalPages, page, updateFilters, handleSearch } =
         useUserManagement();
 
     // Role Badge
@@ -67,8 +63,14 @@ export default function UserManagementPage() {
                 {/* Content */}
                 <div className="space-y-6">
 
-                    <FilterAndSearchData search={(e) => setSearch(e.target.value)} isShowForm={handleShowForm}
-                        sort={(e) => setSort(e.target.value)} hidden={true} placeHolderName="Cari nama user..." isRole={true} showByRole={(e) => setShowByRole(e.target.value)} />
+                    <FilterAndSearchData
+                        search={(e) => handleSearch(e.target.value)}
+                        isShowForm={handleShowForm}
+                        sort={(e) => updateFilters('sort', e.target.value)}
+                        hiddenSearchData={!false}
+                        placeHolderName="Cari nama user..."
+                        hiddenFilterRole={!false}
+                        showByRole={(e) => updateFilters('role', e.target.value)} />
 
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
