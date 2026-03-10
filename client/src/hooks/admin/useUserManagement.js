@@ -1,31 +1,29 @@
 import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
-export const useUserManagement = (page, limit = 10) => {
+export const useUserManagement = () => {
+    const { search, sort, role, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
     const [error, setError] = useState("");
-
-    const [search, setSearch] = useState("");
-    const [sort, setSort] = useState("");
 
     const [showForm, setShowForm] = useState(false);
 
     const [totalPages, setTotalPages] = useState(1)
     const [totalItems, setTotalItems] = useState(0)
 
-    const [showByRole, setShowByRole] = useState("")
-
     // Fetch Data From Server
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get(`/users?`, { params: { search, sort, role: showByRole, page, limit } });
+            const response = await api.get(`/users`, { params: { search, sort, role, page, limit } });
 
             setUsers(response.data.data);
             setTotalPages(response.data.totalPages || 1)
-            setTotalItems(response.data.totalItems)
+            setTotalItems(response.data.totalItems || 0)
 
             setError("");
         } catch (error) {
@@ -33,7 +31,7 @@ export const useUserManagement = (page, limit = 10) => {
         } finally {
             setIsLoading(false);
         }
-    }, [search, sort, showByRole, page, limit]);
+    }, [search, sort, role, page, limit]);
 
     useEffect(() => {
         fetchUsers();
@@ -73,11 +71,12 @@ export const useUserManagement = (page, limit = 10) => {
         isUpdating,
         error,
         updateRole,
-        setSearch,
         handleShowForm,
-        setSort,
+        page,
         totalItems,
         totalPages,
-        setShowByRole
+        updateFilters,
+        handleSearch,
+        role
     };
 };
