@@ -36,8 +36,11 @@ export default function FilterAndSearchData({
                     <h1 className="font-semibold">Filter</h1>
                 </div>
 
+                {/* Input Search and Button Add Data */}
                 {hiddenSearchData ? (
                     <div className={`flex ${(hiddenFilterCategory || hiddenFilterRole || hiddenFilterActivity) ? "col-span-2" : ""} max-md:col-span-2`}>
+
+                        {/* Input Search Data */}
                         <div className={`flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 ${hiddenButtonAddData ? "rounded-l-2xl" : "rounded-2xl"} w-full`}>
                             <Search />
                             <input
@@ -49,6 +52,7 @@ export default function FilterAndSearchData({
                             />
                         </div>
 
+                        {/* Button Add Data */}
                         {hiddenButtonAddData ? (
                             <div className="bg-blue-500 p-2 cursor-pointer max-w-fit rounded-r-2xl"
                                 onClick={isShowForm}
@@ -65,20 +69,22 @@ export default function FilterAndSearchData({
 
                 <div className="grid grid-cols-2 gap-4">
 
-                    <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
-                        <select className="outline-none cursor-pointer w-full" onChange={sort}>
-                            <option className="bg-white/20 text-black" value="">
-                                Urutkan
-                            </option>
-                            <option className="bg-white/20 text-black" value="newest">
-                                Terbaru
-                            </option>
-                            <option className="bg-white/20 text-black" value="oldest">
-                                Terlama
-                            </option>
-                        </select>
+                    {/* Sort Data */}
+                    <div className="max-md:col-span-2">
+                        <label className="">Urutkan</label>
+                        <div className="bg-white/15 backdrop-blur-2xl p-2 rounded-2xl">
+                            <select className="outline-none cursor-pointer w-full" onChange={sort}>
+                                <option className="bg-white/20 text-black" value="newest">
+                                    Terbaru
+                                </option>
+                                <option className="bg-white/20 text-black" value="oldest">
+                                    Terlama
+                                </option>
+                            </select>
+                        </div>
                     </div>
 
+                    {/* Filter Data By Category */}
                     {hiddenFilterCategory ? (
                         <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
                             <select
@@ -101,7 +107,7 @@ export default function FilterAndSearchData({
                         </div>
                     ) : null}
 
-
+                    {/* Filter Data By Role */}
                     {hiddenFilterRole ? (
                         <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
                             <select
@@ -124,7 +130,7 @@ export default function FilterAndSearchData({
                         </div>
                     ) : null}
 
-
+                    {/* Filter Data By Activity User */}
                     {hiddenFilterActivity ? (
                         <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
                             <select
