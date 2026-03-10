@@ -3,15 +3,15 @@
 import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Pagination from "@/components/Pagination";
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
-import { ActivitySquare, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { ActivitySquare, AlertCircle } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export default function ActivityLogPage() {
     const searchParams = useSearchParams();
 
     const page = Number(searchParams.get("page")) || 1;
 
-    const { logs, isLoading, error, totalPages, totalItems, setSort } = useActivityLog(page, 10);
+    const { logs, isLoading, error, totalPages, totalItems, setSort, setShowByActivity } = useActivityLog(page, 10);
 
     const formatDateTime = (dateString) => {
         return new Date(dateString).toLocaleString("id-ID", {
@@ -46,7 +46,10 @@ export default function ActivityLogPage() {
                     </div>
                 )}
 
-                <FilterAndSearchData sort={(e) => setSort(e.target.value)} isLogActivity={true} />
+                <FilterAndSearchData
+                    sort={(e) => setSort(e.target.value)}
+                    showByActivity={(e) => setShowByActivity(e.target.value)}
+                    hiddenFilterActivity={!false} />
 
                 {/* Table Data Log Activity */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -67,7 +70,7 @@ export default function ActivityLogPage() {
                                             colSpan="4"
                                             className="px-6 py-8 text-center animate-pulse"
                                         >
-                                            Mengambil data log aktivitas...
+                                            Sedang mengambil data log aktivitas...
                                         </td>
                                     </tr>
                                 ) : logs.length === 0 ? (
