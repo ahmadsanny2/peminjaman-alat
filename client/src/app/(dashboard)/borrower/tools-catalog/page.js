@@ -78,7 +78,7 @@ export default function CatalogPage() {
                                 </h3>
 
                                 <div className="">
-                                    <p className="text-slate-700">{tool.description}</p>
+                                    <p className="text-slate-700">{tool.description.substring(0, 100)}...</p>
                                 </div>
 
                                 <div className="flex items-center gap-2 mt-4 text-sm">
