@@ -2,8 +2,12 @@
 
 import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
-export function useCategory(page = 1, limit = 5) {
+export function useCategory() {
+    const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+
+
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({ name: "", description: "" });
     const [isEditing, setIsEditing] = useState(false);
@@ -14,19 +18,13 @@ export function useCategory(page = 1, limit = 5) {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
-    // Sorting Data
-    const [sort, setSort] = useState("");
-
-    // Search Data
-    const [search, setSearch] = useState("")
-
     // Show Form
     const [showForm, setShowForm] = useState(false)
 
     // Fetch Data From Server
     const fetchCategories = useCallback(async () => {
         try {
-            const response = await api.get(`/categories?search=${search}&sort=${sort}&page=${page}&limit=${limit}`);
+            const response = await api.get(`/categories`, { params: { search, sort, page, limit } });
 
             setCategories(response.data.data);
             setTotalPages(response.data.totalPages || 1);
@@ -114,9 +112,11 @@ export function useCategory(page = 1, limit = 5) {
         handleEdit,
         handleDelete,
         resetForm,
-        setSort,
-        setSearch,
         handleShowForm,
-        showForm
+        showForm,
+        page,
+        limit,
+        updateFilters,
+        handleSearch
     };
 }
