@@ -24,6 +24,7 @@ export default function CategoryManagementPage() {
         showForm,
         totalItems,
         page,
+        limit,
         updateFilters,
         handleSearch,
     } = useCategory();
@@ -141,13 +142,16 @@ export default function CategoryManagementPage() {
                             <table className="w-full text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr>
-                                        <th className="px-6 py-4 border border-slate-200 text-left">
+                                        <th className="border-slate-200 px-6 py-4 border text-center">
+                                            No
+                                        </th>
+                                        <th className="border-slate-200 px-6 py-4 border text-left min-w-xs max-w-xs">
                                             Nama Kategori
                                         </th>
-                                        <th className="px-6 py-4 border border-slate-200 text-left">
+                                        <th className="border-slate-200 px-6 py-4 border text-left min-w-xl max-w-xl">
                                             Deskripsi
                                         </th>
-                                        <th className="px-6 py-4 border border-slate-200">Aksi</th>
+                                        <th className="border-slate-200 px-6 py-4 border">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
@@ -161,35 +165,41 @@ export default function CategoryManagementPage() {
                                             </td>
                                         </tr>
                                     ) : (
-                                        categories.map((category) => (
-                                            <tr
-                                                key={category.id}
-                                                className="hover:bg-slate-50/80 transition-colors"
-                                            >
-                                                <td className="px-6 py-4 truncate max-w-xs">
-                                                    {category.name}
-                                                </td>
-                                                <td className="px-6 py-4 truncate max-w-xs">
-                                                    {category.description || "-"}
-                                                </td>
-                                                <td className="px-6 py-4 text-center min-w-30">
-                                                    <button
-                                                        onClick={() => handleEdit(category)}
-                                                        className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
-                                                        title="Edit"
-                                                    >
-                                                        <Edit2 size={16} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(category.id)}
-                                                        className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
-                                                        title="Hapus"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
+                                        categories.map((category, index) => {
+                                            const no = index + 1 + (page - 1) * limit
+                                            return (
+                                                <tr
+                                                    key={category.id}
+                                                    className="hover:bg-slate-50/80 transition-colors"
+                                                >
+                                                    <td className="px-6 py-4 text-center">
+                                                        {no}
+                                                    </td>
+                                                    <td className="px-6 py-4 truncate min-w-xs max-w-xs">
+                                                        {category.name}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-justify min-w-xl max-w-xl">
+                                                        {category.description || "-"}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center min-w-30">
+                                                        <button
+                                                            onClick={() => handleEdit(category)}
+                                                            className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
+                                                            title="Edit"
+                                                        >
+                                                            <Edit2 size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(category.id)}
+                                                            className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
+                                                            title="Hapus"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
                                     )}
                                 </tbody>
                             </table>
