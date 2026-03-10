@@ -28,7 +28,7 @@ export const useBorrower = () => {
 
     useEffect(() => {
         const now = new Date();
-        setToday(now.toISOString("").split("T")[0]);
+        setToday(now.toISOString().split("T")[0]);
 
         const future = new Date();
         future.setDate(now.getDate() + 7);
@@ -73,9 +73,9 @@ export const useBorrower = () => {
             );
         } catch (err) {
             setError(
-                err.response?.data?.message ||
                 "Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.",
             );
+            console.log(err.response?.data?.message)
         } finally {
             setIsSubmitting(false);
         }
