@@ -1,5 +1,6 @@
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
 import { useTool } from "@/hooks/admin/useToolManagement";
+import { useFilterAndSearchData } from "@/hooks/useFilterAndSearchData";
 import { Filter, Search, Plus } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
@@ -18,6 +19,8 @@ export default function FilterAndSearchData({
     placeHolderName
 }) {
 
+    const { showFilterData, setShowFilterData } = useFilterAndSearchData()
+
     const searchParams = useSearchParams()
 
     const { categories } = useTool();
@@ -26,95 +29,12 @@ export default function FilterAndSearchData({
     const userRole = ["Admin", "Petugas", "Peminjam"]
 
     return (
-        <form className="bg-white/15 backdrop-blur-2xl rounded-2xl p-5 z-0 space-y-6">
-            <div className="flex items-center gap-2">
-                <Filter />
-                <h1 className="text-xl font-semibold">Filter</h1>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-
-                <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
-                    <select className="outline-none cursor-pointer w-full" onChange={sort}>
-                        <option className="bg-white/20 text-black" value="">
-                            Urutkan
-                        </option>
-                        <option className="bg-white/20 text-black" value="newest">
-                            Terbaru
-                        </option>
-                        <option className="bg-white/20 text-black" value="oldest">
-                            Terlama
-                        </option>
-                    </select>
+        <div className="space-y-6">
+            <div className="flex items-center justify-between">
+                <div className={`border border-white/15 hover:bg-white/15 ${showFilterData ? "bg-white/15" : ""} transition-all ease-in-out duration-300 flex items-center gap-2 p-2 rounded-2xl cursor-pointer`} onClick={() => setShowFilterData(!showFilterData)}>
+                    <Filter size={20} />
+                    <h1 className="font-semibold">Filter</h1>
                 </div>
-
-                {hiddenFilterCategory ? (
-                    <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
-                        <select
-                            className="outline-none cursor-pointer w-full"
-                            onChange={showByCategory}
-                        >
-                            <option className="bg-white/20 text-black" value="">
-                                Semua
-                            </option>
-                            {categories.map((cat) => (
-                                <option
-                                    className="bg-white/20 text-black"
-                                    value={cat.name}
-                                    key={cat.id}
-                                >
-                                    {cat.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                ) : null}
-
-
-                {hiddenFilterRole ? (
-                    <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
-                        <select
-                            className="outline-none cursor-pointer w-full"
-                            onChange={showByRole}
-                        >
-                            <option className="bg-white/20 text-black" value="">
-                                Semua
-                            </option>
-                            {userRole.map((role, index) => (
-                                <option
-                                    className="bg-white/20 text-black"
-                                    value={role}
-                                    key={index}
-                                >
-                                    {role.charAt(0).toUpperCase() + role.slice(1)}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                ) : null}
-
-
-                {hiddenFilterActivity ? (
-                    <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
-                        <select
-                            className="outline-none cursor-pointer w-full"
-                            onChange={showByActivity}
-                        >
-                            <option className="bg-white/20 text-black" value="">
-                                Semua
-                            </option>
-                            {dataActivity.map((action) => (
-                                <option
-                                    className="bg-white/20 text-black"
-                                    value={action}
-                                    key={action}
-                                >
-                                    {action}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                ) : null}
-
 
                 {hiddenSearchData ? (
                     <div className={`flex ${(hiddenFilterCategory || hiddenFilterRole || hiddenFilterActivity) ? "col-span-2" : ""} max-md:col-span-2`}>
@@ -139,8 +59,96 @@ export default function FilterAndSearchData({
 
                     </div>
                 ) : null}
-
             </div>
-        </form>
+
+            <form className={`space-y-6 ${showFilterData ? "" : "hidden"}`}>
+
+                <div className="grid grid-cols-2 gap-4">
+
+                    <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
+                        <select className="outline-none cursor-pointer w-full" onChange={sort}>
+                            <option className="bg-white/20 text-black" value="">
+                                Urutkan
+                            </option>
+                            <option className="bg-white/20 text-black" value="newest">
+                                Terbaru
+                            </option>
+                            <option className="bg-white/20 text-black" value="oldest">
+                                Terlama
+                            </option>
+                        </select>
+                    </div>
+
+                    {hiddenFilterCategory ? (
+                        <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
+                            <select
+                                className="outline-none cursor-pointer w-full"
+                                onChange={showByCategory}
+                            >
+                                <option className="bg-white/20 text-black" value="">
+                                    Semua
+                                </option>
+                                {categories.map((cat) => (
+                                    <option
+                                        className="bg-white/20 text-black"
+                                        value={cat.name}
+                                        key={cat.id}
+                                    >
+                                        {cat.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : null}
+
+
+                    {hiddenFilterRole ? (
+                        <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
+                            <select
+                                className="outline-none cursor-pointer w-full"
+                                onChange={showByRole}
+                            >
+                                <option className="bg-white/20 text-black" value="">
+                                    Semua
+                                </option>
+                                {userRole.map((role, index) => (
+                                    <option
+                                        className="bg-white/20 text-black"
+                                        value={role}
+                                        key={index}
+                                    >
+                                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : null}
+
+
+                    {hiddenFilterActivity ? (
+                        <div className="flex items-center bg-white/15 backdrop-blur-2xl p-2 gap-2 rounded-2xl max-md:col-span-2">
+                            <select
+                                className="outline-none cursor-pointer w-full"
+                                onChange={showByActivity}
+                            >
+                                <option className="bg-white/20 text-black" value="">
+                                    Semua
+                                </option>
+                                {dataActivity.map((action) => (
+                                    <option
+                                        className="bg-white/20 text-black"
+                                        value={action}
+                                        key={action}
+                                    >
+                                        {action}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : null}
+
+                </div>
+            </form>
+        </div>
     );
 }
