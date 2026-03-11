@@ -1,14 +1,16 @@
 "use client";
 
-import FilterAndSearchData from "@/components/FilterAndSearchData";
-import Pagination from "@/components/Pagination";
+import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import Pagination from "@/components/PaginationComponent";
 import { useUserManagement } from "@/hooks/admin/useUserManagement";
 import { ShieldCheck, Users, ShieldAlert, AlertCircle } from "lucide-react";
 
 export default function UserManagementPage() {
 
-    const { users, isLoading, isUpdating, error, updateRole, handleShowForm, totalItems, totalPages, page, updateFilters, handleSearch } =
+    const { users, isLoading, isUpdating, error, updateRole, handleShowForm, totalItems, totalPages, page, updateFilters, handleSearch, limit } =
         useUserManagement();
+
+    const userRole = ["Admin", "Petugas", "Peminjam"]
 
     // Role Badge
     const RoleBadge = ({ role }) => {
@@ -27,6 +29,8 @@ export default function UserManagementPage() {
             },
         };
         const current = config[role] || config.peminjam;
+
+
 
         return (
             <span
@@ -69,14 +73,21 @@ export default function UserManagementPage() {
                         sort={(e) => updateFilters('sort', e.target.value)}
                         hiddenSearchData={!false}
                         placeHolderName="Cari nama user..."
-                        hiddenFilterRole={!false}
-                        showByRole={(e) => updateFilters('role', e.target.value)} />
+                        hiddenFilterData={!false}
+                        showBy={(e) => updateFilters('role', e.target.value)}
+                        label="Role"
+                    >
+                        {userRole.map((role, index) => (
+                            <option key={index} value={role} className="bg-white/20 text-black">{role}</option>
+                        ))}
+                    </FilterAndSearchData>
 
                     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr className="text-center">
+                                        <th className="px-6 py-4 text-center">No</th>
                                         <th className="px-6 py-4 text-left">Nama Lengkap</th>
                                         <th className="px-6 py-4">Username</th>
                                         <th className="px-6 py-4">Role</th>
@@ -87,7 +98,7 @@ export default function UserManagementPage() {
                                     {isLoading ? (
                                         <tr>
                                             <td
-                                                colSpan="4"
+                                                colSpan="5"
                                                 className="px-6 py-10 text-center text-slate-500 animate-pulse"
                                             >
                                                 Sedang mengambil data users...
@@ -96,41 +107,50 @@ export default function UserManagementPage() {
                                     ) : users.length === 0 ? (
                                         <tr>
                                             <td
-                                                colSpan="4"
+                                                colSpan="5"
                                                 className="px-6 py-10 text-center text-slate-500"
                                             >
-                                                Tidak terdeteksi adanya entitas pengguna di dalam sistem.
+                                                Belum ada pengguna pada sistem ini.
                                             </td>
                                         </tr>
                                     ) : (
-                                        users.map((user) => (
-                                            <tr
-                                                key={user.id}
-                                                className="hover:bg-slate-50/80 transition-colors text-center"
-                                            >
-                                                <td className="px-6 py-4 truncate max-w-xs text-left">
-                                                    {user.fullName}
-                                                </td>
-                                                <td className="px-6 py-4 text-slate-500">
-                                                    @{user.username}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <RoleBadge role={user.role} />
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <select
-                                                        value={user.role}
-                                                        onChange={(e) => updateRole(user.id, e.target.value)}
-                                                        disabled={isUpdating}
-                                                        className="p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm bg-slate-50 disabled:opacity-50 cursor-pointer"
-                                                    >
-                                                        <option value="peminjam">Peminjam</option>
-                                                        <option value="petugas">Petugas</option>
-                                                        <option value="admin">Admin</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
-                                        ))
+                                        users.map((user, index) => {
+                                            const no = index + 1 + (page - 1) * limit
+
+
+                                            return (
+                                                <tr
+                                                    key={user.id}
+                                                    className="hover:bg-slate-50/80 transition-colors text-center"
+                                                >
+                                                    <td className="px-6 py-4 text-center">
+                                                        {no}
+                                                    </td>
+                                                    <td className="px-6 py-4 truncate max-w-xs text-left">
+                                                        {user.fullName}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-slate-500">
+                                                        @{user.username}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <RoleBadge role={user.role} />
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <select
+                                                            value={user.role}
+                                                            onChange={(e) => updateRole(user.id, e.target.value)}
+                                                            disabled={isUpdating}
+                                                            className="p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm bg-slate-50 disabled:opacity-50 cursor-pointer"
+                                                        >
+                                                            {userRole.map((role, index) => (
+                                                                <option key={index} value={role.toLowerCase()}>{role}</option>
+                                                            ))}
+
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
                                     )}
                                 </tbody>
                             </table>
