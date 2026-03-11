@@ -3,15 +3,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loanRequestSchema } from "@/schemas/loanSchema";
 import api from "@/lib/api";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
 export const useBorrower = () => {
-    const [catalog, setCatalog] = useState([]);
-    const [myLoans, setMyLoans] = useState([]);
-
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState("");
-    const [selectedTool, setSelectedTool] = useState(null);
 
     const {
         register,
@@ -23,8 +17,24 @@ export const useBorrower = () => {
         resolver: zodResolver(loanRequestSchema),
     });
 
+    const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData("20")
+
+    const [catalog, setCatalog] = useState([]);
+    const [myLoans, setMyLoans] = useState([]);
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [success, setSuccess] = useState("")
+    const [error, setError] = useState("");
+    const [selectedTool, setSelectedTool] = useState(null);
+
+    const [totalItems, setTotalItems] = useState(0)
+    const [totalPages, setTotalPages] = useState(1)
+
     const [today, setToday] = useState("");
     const [maxDay, setMaxDay] = useState("");
+
+    const [showForm, setShowForm] = useState(false)
 
     useEffect(() => {
         const now = new Date();
@@ -40,19 +50,21 @@ export const useBorrower = () => {
         setIsLoading(true);
         try {
             const [toolsRes, loansRes] = await Promise.all([
-                api.get("/tools"),
+                api.get("/tools", { params: { search, sort, page, limit } }),
                 api.get("/loans/my-loans"),
             ]);
 
             setCatalog(toolsRes.data.data);
             setMyLoans(loansRes.data.data);
+            setTotalItems(toolsRes.data.totalItems || 0)
+            setTotalPages(toolsRes.data.totalPages || 1)
             setError("");
         } catch (err) {
             setError("Gagal mengambil data katalog atau riwayat. Coba lagi ya.");
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [search, sort, page, limit]);
 
     useEffect(() => {
         fetchData();
@@ -68,13 +80,16 @@ export const useBorrower = () => {
 
             closeRequestForm();
             await fetchData();
-            alert(
-                "Permintaan peminjaman berhasil dikirim. Silakan cek statusnya di menu Riwayat ya.",
-            );
+            setSuccess("Permintaan peminjaman berhasil dikirim. Silakan cek statusnya di menu Riwayat ya.")
         } catch (err) {
-            setError(
-                "Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.",
-            );
+            closeRequestForm();
+            if (err.response?.data?.message) {
+                setError("Kamu sudah meminjam barang ini. Silakan kembalikan dulu!")
+            } else {
+                setError(
+                    "Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.",
+                );
+            }
             console.log(err.response?.data?.message)
         } finally {
             setIsSubmitting(false);
@@ -86,6 +101,7 @@ export const useBorrower = () => {
         setSelectedTool(tool);
         setValue("toolId", tool.id);
         setValue("expectedReturnDate", "");
+        setShowForm(!showForm)
         setError("");
     };
 
@@ -93,6 +109,7 @@ export const useBorrower = () => {
     const closeRequestForm = () => {
         setSelectedTool(null);
         reset();
+        setShowForm(!showForm)
         setError("");
     };
 
@@ -110,5 +127,13 @@ export const useBorrower = () => {
         closeRequestForm,
         today,
         maxDay,
+        success,
+        page,
+        limit,
+        totalItems,
+        totalPages,
+        showForm,
+        updateFilters,
+        handleSearch
     };
 };
