@@ -4,7 +4,7 @@ import { ActivityLog, User } from "../models/index.js";
 export default {
     async getLogs(req, res) {
         try {
-            let { sort, showByActivity, page, limit } = req.query;
+            let { sort, activity, page, limit } = req.query;
 
             const queryOptions = {
                 where: {}
@@ -16,9 +16,9 @@ export default {
                 queryOptions.order = [["createdAt", "DESC"]]
             }
 
-            if (showByActivity) {
+            if (activity) {
                 queryOptions.where.action = {
-                    [Op.like]: `%${showByActivity}%`
+                    [Op.like]: `%${activity}%`
                 }
             }
 
