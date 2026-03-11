@@ -4,7 +4,23 @@ import { recordActivity } from "../utils/logger.js";
 export default {
     async getAllLoans(req, res) {
         try {
-            const loan = await Loan.findAll({
+
+            let { sort, page, limit } = req.query
+            let queryOptions = {
+                where: {},
+                order: [["createdAt", sort === "oldest" ? "ASC" : "DESC"]]
+            }
+
+            if (page && limit) {
+                page = parseInt(page)
+                limit = parseInt(limit)
+
+                queryOptions.limit = limit
+                queryOptions.offset = (page - 1) * limit
+            }
+
+            const { count, rows } = await Loan.findAndCountAll({
+                ...queryOptions,
                 include: [
                     {
                         model: Tool,
@@ -21,12 +37,14 @@ export default {
                         attributes: ["fullName"],
                     },
                 ],
-                order: [["createdAt", "DESC"]],
             });
 
             res.status(200).json({
                 message: "All loans retrieved successfully",
-                data: loan,
+                totalItems: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                data: rows,
             });
         } catch (error) {
             res.status(500).json({
@@ -78,11 +96,25 @@ export default {
                 });
             }
 
+            const pendingLoan = await Loan.findOne({
+                where: {
+                    borrowerId,
+                    toolId,
+                    status: ["pending"],
+                },
+            });
+
+            if (pendingLoan) {
+                return res.status(409).json({
+                    message: "You have submitted a request to borrow this equipment. Please wait for approval from the officer."
+                })
+            }
+
             const activeLoan = await Loan.findOne({
                 where: {
                     borrowerId,
                     toolId,
-                    status: ["pending", "approved"],
+                    status: ["approved"],
                 },
             });
 
@@ -114,6 +146,7 @@ export default {
                 message: "Error creating loan request",
                 error: error.message,
             });
+            console.log(error)
         }
     },
 
