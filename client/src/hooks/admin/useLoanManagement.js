@@ -1,30 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
 export const useLoanManagement = () => {
+    const { sort, page, limit, updateFilters } = useFilterAndSearchData()
+
     const [loans, setLoans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState("");
 
+    const [totalItems, setTotalItems] = useState(0)
+    const [totalPages, setTtotalPages] = useState(1)
+
     // Fetch Data From Server
-    const fetchLoans = async () => {
+    const fetchLoans = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get("/loans");
+            const response = await api.get("/loans", { params: { sort, page, limit } });
+
             setLoans(response.data.data);
+            setTotalItems(response.data.totalItems || 0)
+            setTtotalPages(response.data.totalPages || 1)
             setError("");
         } catch (err) {
-            setError("Data riwayat peminjaman gagal dimuat! Coba lagi ya.");
+            setError("Data riwayat peminjaman gagal dimuat! Coba lagi ya.", err);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [sort, page, limit]);
 
     useEffect(() => {
         fetchLoans();
-    }, []);
+    }, [fetchLoans]);
 
     // Handle Approve Loan Form
     const approveLoan = async (loanId) => {
@@ -91,5 +100,9 @@ export const useLoanManagement = () => {
         approveLoan,
         rejectLoan,
         returnLoan,
+        page,
+        totalPages,
+        totalItems,
+        limit
     };
 };
