@@ -1,7 +1,7 @@
 "use client";
 
-import FilterAndSearchData from "@/components/FilterAndSearchData";
-import Pagination from "@/components/Pagination";
+import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import Pagination from "@/components/PaginationComponent";
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
 import { ActivitySquare, AlertCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -11,7 +11,7 @@ export default function ActivityLogPage() {
 
     const page = Number(searchParams.get("page")) || 1;
 
-    const { logs, isLoading, error, totalPages, totalItems, setSort, setShowByActivity } = useActivityLog(page, 10);
+    const { logs, isLoading, error, totalPages, totalItems, setSort, setShowByActivity, dataActivity } = useActivityLog(page, 10);
 
     const formatDateTime = (dateString) => {
         return new Date(dateString).toLocaleString("id-ID", {
@@ -47,6 +47,7 @@ export default function ActivityLogPage() {
                 )}
 
                 <FilterAndSearchData
+                    dataActivity={dataActivity}
                     sort={(e) => setSort(e.target.value)}
                     showByActivity={(e) => setShowByActivity(e.target.value)}
                     hiddenFilterActivity={!false} />
