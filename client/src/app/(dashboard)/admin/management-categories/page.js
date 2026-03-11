@@ -1,8 +1,8 @@
 "use client";
 
-import FilterAndSearchData from "@/components/FilterAndSearchData";
-import Modal from "@/components/Modal";
-import Pagination from "@/components/Pagination";
+import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import Modal from "@/components/ModalComponent";
+import Pagination from "@/components/PaginationComponent";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
 import { Edit, Trash2, Plus, X, Tags, Edit2 } from "lucide-react";
 
