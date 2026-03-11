@@ -1,7 +1,8 @@
 "use client";
 
-import FilterAndSearchData from "@/components/FilterAndSearchData";
-import Pagination from "@/components/Pagination";
+import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import Pagination from "@/components/PaginationComponent";
+import StatusBadge from "@/components/StatusBadge";
 import { useLoanManagement } from "@/hooks/admin/useLoanManagement";
 import { ClipboardList, CheckCircle, Undo2, AlertCircle, XCircle } from "lucide-react";
 
@@ -18,7 +19,8 @@ export default function LoanManagementPage() {
         returnLoan,
         page,
         totalPages,
-        totalItems
+        totalItems,
+        limit
     } = useLoanManagement();
 
     // Format Date
@@ -29,40 +31,6 @@ export default function LoanManagementPage() {
             month: "long",
             year: "numeric",
         });
-    };
-
-    // Status Badge
-    const StatusBadge = ({ status }) => {
-        const config = {
-            pending: {
-                color: "bg-amber-100 text-amber-700 border-amber-200",
-                label: "Menunggu Persetujuan",
-            },
-            approved: {
-                color: "bg-blue-100 text-blue-700 border-blue-200",
-                label: "Sedang dipinjam",
-            },
-            returned: {
-                color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-                label: "Telah dikembalikan",
-            },
-            rejected: {
-                color: "bg-red-100 text-red-700 border-red-200",
-                label: "Pengajuan ditolak",
-            },
-        };
-        const current = config[status] || {
-            color: "bg-slate-100 text-slate-700",
-            label: "Status tidak diketahui",
-        };
-
-        return (
-            <span
-                className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${current.color}`}
-            >
-                {current.label}
-            </span>
-        );
     };
 
     return (
@@ -85,7 +53,10 @@ export default function LoanManagementPage() {
                     </div>
                 )}
 
-                <FilterAndSearchData />
+                <FilterAndSearchData
+                    hiddenSearchData={!false}
+                    placeHolderName="Cari nama peminjam..."
+                />
 
                 {/* Main Content */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -95,6 +66,7 @@ export default function LoanManagementPage() {
                         <table className="w-full text-left text-sm text-slate-600">
                             <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                 <tr>
+                                    <th className="px-6 py-4 border border-slate-200 text-center">No</th>
                                     <th className="px-6 py-4 border border-slate-200">Peminjam</th>
                                     <th className="px-6 py-4 border border-slate-200">Spesifikasi Alat</th>
                                     <th className="px-6 py-4 border border-slate-200 text-center">Tanggal Pengajuan</th>
@@ -107,86 +79,90 @@ export default function LoanManagementPage() {
                                 {isLoading ? (
                                     <tr>
                                         <td
-                                            colSpan="6"
+                                            colSpan="7"
                                             className="px-6 py-10 text-center text-slate-500 animate-pulse"
                                         >
-                                            Sedang mengambil data peminjaman alat...
+                                            Sedang mengambil data riwayat peminjaman alat...
                                         </td>
                                     </tr>
                                 ) : loans.length === 0 ? (
                                     <tr>
                                         <td
-                                            colSpan="6"
+                                            colSpan="7"
                                             className="px-6 py-10 text-center text-slate-500"
                                         >
                                             Belum ada riwayat peminjaman alat.
                                         </td>
                                     </tr>
                                 ) : (
-                                    loans.map((loan) => (
-                                        <tr
-                                            key={loan.id}
-                                            className="hover:bg-slate-50/80 transition-colors"
-                                        >
-                                            <td className="px-6 py-4">
-                                                <div className="font-medium text-slate-800 min-w-40">
-                                                    {loan.borrower?.fullName || "Identitas tidak dikenal"}
-                                                </div>
-                                                <div className="text-xs text-slate-400">
-                                                    {loan.borrower?.username}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 font-medium text-slate-800 truncate max-w-sm">
-                                                {loan.Tool?.name || "Nama alat tidak ada."}
-                                            </td>
-                                            <td className="px-6 py-4 text-center min-w-60">{formatDate(loan.borrowDate)}</td>
-                                            <td className="px-6 py-4 text-center min-w-60">
-                                                {formatDate(loan.expectedReturnDate)}
-                                            </td>
-                                            <td className="px-6 py-4 text-center min-w-50">
-                                                <StatusBadge status={loan.status} />
-                                            </td>
-                                            <td className="px-6 py-4 text-center space-x-2 min-w-30">
-                                                {loan.status === "pending" && (
-                                                    <div className="flex items-center justify-center gap-2">
-                                                        <button
-                                                            onClick={() => approveLoan(loan.id)}
-                                                            disabled={isProcessing}
-                                                            className="text-emerald-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
-                                                            title="Setujui"
-                                                        >
-                                                            <CheckCircle size={14} />
-                                                        </button>
-
-                                                        <button
-                                                            onClick={() => rejectLoan(loan.id)}
-                                                            disabled={isProcessing}
-                                                            className="text-red-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
-                                                            title="Tolak"
-                                                        >
-                                                            <XCircle size={14} />
-                                                        </button>
+                                    loans.map((loan, index) => {
+                                        const no = index + 1 + (page - 1) * limit
+                                        return (
+                                            <tr
+                                                key={loan.id}
+                                                className="hover:bg-slate-50/80 transition-colors"
+                                            >
+                                                <td className="text-center">{no}</td>
+                                                <td className="px-6 py-4">
+                                                    <div className="font-medium text-slate-800 min-w-40">
+                                                        {loan.borrower?.fullName || "Identitas tidak dikenal"}
                                                     </div>
-                                                )}
+                                                    <div className="text-xs text-slate-400">
+                                                        {loan.borrower?.username}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 font-medium text-slate-800 truncate max-w-sm">
+                                                    {loan.Tool?.name || "Nama alat tidak ada."}
+                                                </td>
+                                                <td className="px-6 py-4 text-center min-w-60">{formatDate(loan.borrowDate)}</td>
+                                                <td className="px-6 py-4 text-center min-w-60">
+                                                    {formatDate(loan.expectedReturnDate)}
+                                                </td>
+                                                <td className="px-6 py-4 text-center min-w-50">
+                                                    <StatusBadge status={loan.status} />
+                                                </td>
+                                                <td className="px-6 py-4 text-center space-x-2 min-w-30">
+                                                    {loan.status === "pending" && (
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <button
+                                                                onClick={() => approveLoan(loan.id)}
+                                                                disabled={isProcessing}
+                                                                className="text-emerald-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
+                                                                title="Setujui"
+                                                            >
+                                                                <CheckCircle size={14} />
+                                                            </button>
 
-                                                {loan.status === "approved" && (
-                                                    <button
-                                                        onClick={() => returnLoan(loan.id)}
-                                                        disabled={isProcessing}
-                                                        className="text-yellow-600 transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
-                                                    >
-                                                        <Undo2 size={14} />
-                                                    </button>
-                                                )}
+                                                            <button
+                                                                onClick={() => rejectLoan(loan.id)}
+                                                                disabled={isProcessing}
+                                                                className="text-red-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
+                                                                title="Tolak"
+                                                            >
+                                                                <XCircle size={14} />
+                                                            </button>
+                                                        </div>
+                                                    )}
 
-                                                {(loan.status === "returned" || loan.status === "rejected") && (
-                                                    <span className="text-xs font-semibold text-slate-400 italic">
-                                                        Selesai
-                                                    </span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
+                                                    {loan.status === "approved" && (
+                                                        <button
+                                                            onClick={() => returnLoan(loan.id)}
+                                                            disabled={isProcessing}
+                                                            className="text-yellow-600 transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
+                                                        >
+                                                            <Undo2 size={14} />
+                                                        </button>
+                                                    )}
+
+                                                    {(loan.status === "returned" || loan.status === "rejected") && (
+                                                        <span className="text-xs font-semibold text-slate-400 italic">
+                                                            Selesai
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -195,7 +171,7 @@ export default function LoanManagementPage() {
                 </div>
             </div>
 
-            <Pagination page={page} totalData={totalItems} totalPages={totalPages}/>
+            <Pagination page={page} totalData={totalItems} totalPages={totalPages} />
         </div>
     );
 }
