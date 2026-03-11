@@ -1,8 +1,8 @@
 "use client";
 
-import FilterAndSearchData from "@/components/FilterAndSearchData";
-import Modal from "@/components/Modal";
-import Pagination from "@/components/Pagination";
+import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import Modal from "@/components/ModalComponent";
+import Pagination from "@/components/PaginationComponent";
 import { useTool } from "@/hooks/admin/useToolManagement";
 import {
     Edit,
@@ -12,6 +12,7 @@ import {
     PackageSearch,
     Layers,
     Edit2,
+    PackageCheck,
 } from "lucide-react";
 
 export default function ToolManagementPage() {
@@ -39,7 +40,8 @@ export default function ToolManagementPage() {
         handleFileChange,
         previewUrl,
         selectedFile,
-        condition
+        condition,
+        limit
     } = useTool();
 
     return (
@@ -67,15 +69,21 @@ export default function ToolManagementPage() {
 
                     {/* Filter and Search Category */}
                     <FilterAndSearchData
+
                         search={(e) => handleSearch(e.target.value)}
                         sort={(e) => updateFilters('sort', e.target.value)}
                         isShowForm={handleShowForm}
-                        showByCategory={(e) => updateFilters('category', e.target.value)}
+                        showBy={(e) => updateFilters('category', e.target.value)}
                         placeHolderName="Cari nama alat..."
-                        hiddenFilterCategory={!false}
+                        label="Kategori"
+                        hiddenFilterData={!false}
                         hiddenSearchData={!false}
                         hiddenButtonAddData={!false}
-                    />
+                    >
+                        {categories.map((cat) => (
+                            <option key={cat.id} className="bg-white/20 text-black">{cat.name}</option>
+                        ))}
+                    </FilterAndSearchData>
 
                     {/* Form */}
                     <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center z-50' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
@@ -134,7 +142,7 @@ export default function ToolManagementPage() {
                                         Kondisi
                                     </label>
                                     <div className="relative">
-                                        <Layers
+                                        <PackageCheck
                                             className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
                                             size={16}
                                         />
@@ -155,7 +163,7 @@ export default function ToolManagementPage() {
                                     </div>
                                     {error.categoryId && (
                                         <span className="text-red-500 text-xs mt-1 block">
-                                            {errors.categoryId.message}
+                                            {error.categoryId.message}
                                         </span>
                                     )}
                                 </div>
@@ -287,11 +295,11 @@ export default function ToolManagementPage() {
                             <table className="w-full text-left text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr>
-                                        <th className="px-6 py-4 border border-slate-200">No</th>
+                                        <th className="px-6 py-4 border border-slate-200 text-center">No</th>
                                         <th className="px-6 py-4 border border-slate-200">Nama Alat</th>
                                         <th className="px-6 py-4 border border-slate-200">Deskripsi</th>
                                         <th className="px-6 py-4 border border-slate-200">Kategori</th>
-                                        <th className="px-6 py-4 border border-slate-200">Kondisi</th>
+                                        <th className="px-6 py-4 border border-slate-200 text-center">Kondisi</th>
                                         <th className="px-6 py-4 border border-slate-200 text-center">Stok</th>
                                         <th className="px-6 py-4 border border-slate-200 text-center">Aksi</th>
                                     </tr>
@@ -300,7 +308,7 @@ export default function ToolManagementPage() {
                                     {tools.length === 0 ? (
                                         <tr>
                                             <td
-                                                colSpan="6"
+                                                colSpan="7"
                                                 className="px-6 py-8 text-center text-slate-500"
                                             >
                                                 Belum ada alat yang terdaftar.
@@ -308,13 +316,13 @@ export default function ToolManagementPage() {
                                         </tr>
                                     ) : (
                                         tools.map((tool, index) => {
-                                            const no = index + 1 + (page - 1) * totalItems
+                                            const no = index + 1 + (page - 1) * limit
                                             return (
                                                 <tr
                                                     key={tool.id}
                                                     className="hover:bg-slate-50/80 transition-colors"
                                                 >
-                                                    <td className="px-6 py-4 truncate max-w-3xs">
+                                                    <td className="px-6 py-4 text-center">
                                                         {no}
                                                     </td>
                                                     <td className="px-6 py-4 truncate max-w-3xs">
@@ -328,7 +336,7 @@ export default function ToolManagementPage() {
                                                     <td className="px-6 py-4 truncate">
                                                         {tool.Category?.name || "-"}
                                                     </td>
-                                                    <td className="px-6 py-4 truncate">
+                                                    <td className="px-6 py-4 text-center">
                                                         {tool.condition}
                                                     </td>
                                                     <td className="px-6 py-4 text-center">{tool.stock}</td>
