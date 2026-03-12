@@ -10,7 +10,7 @@ export default {
                 where: {}
             }
 
-            if (sort === "oldest") {
+            if (sort === "ASC") {
                 queryOptions.order = [["createdAt", "ASC"]]
             } else {
                 queryOptions.order = [["createdAt", "DESC"]]
