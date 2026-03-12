@@ -1,5 +1,6 @@
 "use client";
 
+import StatusBadge from "@/components/StatusBadge";
 import { useBorrower } from "@/hooks/borrower/useBorrower";
 import { History, AlertCircle } from "lucide-react";
 
@@ -16,40 +17,6 @@ export default function RiwayatPeminjamanPage() {
             month: "long",
             year: "numeric",
         });
-    };
-
-    // Status Badge
-    const StatusBadge = ({ status }) => {
-        const config = {
-            pending: {
-                color: "bg-amber-100 text-amber-700 border-amber-200",
-                label: "Pending",
-            },
-            approved: {
-                color: "bg-blue-100 text-blue-700 border-blue-200",
-                label: "Borrowed",
-            },
-            returned: {
-                color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-                label: "Returned",
-            },
-            rejected: {
-                color: "bg-red-100 text-red-700 border-red-200",
-                label: "Rejected",
-            },
-        };
-        const current = config[status] || {
-            color: "bg-slate-100 text-slate-700",
-            label: "Anomali Status",
-        };
-
-        return (
-            <span
-                className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${current.color}`}
-            >
-                {current.label}
-            </span>
-        );
     };
 
     return (
