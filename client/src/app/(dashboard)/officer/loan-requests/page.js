@@ -1,12 +1,13 @@
 "use client";
 
+import StatusBadge from "@/components/StatusBadge";
 import { useLoanManagement } from "@/hooks/admin/useLoanManagement";
-import { ClipboardCheck, CheckCircle, Undo2, AlertCircle } from "lucide-react";
+import { ClipboardCheck, CheckCircle, Undo2, AlertCircle, XCircle } from "lucide-react";
 
 export default function PetugasValidasiPage() {
 
     // Loan Management Data
-    const { loans, isLoading, isProcessing, error, approveLoan, returnLoan } =
+    const { loans, isLoading, isProcessing, error, approveLoan, returnLoan, rejectLoan } =
         useLoanManagement();
 
     // Format Date
@@ -17,40 +18,6 @@ export default function PetugasValidasiPage() {
             month: "short",
             year: "numeric",
         });
-    };
-
-    // Status Badge
-    const StatusBadge = ({ status }) => {
-        const config = {
-            pending: {
-                color: "bg-amber-100 text-amber-700 border-amber-200",
-                label: "Pending",
-            },
-            approved: {
-                color: "bg-blue-100 text-blue-700 border-blue-200",
-                label: "Borrowed",
-            },
-            returned: {
-                color: "bg-emerald-100 text-emerald-700 border-emerald-200",
-                label: "Returned",
-            },
-            rejected: {
-                color: "bg-red-100 text-red-700 border-red-200",
-                label: "Rejected",
-            },
-        };
-        const current = config[status] || {
-            color: "bg-slate-100 text-slate-700",
-            label: "Anomali",
-        };
-
-        return (
-            <span
-                className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${current.color}`}
-            >
-                {current.label}
-            </span>
-        );
     };
 
     return (
@@ -83,10 +50,10 @@ export default function PetugasValidasiPage() {
                             <tr>
                                 <th className="px-6 py-4">Peminjam</th>
                                 <th className="px-6 py-4">Alat</th>
-                                <th className="px-6 py-4">Tanggal Diajukan</th>
-                                <th className="px-6 py-4">Tenggat Pengembalian</th>
+                                <th className="px-6 py-4 text-center">Tanggal Diajukan</th>
+                                <th className="px-6 py-4 text-center">Tenggat Pengembalian</th>
                                 <th className="px-6 py-4 text-center">Status</th>
-                                <th className="px-6 py-4 text-right">Aksi</th>
+                                <th className="px-6 py-4 text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -96,7 +63,7 @@ export default function PetugasValidasiPage() {
                                         colSpan="6"
                                         className="px-6 py-10 text-center text-slate-500 animate-pulse"
                                     >
-                                        Sedang mengambil data...
+                                        Sedang mengambil data riwayat daftar peminjaman alat...
                                     </td>
                                 </tr>
                             ) : loans.length === 0 ? (
@@ -122,30 +89,42 @@ export default function PetugasValidasiPage() {
                                         <td className="px-6 py-4 font-medium text-slate-800">
                                             {loan.Tool?.name}
                                         </td>
-                                        <td className="px-6 py-4">{formatDate(loan.borrowDate)}</td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 text-center">{formatDate(loan.borrowDate)}</td>
+                                        <td className="px-6 py-4 text-center">
                                             {formatDate(loan.expectedReturnDate)}
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <StatusBadge status={loan.status} />
                                         </td>
-                                        <td className="px-6 py-4 text-right space-x-2">
+                                        <td className="px-6 py-4 text-center">
                                             {loan.status === "pending" && (
-                                                <button
-                                                    onClick={() => approveLoan(loan.id)}
-                                                    disabled={isProcessing}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-xs font-medium disabled:opacity-50"
-                                                >
-                                                    <CheckCircle size={14} /> Setujui
-                                                </button>
+                                                <div className="flex items-center justify-center gap-2">
+                                                    <button
+                                                        onClick={() => approveLoan(loan.id)}
+                                                        disabled={isProcessing}
+                                                        className="text-emerald-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
+                                                        title="Setujui"
+                                                    >
+                                                        <CheckCircle size={14} />
+                                                    </button>
+
+                                                    <button
+                                                        onClick={() => rejectLoan(loan.id)}
+                                                        disabled={isProcessing}
+                                                        className="text-red-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
+                                                        title="Tolak"
+                                                    >
+                                                        <XCircle size={14} />
+                                                    </button>
+                                                </div>
                                             )}
                                             {loan.status === "approved" && (
                                                 <button
                                                     onClick={() => returnLoan(loan.id)}
                                                     disabled={isProcessing}
-                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors text-xs font-medium disabled:opacity-50"
+                                                    className="text-yellow-600 transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
                                                 >
-                                                    <Undo2 size={14} /> Terima Pengembalian
+                                                    <Undo2 size={14} />
                                                 </button>
                                             )}
                                             {(loan.status === "returned" ||
