@@ -57,9 +57,9 @@ export const useUserManagement = () => {
             await fetchUsers();
         } catch (err) {
             setError(
-                err.response?.data?.message ||
-                "Terjadi anomali saat memodifikasi hak akses pengguna.",
+                "Terjadi kesalahan saat memodifikasi role pengguna.",
             );
+            console.error(err.response?.data?.message)
         } finally {
             setIsUpdating(false);
         }
@@ -73,6 +73,7 @@ export const useUserManagement = () => {
         updateRole,
         handleShowForm,
         page,
+        limit,
         totalItems,
         totalPages,
         updateFilters,
