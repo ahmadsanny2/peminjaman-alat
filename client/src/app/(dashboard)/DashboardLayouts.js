@@ -1,5 +1,6 @@
 "use client";
 
+import BreadcrumbComponent from "@/components/BreadcrumbComponen";
 import Sidebar from "@/components/layout/Sidebar";
 import { Menu } from "lucide-react";
 import { useState } from "react";
@@ -40,8 +41,11 @@ export default function DashboardLayout({ children }) {
                 </header>
 
                 {/* Main Content */}
-                <main className="flex-1 overflow-x-hidden bg-slate-900 p-6">
-                    <div className="mx-auto max-w-7xl h-full">{children}</div>
+                <main className="flex-1 overflow-x-hidden bg-slate-900 p-6 w-full">
+                    <div className="mx-auto container h-full">
+                        <BreadcrumbComponent />
+                        {children}
+                    </div>
                 </main>
 
             </div>
