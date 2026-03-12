@@ -20,7 +20,9 @@ export default function LoanManagementPage() {
         page,
         totalPages,
         totalItems,
-        limit
+        limit,
+        updateFilters,
+        handleSearch
     } = useLoanManagement();
 
     // Format Date
@@ -56,6 +58,8 @@ export default function LoanManagementPage() {
                 <FilterAndSearchData
                     hiddenSearchData={!false}
                     placeHolderName="Cari nama peminjam..."
+                    sort={(e) => updateFilters('sort', e.target.value)}
+                    search={(e) => handleSearch(e.target.value)}
                 />
 
                 {/* Main Content */}
