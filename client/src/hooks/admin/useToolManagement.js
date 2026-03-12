@@ -123,8 +123,10 @@ export function useTool() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.description || !formData.categoryId) {
-            return alert("Nama, deskripsi dan kategori wajib diisi");
+        if (!formData.name) {
+            return alert("Nama alat harus diisi!");
+        } else if (!formData.description) {
+            return alert("Deskripsi alat harus diisi!")
         }
 
         setIsSubmitting(true);
@@ -158,6 +160,8 @@ export function useTool() {
         } catch (err) {
             console.error(err);
             alert("Gagal menambahkan tool! Coba lagi ya.");
+            resetForm()
+            fetchTools()
         } finally {
             setIsSubmitting(false);
         }
