@@ -1,5 +1,6 @@
-import { Op } from "sequelize";
 import { ActivityLog, User } from "../models/index.js";
+
+import { Op } from "sequelize";
 
 export default {
     async getLogs(req, res) {
