@@ -1,9 +1,10 @@
 "use client";
 
+import { AlertCircle, ShieldAlert, ShieldCheck, Users } from "lucide-react";
+
 import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
 import Pagination from "@/components/PaginationComponent";
 import { useUserManagement } from "@/hooks/admin/useUserManagement";
-import { ShieldCheck, Users, ShieldAlert, AlertCircle } from "lucide-react";
 
 export default function UserManagementPage() {
 
