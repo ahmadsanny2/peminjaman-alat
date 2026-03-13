@@ -1,9 +1,10 @@
 "use client";
 
+import { ActivitySquare, AlertCircle } from "lucide-react";
+
 import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
 import Pagination from "@/components/PaginationComponent";
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
-import { ActivitySquare, AlertCircle } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 
 export default function ActivityLogPage() {
