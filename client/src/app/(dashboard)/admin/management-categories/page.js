@@ -1,10 +1,11 @@
 "use client";
 
+import { Edit, Edit2, Plus, Tags, Trash2, X } from "lucide-react";
+
 import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
 import Modal from "@/components/ModalComponent";
 import Pagination from "@/components/PaginationComponent";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
-import { Edit, Trash2, Plus, X, Tags, Edit2 } from "lucide-react";
 
 export default function CategoryManagementPage() {
     // Category Management Data
