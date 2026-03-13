@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
 export function useCategory() {
-    const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
-
+    const { search, sort, page, limit, updateFilters, handleSearch } =
+        useFilterAndSearchData();
 
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({ name: "", description: "" });
@@ -19,29 +20,30 @@ export function useCategory() {
     const [totalItems, setTotalItems] = useState(0);
 
     // Show Form
-    const [showForm, setShowForm] = useState(false)
+    const [showForm, setShowForm] = useState(false);
 
     // Fetch Data From Server
     const fetchCategories = useCallback(async () => {
         try {
-            const response = await api.get(`/categories`, { params: { search, sort, page, limit } });
+            const response = await api.get(`/categories`, {
+                params: { search, sort, page, limit },
+            });
 
             setCategories(response.data.data);
             setTotalPages(response.data.totalPages || 1);
             setTotalItems(response.data.totalItems || 0);
         } catch (err) {
-            console.error(err);
-            setError("Gagal memuat kategori");
+            setError(err.response?.data?.message);
         }
     }, [page, limit, sort, search]);
 
     useEffect(() => {
-        fetchCategories()
+        fetchCategories();
     }, [fetchCategories]);
 
     const handleShowForm = () => {
-        setShowForm(!showForm)
-    }
+        setShowForm(!showForm);
+    };
 
     // Handle Change Form
     const handleChange = (e) => {
@@ -54,7 +56,7 @@ export function useCategory() {
         setFormData({ name: "", description: "" });
         setIsEditing(false);
         setEditId(null);
-        setShowForm(false)
+        setShowForm(false);
     };
 
     // Handle Submit Form
@@ -71,8 +73,7 @@ export function useCategory() {
             resetForm();
             fetchCategories();
         } catch (err) {
-            console.error(err);
-            alert("Gagal menyimpan kategori! Coba lagi ya.");
+            alert(err.response?.data?.message);
         } finally {
             setIsSubmitting(false);
         }
@@ -83,7 +84,7 @@ export function useCategory() {
         setFormData({ name: category.name, description: category.description });
         setIsEditing(true);
         setEditId(category.id);
-        setShowForm(true)
+        setShowForm(true);
     };
 
     // Handle Delete Form
@@ -94,8 +95,7 @@ export function useCategory() {
             await api.delete(`/categories/${id}`);
             fetchCategories();
         } catch (err) {
-            console.error(err);
-            alert("Gagal menghapus kategori! Coba lagi ya.");
+            alert(err.response?.data?.message);
         }
     };
 
@@ -117,6 +117,6 @@ export function useCategory() {
         page,
         limit,
         updateFilters,
-        handleSearch
+        handleSearch,
     };
 }
