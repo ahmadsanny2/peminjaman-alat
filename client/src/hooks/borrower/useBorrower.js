@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+import api from "@/lib/api";
+import { loanRequestSchema } from "@/schemas/loanSchema";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loanRequestSchema } from "@/schemas/loanSchema";
-import api from "@/lib/api";
-import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
 export const useBorrower = () => {
-
     const {
         register,
         handleSubmit,
@@ -17,24 +17,25 @@ export const useBorrower = () => {
         resolver: zodResolver(loanRequestSchema),
     });
 
-    const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData("20")
+    const { search, sort, page, limit, updateFilters, handleSearch } =
+        useFilterAndSearchData("20");
 
     const [catalog, setCatalog] = useState([]);
     const [myLoans, setMyLoans] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [success, setSuccess] = useState("")
+    const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
     const [selectedTool, setSelectedTool] = useState(null);
 
-    const [totalItems, setTotalItems] = useState(0)
-    const [totalPages, setTotalPages] = useState(1)
+    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
 
     const [today, setToday] = useState("");
     const [maxDay, setMaxDay] = useState("");
 
-    const [showForm, setShowForm] = useState(false)
+    const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
         const now = new Date();
@@ -56,11 +57,11 @@ export const useBorrower = () => {
 
             setCatalog(toolsRes.data.data);
             setMyLoans(loansRes.data.data);
-            setTotalItems(toolsRes.data.totalItems || 0)
-            setTotalPages(toolsRes.data.totalPages || 1)
+            setTotalItems(toolsRes.data.totalItems || 0);
+            setTotalPages(toolsRes.data.totalPages || 1);
             setError("");
         } catch (err) {
-            setError("Gagal mengambil data katalog atau riwayat. Coba lagi ya.");
+            setError(err.response?.data?.message);
         } finally {
             setIsLoading(false);
         }
@@ -76,21 +77,14 @@ export const useBorrower = () => {
         setError("");
 
         try {
-            await api.post("/loans/request", data);
+            const response = await api.post("/loans/request", data);
 
             closeRequestForm();
             await fetchData();
-            setSuccess("Permintaan peminjaman berhasil dikirim. Silakan cek statusnya di menu Riwayat ya.")
+            setSuccess(response.data?.message)
         } catch (err) {
             closeRequestForm();
-            if (err.response?.data?.message) {
-                setError("Kamu sudah meminjam barang ini. Silakan kembalikan dulu!")
-            } else {
-                setError(
-                    "Terjadi kesalahan saat memproses permintaan peminjaman. Silakan coba lagi.",
-                );
-            }
-            console.log(err.response?.data?.message)
+            setError(err.response?.data?.message);
         } finally {
             setIsSubmitting(false);
         }
@@ -101,7 +95,7 @@ export const useBorrower = () => {
         setSelectedTool(tool);
         setValue("toolId", tool.id);
         setValue("expectedReturnDate", "");
-        setShowForm(!showForm)
+        setShowForm(!showForm);
         setError("");
     };
 
@@ -109,7 +103,7 @@ export const useBorrower = () => {
     const closeRequestForm = () => {
         setSelectedTool(null);
         reset();
-        setShowForm(!showForm)
+        setShowForm(!showForm);
         setError("");
     };
 
@@ -134,6 +128,6 @@ export const useBorrower = () => {
         totalPages,
         showForm,
         updateFilters,
-        handleSearch
+        handleSearch,
     };
 };
