@@ -1,6 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+
 import { useDebouncedCallback } from "use-debounce";
+import { useState } from "react";
 
 export function useFilterAndSearchData(defaultLimit = "10") {
     const router = useRouter()
@@ -8,7 +9,7 @@ export function useFilterAndSearchData(defaultLimit = "10") {
     const searchParams = useSearchParams()
 
     const search = searchParams.get('search') || ''
-    const sort = searchParams.get('sort') || 'newest'
+    const sort = searchParams.get('sort') || 'DESC'
     const page = searchParams.get('page') || '1'
     const limit = searchParams.get('limit') || defaultLimit
     const role = searchParams.get('role') || ''
