@@ -1,18 +1,19 @@
 "use client";
 
+import {
+    CheckCircle2,
+    Package,
+    PackageSearch,
+    X,
+} from "lucide-react";
+
 import AlertComponent from "@/components/AlertComponent";
 import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import Image from "next/image";
 import Modal from "@/components/ModalComponent";
 import Pagination from "@/components/PaginationComponent";
 import { useBorrower } from "@/hooks/borrower/useBorrower";
 import { useFilterAndSearchData } from "@/hooks/useFilterAndSearchData";
-import {
-    PackageSearch,
-    X,
-    CheckCircle2,
-    Package,
-} from "lucide-react";
-import Image from "next/image";
 
 export default function CatalogPage() {
 
