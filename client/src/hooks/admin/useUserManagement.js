@@ -1,9 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
 
 export const useUserManagement = () => {
-    const { search, sort, role, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+    const { search, sort, role, page, limit, updateFilters, handleSearch } =
+        useFilterAndSearchData();
 
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -12,22 +14,24 @@ export const useUserManagement = () => {
 
     const [showForm, setShowForm] = useState(false);
 
-    const [totalPages, setTotalPages] = useState(1)
-    const [totalItems, setTotalItems] = useState(0)
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     // Fetch Data From Server
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get(`/users`, { params: { search, sort, role, page, limit } });
+            const response = await api.get(`/users`, {
+                params: { search, sort, role, page, limit },
+            });
 
             setUsers(response.data.data);
-            setTotalPages(response.data.totalPages || 1)
-            setTotalItems(response.data.totalItems || 0)
+            setTotalPages(response.data.totalPages || 1);
+            setTotalItems(response.data.totalItems || 0);
 
             setError("");
-        } catch (error) {
-            setError("Gagal mengambil data pengguna dari server.");
+        } catch (err) {
+            setError(err.response?.data?.message);
         } finally {
             setIsLoading(false);
         }
@@ -56,10 +60,7 @@ export const useUserManagement = () => {
             await api.put(`/users/${userId}/role`, { role: newRole });
             await fetchUsers();
         } catch (err) {
-            setError(
-                "Terjadi kesalahan saat memodifikasi role pengguna.",
-            );
-            console.error(err.response?.data?.message)
+            setError(err.response?.data?.message);
         } finally {
             setIsUpdating(false);
         }
@@ -78,6 +79,6 @@ export const useUserManagement = () => {
         totalPages,
         updateFilters,
         handleSearch,
-        role
+        role,
     };
 };
