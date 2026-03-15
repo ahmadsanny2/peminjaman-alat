@@ -1,24 +1,30 @@
-import api from "@/lib/api";
 import { useCallback, useEffect, useState } from "react";
 
-export const useActivityLog = (page = 1, limit = 10) => {
+import api from "@/lib/api";
+import { useFilterAndSearchData } from "../useFilterAndSearchData";
+import { useFormatDateTime } from "../useFormatDateTime";
+
+export const useActivityLog = () => {
+    const { search, sort, activity, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+
+    const { formatDateTime } = useFormatDateTime()
+
     const [logs, setLogs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
 
-
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
-    const [sort, setSort] = useState("")
-    const [showByActivity, setShowByActivity] = useState("")
-    const [dataActivity, setDataActivity] = useState([])
+    const [dataActivity, setDataActivity] = useState([]);
 
     // Fetch Data From Server
     const fetchLog = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get(`/logs`, { params: { sort, activity: showByActivity, page, limit } });
+            const response = await api.get(`/logs`, {
+                params: { search, sort, activity, page, limit },
+            });
 
             const rawData = response.data.data;
 
@@ -33,15 +39,27 @@ export const useActivityLog = (page = 1, limit = 10) => {
             setTotalItems(response.data.totalItems);
             setError("");
         } catch (err) {
-            setError("Gagal mengambil data log aktivitas dari server.", err);
+            setError(err.response?.data?.message);
         } finally {
             setIsLoading(false);
         }
-    }, [sort, showByActivity, page, limit]);
+    }, [search, sort, activity, page, limit]);
 
     useEffect(() => {
         fetchLog();
     }, [fetchLog]);
 
-    return { logs, isLoading, error, totalItems, totalPages, setSort, setShowByActivity, dataActivity }
+    return {
+        page,
+        logs,
+        isLoading,
+        error,
+        totalItems,
+        totalPages,
+        dataActivity,
+        updateFilters,
+        handleSearch,
+        limit,
+        formatDateTime
+    };
 };
