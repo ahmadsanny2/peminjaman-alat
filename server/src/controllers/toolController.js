@@ -1,15 +1,17 @@
-import { Tool, Category } from "../models/index.js";
+import { Category, Tool } from "../models/index.js";
+
+import { Op } from "sequelize";
 import fs from "fs";
 import path from "path";
 import { recordActivity } from "../utils/logger.js";
-import { Op } from "sequelize";
 
 export default {
     async getAllTools(req, res) {
         try {
             let { page, limit, sort, search, category } = req.query;
             let queryOptions = {
-                where: {}
+                where: {},
+                order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]]
             }
 
             let categoryCondition = undefined
@@ -21,7 +23,6 @@ export default {
                 }
             }
 
-
             // Search Tools Name
             if (search) {
                 queryOptions.where = {
@@ -31,17 +32,10 @@ export default {
                 }
             }
 
-            // Sorting Data
-            if (sort === "oldest") {
-                queryOptions.order = [["createdAt", "ASC"]]
-            } else {
-                queryOptions.order = [["createdAt", "DESC"]]
-            }
-
             // Pagination
             if (page && limit) {
-                page = parseInt(page) || 1;
-                limit = parseInt(limit) || 1;
+                page = parseInt(page);
+                limit = parseInt(limit);
 
                 queryOptions.limit = limit;
                 queryOptions.offset = (page - 1) * limit;
@@ -59,10 +53,10 @@ export default {
             });
 
             res.status(200).json({
-                message: "Tools retrieved successfully",
+                message: "Got the tools list for you!",
                 totalItems: count,
-                totalPages: limit ? Math.ceil(count / limit) : 1,
-                currentPage: page ? page : 1,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
                 data: rows,
             });
         } catch (error) {
@@ -87,30 +81,30 @@ export default {
 
             if (!tool) {
                 return res.status(404).json({
-                    message: "Tool not found",
+                    message: "Oops, we couldn't find that specific tool.",
                 });
             }
 
             res.status(200).json({
-                message: "Tool retrieved successfully",
+                message: "Here are the details for the tool you requested.",
                 data: tool,
             });
         } catch (error) {
             res.status(500).json({
-                message: "Error retrieving tool",
+                message: "Something went wrong while fetching the tools.",
                 error: error.message,
             });
         }
     },
 
     async createTools(req, res) {
-        const { name, description, stock, image, categoryId } = req.body;
+        const { name, description, stock, condition, image, categoryId } = req.body;
 
         try {
             const categoryExists = await Category.findByPk(categoryId);
             if (!categoryExists) {
                 return res.status(404).json({
-                    message: "Category not found",
+                    message: "We couldn't find the category you picked. Make sure it exists!",
                 });
             }
 
@@ -120,7 +114,7 @@ export default {
 
             if (toolExist) {
                 return res.status(409).json({
-                    message: "Name tool must be unique",
+                    message: "That tool name is already taken. Try adding a unique name!",
                 });
             }
 
@@ -129,6 +123,7 @@ export default {
             const newTool = await Tool.create({
                 name,
                 description,
+                condition,
                 stock,
                 image: imagePath,
                 categoryId,
@@ -137,16 +132,16 @@ export default {
             await recordActivity(
                 req.user.id,
                 "ADD TOOL",
-                `${req.user.fullName} telah menambahkan alat baru. Nama alat: ${newTool.name}`,
+                `${req.user.fullName} added a new tool: ${newTool.name}`,
             );
 
             res.status(201).json({
-                message: "Tool created successfully",
+                message: "Nice! New tool has been added to the inventory.",
                 data: newTool,
             });
         } catch (error) {
             res.status(500).json({
-                message: "Error creating tool",
+                message: "Failed to create the tool. Please check your data again.",
                 error: error.message,
             });
         }
@@ -159,7 +154,7 @@ export default {
 
             if (!tool) {
                 return res.status(404).json({
-                    message: "Tool not found",
+                    message: "Can't update it because we couldn't find that tool.",
                 });
             }
 
@@ -167,7 +162,7 @@ export default {
                 const categoryExists = await Category.findByPk(req.body.categoryId);
                 if (!categoryExists) {
                     return res.status(404).json({
-                        message: "Category not found",
+                        message: "The category you're trying to switch to doesn't exist.",
                     });
                 }
             }
@@ -197,16 +192,16 @@ export default {
             await recordActivity(
                 req.user.id,
                 "UPDATE TOOL",
-                `${req.user.fullName} telah memperbarui alat. ID alat: ${tool.id}`,
+                `${req.user.fullName} updated tool ID: ${tool.id}`,
             );
 
             res.status(200).json({
-                message: "Tool updated successfully",
+                message: "Tool updated! Everything is up to date now.",
                 data: tool,
             });
         } catch (error) {
             res.status(500).json({
-                message: "Error updating tool",
+                message: "Error updating the tool. Give it another shot.",
                 error: error.message,
             });
         }
@@ -218,15 +213,24 @@ export default {
             const tool = await Tool.findByPk(id);
 
             if (!tool) {
-                return res.status(404).json({
-                    message: "Tool not found",
-                });
+                return res.status(404).json({ message: "Couldn't find the tool you're trying to delete." });
             }
 
+
             if (tool.image) {
-                const filePath = path.join("public", tool.image);
+                const cleanImagePath = tool.image.startsWith('/')
+                    ? tool.image.substring(1)
+                    : tool.image;
+
+                const filePath = path.resolve(process.cwd(), "public", cleanImagePath);
+
+                console.log("Mencoba menghapus file di:", filePath);
+
                 if (fs.existsSync(filePath)) {
                     fs.unlinkSync(filePath);
+                    console.log("File berhasil dihapus dari server");
+                } else {
+                    console.log("File tidak ditemukan di server, hanya hapus data DB");
                 }
             }
 
@@ -235,16 +239,15 @@ export default {
             await recordActivity(
                 req.user.id,
                 "DELETE TOOL",
-                `${req.user.fullName} telah menghapus alat. Nama alat: ${tool.name}`,
+                `${req.user.fullName} deleted the tool: ${tool.name}`,
             );
-            res.status(200).json({
-                message: "Tool deleted successfully",
-            });
+
+            res.status(200).json({ message: "The tool has been removed from the system." });
         } catch (error) {
             res.status(500).json({
-                message: "Error deleting tool",
+                message: "Something went wrong. The tool is still here.",
                 error: error.message,
             });
         }
-    },
+    }
 };
