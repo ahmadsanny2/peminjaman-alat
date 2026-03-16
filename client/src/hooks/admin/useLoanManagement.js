@@ -1,9 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
+import { useFormatDateTime } from "../useFormatDateTime";
 
 export const useLoanManagement = () => {
     const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+
+    const { formatDateTime } = useFormatDateTime()
 
     const [loans, setLoans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -25,8 +29,7 @@ export const useLoanManagement = () => {
             setTotalPages(response.data.totalPages || 1)
             setError("");
         } catch (err) {
-            setError("Data riwayat peminjaman gagal dimuat! Coba lagi ya.");
-            console.error(err?.response?.data?.message)
+            setError(err.response?.data?.message);
         } finally {
             setIsLoading(false);
         }
@@ -46,10 +49,7 @@ export const useLoanManagement = () => {
             await api.put(`/loans/${loanId}/approve`);
             await fetchLoans();
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                "Gagal menyetujui peminjaman! Coba lagi ya.",
-            );
+            setError(err.response?.data?.message);
         } finally {
             setIsProcessing(false);
         }
@@ -65,10 +65,7 @@ export const useLoanManagement = () => {
             await api.put(`loans/${loanId}/reject`);
             await fetchLoans();
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                "Gagal menolak peminjaman! Coba lagi ya.",
-            );
+            setError(err.response?.data?.message);
         } finally {
             setIsProcessing(false);
         }
@@ -84,10 +81,7 @@ export const useLoanManagement = () => {
             await api.put(`/loans/${loanId}/return`);
             await fetchLoans();
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                "Pengembalian belum berhasil diproses! Coba lagi ya.",
-            );
+            setError(err.response?.data?.message);
         } finally {
             setIsProcessing(false);
         }
@@ -106,6 +100,7 @@ export const useLoanManagement = () => {
         totalItems,
         limit,
         updateFilters,
-        handleSearch
+        handleSearch,
+        formatDateTime
     };
 };
