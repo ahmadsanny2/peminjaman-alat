@@ -1,12 +1,14 @@
-"use client";
+import { useCallback, useEffect, useState } from "react";
 
-import { useState, useEffect, useCallback } from "react";
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
+import { useShowForm } from "../useShowForm";
 
 export function useTool() {
+    const { search, sort, category, page, limit, updateFilters, handleSearch } =
+        useFilterAndSearchData();
 
-    const { search, sort, category, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+    const { handleShowForm, showForm, setShowForm } = useShowForm()
 
     const [tools, setTools] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -16,7 +18,7 @@ export function useTool() {
         condition: "",
         stock: "",
         categoryId: "",
-        image: null
+        image: null,
     });
 
     const [selectedFile, setSelectedFile] = useState(null);
@@ -30,38 +32,31 @@ export function useTool() {
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
 
-    // Show Form
-    const [showForm, setShowForm] = useState(false)
-
-    const condition = ["Bagus", "Rusak"]
+    const condition = ["Bagus", "Rusak"];
 
     // Fetch Data From Server
     const fetchTools = useCallback(async () => {
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
                 api.get(`/tools`, { params: { search, sort, category, page, limit } }),
-                api.get('/categories')
-            ])
+                api.get("/categories"),
+            ]);
 
-            const tools = toolsRes.data.data
-            const categories = categoriesRes.data.data
+            const tools = toolsRes.data.data;
+            const categories = categoriesRes.data.data;
 
-            setTotalPages(toolsRes.data.totalPages || 1)
-            setTotalItems(toolsRes.data.totalItems || 0)
-            setTools(tools)
-            setCategories(categories)
-        } catch (error) {
-            setError("Gagal mengambil data kategori atau alat di server.", error)
+            setTotalPages(toolsRes.data.totalPages || 1);
+            setTotalItems(toolsRes.data.totalItems || 0);
+            setTools(tools);
+            setCategories(categories);
+        } catch (err) {
+            setError(err.response?.data?.message);
         }
-    }, [page, limit, search, sort, category])
+    }, [page, limit, search, sort, category]);
 
     useEffect(() => {
-        fetchTools()
+        fetchTools();
     }, [fetchTools]);
-
-    const handleShowForm = () => {
-        setShowForm(!showForm)
-    }
 
     // Handle Change Form
     const handleChange = (e) => {
@@ -70,7 +65,7 @@ export function useTool() {
         if (name === "image") {
             setFormData((prev) => ({
                 ...prev,
-                image: files[0]
+                image: files[0],
             }));
         } else {
             setFormData((prev) => ({
@@ -78,24 +73,20 @@ export function useTool() {
                 [name]: name === "stock" ? Number(value) : value,
             }));
         }
-
     };
 
     const handleFileChange = (e) => {
-        // Perhatikan: e.target.files (hanya satu 'target')
         const file = e.target.files[0];
 
         if (file) {
             setSelectedFile(file);
 
-            // Membuat preview URL
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewUrl(reader.result);
             };
             reader.readAsDataURL(file);
 
-            // Teruskan ke fungsi handleChange bawaan Anda (jika ada)
             if (handleChange) {
                 handleChange(e);
             }
@@ -114,9 +105,9 @@ export function useTool() {
         });
         setIsEditing(false);
         setEditId(null);
-        setShowForm(false)
-        setSelectedFile(null)
-        setPreviewUrl(null)
+        setShowForm(false);
+        setSelectedFile("");
+        setPreviewUrl(null);
     };
 
     // Handle Submit Form
@@ -126,7 +117,7 @@ export function useTool() {
         if (!formData.name) {
             return alert("Nama alat harus diisi!");
         } else if (!formData.description) {
-            return alert("Deskripsi alat harus diisi!")
+            return alert("Deskripsi alat harus diisi!");
         }
 
         setIsSubmitting(true);
@@ -135,15 +126,15 @@ export function useTool() {
         const method = isEditing ? "put" : "post";
 
         try {
-            const data = new FormData()
+            const data = new FormData();
 
-            data.append("name", formData.name)
-            data.append("description", formData.description)
-            data.append("stock", formData.stock)
-            data.append("categoryId", formData.categoryId)
+            data.append("name", formData.name);
+            data.append("description", formData.description);
+            data.append("stock", formData.stock);
+            data.append("categoryId", formData.categoryId);
 
             if (formData.image) {
-                data.append("image", formData.image)
+                data.append("image", formData.image);
             }
 
             await api({
@@ -151,17 +142,16 @@ export function useTool() {
                 url,
                 data,
                 headers: {
-                    "Content-Type": "multipart/form-data"
-                }
+                    "Content-Type": "multipart/form-data",
+                },
             });
 
             resetForm();
             fetchTools();
         } catch (err) {
-            console.error(err);
-            alert("Gagal menambahkan tool! Coba lagi ya.");
-            resetForm()
-            fetchTools()
+            alert(err.response?.data?.message);
+            resetForm();
+            fetchTools();
         } finally {
             setIsSubmitting(false);
         }
@@ -172,13 +162,14 @@ export function useTool() {
         setFormData({
             name: tool.name,
             description: tool.description,
+            condition: tool.condition,
             stock: tool.stock,
             categoryId: tool.categoryId,
-            image: null
+            image: null,
         });
         setIsEditing(true);
         setEditId(tool.id);
-        setShowForm(true)
+        setShowForm(true);
     };
 
     // Handle Delete Form
@@ -189,8 +180,7 @@ export function useTool() {
             await api.delete(`/tools/${id}`);
             fetchTools();
         } catch (err) {
-            console.error(err);
-            alert("Gagal menghapus tool! Coba lagi ya.");
+            alert(err.response?.data?.message);
         }
     };
 
@@ -208,12 +198,16 @@ export function useTool() {
         resetForm,
         totalPages,
         totalItems,
-        category, page, limit, updateFilters, handleSearch,
+        category,
+        page,
+        limit,
+        updateFilters,
+        handleSearch,
         handleShowForm,
         showForm,
         handleFileChange,
         previewUrl,
         selectedFile,
-        condition
+        condition,
     };
 }
