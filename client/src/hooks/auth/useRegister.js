@@ -1,11 +1,14 @@
+import api from "@/lib/api";
 import { registerSchema } from "@/schemas/authSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import api from "@/lib/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useShowAndHidePassword } from "./useShowAndHidePassword";
 
 export const useRegister = () => {
+    const { showPassword, toggleVisibility } = useShowAndHidePassword();
+
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [serverError, setServerError] = useState("");
@@ -13,9 +16,11 @@ export const useRegister = () => {
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(registerSchema),
+        mode: "onChange",
     });
 
     const executeRegister = async (data) => {
@@ -32,12 +37,9 @@ export const useRegister = () => {
             };
 
             await api.post("/auth/register", payload);
-
             router.push("/login");
-        } catch (error) {
-            const errorMessage =
-                error.response?.data?.message ||
-                "Terjadi kesalahan saat proses pendaftaran. Coba lagi ya.";
+        } catch (err) {
+            const errorMessage = err.response?.data?.message;
             setServerError(errorMessage);
         } finally {
             setIsLoading(false);
@@ -47,8 +49,10 @@ export const useRegister = () => {
     return {
         register,
         errors,
+        watch,
         isLoading,
         serverError,
         onSubmit: handleSubmit(executeRegister),
+        showPassword, toggleVisibility
     };
 };
