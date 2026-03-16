@@ -1,22 +1,30 @@
 import { Loan, Tool, User, sequelize } from "../models/index.js";
+
+import { Op } from "sequelize";
 import { recordActivity } from "../utils/logger.js";
 
 export default {
     async getAllLoans(req, res) {
         try {
 
-            let { sort, page, limit } = req.query
+            let { search, sort, page, limit } = req.query
             let queryOptions = {
                 where: {},
-                order: [["createdAt", sort === "oldest" ? "ASC" : "DESC"]]
+                order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]]
+            }
+
+            if (search) {
+                queryOptions.where["$borrower.fullName$"] = {
+                    [Op.like]: `%${search}%`
+                }
             }
 
             if (page && limit) {
-                page = parseInt(page)
-                limit = parseInt(limit)
+                page = parseInt(page);
+                limit = parseInt(limit);
 
-                queryOptions.limit = limit
-                queryOptions.offset = (page - 1) * limit
+                queryOptions.limit = limit;
+                queryOptions.offset = (page - 1) * limit;
             }
 
             const { count, rows } = await Loan.findAndCountAll({
@@ -40,7 +48,7 @@ export default {
             });
 
             res.status(200).json({
-                message: "All loans retrieved successfully",
+                message: "Got all the loan records for you.",
                 totalItems: count,
                 totalPages: Math.ceil(count / limit),
                 currentPage: page,
@@ -48,15 +56,37 @@ export default {
             });
         } catch (error) {
             res.status(500).json({
-                message: "Error fetching loans",
+                message: "Couldn't fetch the loan data right now.",
                 error: error.message,
             });
         }
     },
 
     async getMyLoans(req, res) {
+        let { search, sort, page, limit } = req.query
+        let queryOptions = {
+            where: {},
+            order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]]
+        }
+
+        if (search) {
+            queryOptions.where["$borrower.fullName$"] = {
+                [Op.like]: `%${search}%`
+            }
+        }
+
+        if (page && limit) {
+            page = parseInt(page);
+            limit = parseInt(limit);
+
+            queryOptions.limit = limit;
+            queryOptions.offset = (page - 1) * limit;
+        }
+
+
         try {
-            const myLoans = await Loan.findAll({
+            const { count, rows } = await Loan.findAndCountAll({
+                ...queryOptions,
                 where: { borrowerId: req.user.id },
                 include: [
                     {
@@ -68,12 +98,15 @@ export default {
             });
 
             res.status(200).json({
-                message: "My loans retrieved successfully",
-                data: myLoans,
+                message: "Here’s a list of the tools you've borrowed.",
+                totalItems: count,
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                data: rows,
             });
         } catch (error) {
             res.status(500).json({
-                message: "Error fetching loans",
+                message: "Couldn't fetch the loan data right now.",
                 error: error.message,
             });
         }
@@ -87,12 +120,12 @@ export default {
             const tool = await Tool.findByPk(toolId);
             if (!tool) {
                 return res.status(404).json({
-                    message: "Tool not found",
+                    message: "We couldn't find that tool in our inventory.",
                 });
             }
             if (tool.stock < 1) {
                 return res.status(400).json({
-                    message: "Tool is not available",
+                    message: "Sorry, this tool is currently out of stock.",
                 });
             }
 
@@ -106,7 +139,7 @@ export default {
 
             if (pendingLoan) {
                 return res.status(409).json({
-                    message: "You have submitted a request to borrow this equipment. Please wait for approval from the officer."
+                    message: "You've already requested this. Just hang tight until an officer approves it!"
                 })
             }
 
@@ -120,7 +153,7 @@ export default {
 
             if (activeLoan) {
                 return res.status(409).json({
-                    message: "You have already borrowed this tool",
+                    message: "You're still using this tool! Return it first before borrowing it again.",
                 });
             }
 
@@ -134,16 +167,16 @@ export default {
             await recordActivity(
                 req.user.id,
                 "LOAN APPLICATION",
-                `${req.user.fullName} telah melakukan pengajuan peminjaman alat. Nama alat: ${tool.name}`,
+                `${req.user.fullName} just requested to borrow: ${tool.name}`,
             );
 
             return res.status(201).json({
-                message: "Loan request created successfully",
+                message: "Loan request submitted! Wait for the green light from our team.",
                 data: newLoan,
             });
         } catch (error) {
             res.status(500).json({
-                message: "Error creating loan request",
+                message: "Oops, something went wrong while processing your request.",
                 error: error.message,
             });
             console.log(error)
@@ -161,14 +194,14 @@ export default {
             if (!loan) {
                 await transaction.rollback();
                 return res.status(404).json({
-                    message: "Loan not found",
+                    message: "Loan request not found.",
                 });
             }
 
             if (loan.status !== "pending") {
                 await transaction.rollback();
                 return res.status(400).json({
-                    message: "Loan is not pending",
+                    message: "This request isn't in 'pending' status anymore.",
                 });
             }
 
@@ -176,7 +209,7 @@ export default {
             if (!tool || tool.stock < 1) {
                 await transaction.rollback();
                 return res.status(400).json({
-                    message: "Tool is not available",
+                    message: "Can't approve this—the tool is currently out of stock.",
                 });
             }
 
@@ -194,17 +227,17 @@ export default {
             await recordActivity(
                 req.user.id,
                 "APPROVE LOAN",
-                `${req.user.fullName} telah menyetujui peminjaman alat '${tool.name}' untuk ID transaksi: ${loan.id}`,
+                `${req.user.fullName} approved the loan for '${tool.name}' (ID: ${loan.id})`,
             );
 
             res.status(200).json({
-                message: "Loan approved successfully",
+                message: "Loan approved! The tool is ready to go.",
                 data: loan,
             });
         } catch (error) {
             await transaction.rollback();
             res.status(500).json({
-                message: "Error approving loan",
+                message: "Failed to approve the loan. Try again?",
                 error: error.message,
             });
         }
@@ -256,16 +289,16 @@ export default {
             await recordActivity(
                 req.user.id,
                 "REJECT LOAN APPLICATION",
-                `${req.user.fullName} telah menolak pengajuan peminjaman alat. Nama alat: ${tool.name}`,
+                `${req.user.fullName} rejected a loan request for: ${tool.name}`,
             );
 
             res.status(201).json({
-                message: "Loan request is rejected",
+                message: "Loan request rejected.",
             });
         } catch (error) {
             await transaction.rollback();
             res.status(500).json({
-                message: "Error reject loan",
+                message: "Couldn't process the rejection. Something's off.",
                 error: error.message,
             });
         }
@@ -280,7 +313,7 @@ export default {
             if (!loan || loan.status !== "approved") {
                 await transaction.rollback();
                 return res.status(404).json({
-                    message: "Loan not found or not approved",
+                    message: "We couldn't find an active loan for this item.",
                 });
             }
 
@@ -303,17 +336,17 @@ export default {
             await recordActivity(
                 req.user.id,
                 "RETURN LOAN",
-                `${req.user.fullName} telah memvalidasi pengembalian peminjaman alat. Nama alat: ${tool.name}`,
+                `${req.user.fullName} validated the return of: ${tool.name}`,
             );
 
             res.status(200).json({
-                message: "Loan returned successfully",
+                message: "Tool returned successfully. Thanks for taking care of it!",
                 data: loan,
             });
         } catch (error) {
             await transaction.rollback();
             res.status(500).json({
-                message: "Error returning loan",
+                message: "There was an error while processing the return.",
                 error: error.message,
             });
         }
