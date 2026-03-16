@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "@/schemas/authSchema";
-import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import api from "@/lib/api";
+import { loginSchema } from "@/schemas/authSchema";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const useLogin = () => {
     const router = useRouter();
@@ -14,7 +14,7 @@ export const useLogin = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: { errors }
     } = useForm({
         resolver: zodResolver(loginSchema),
     });
@@ -29,7 +29,7 @@ export const useLogin = () => {
             const { token, user } = response.data;
 
             // Set Token and Cookies
-            Cookies.set("token", token, { expires: 1 });
+            Cookies.set("token", token, { expires: 1, secure: true, sameSite: 'strict' });
             Cookies.set("user", JSON.stringify(user), { expires: 1 });
 
             if (user.role === "admin") {
@@ -39,8 +39,8 @@ export const useLogin = () => {
             } else {
                 router.push("/borrower");
             }
-        } catch (error) {
-            const errorMessage = "Terjadi kesalahan saat masuk. Silakan coba lagi.";
+        } catch (err) {
+            const errorMessage = err.response?.data?.message
             setServerError(errorMessage);
         } finally {
             setIsLoading(false);
