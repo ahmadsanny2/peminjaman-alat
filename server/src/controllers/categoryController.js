@@ -1,36 +1,31 @@
-import { Op } from "sequelize";
 import { Category } from "../models/index.js";
+import { Op } from "sequelize";
 import { recordActivity } from "../utils/logger.js";
 
 export default {
     async getAllCategories(req, res) {
         try {
             let { page, limit, sort, search } = req.query;
-            const queryOptions = {}
+
+            page = parseInt(page);
+            limit = parseInt(limit);
+            const offset = (page - 1) * limit;
+
+            let queryOptions = {
+                where: {},
+                order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]]
+            }
+
+            if (page && limit) {
+                queryOptions.limit = limit
+                queryOptions.offset = offset
+            }
 
             // Search Category Name
             if (search) {
-                queryOptions.where = {
-                    name: {
-                        [Op.like]: `%${search}%`
-                    }
+                queryOptions.where.name = {
+                    [Op.like]: `%${search}%`
                 }
-            }
-
-            // Sorting Data
-            if (sort === "oldest") {
-                queryOptions.order = [["createdAt", "ASC"]]
-            } else {
-                queryOptions.order = [["createdAt", "DESC"]]
-            }
-
-            // Pagination
-            if (page && limit) {
-                page = parseInt(page);
-                limit = parseInt(limit);
-
-                queryOptions.limit = limit
-                queryOptions.offset = (page - 1) * limit;
             }
 
             const { count, rows } = await Category.findAndCountAll({
@@ -38,7 +33,7 @@ export default {
             });
 
             res.status(200).json({
-                message: "Successfully get category data.",
+                message: "Got the categories for you!",
                 totalItems: count,
                 totalPages: Math.ceil(count / limit),
                 currentPage: page,
@@ -46,7 +41,7 @@ export default {
             });
         } catch (error) {
             res.status(500).json({
-                message: "Failed to retrieve category data.",
+                message: "Couldn't fetch the categories, something went wrong.",
                 error: error.message,
             });
         }
@@ -64,22 +59,22 @@ export default {
             await recordActivity(
                 req.user.id,
                 "ADD CATEGORY",
-                `${req.user.fullName} telah menambahkan kategori baru: ${name}`,
+                `${req.user.fullName} just added a new category: ${name}`,
             );
 
             res.status(201).json({
-                message: "Category created successfully",
+                message: "Nice! New category added successfully.",
                 data: newCategory,
             });
         } catch (error) {
             if (error.name === "SequelizeUniqueConstraintError") {
                 return res.status(400).json({
-                    message: "Category name must be unique",
+                    message: "That category name already exists, try a different one.",
                 });
             }
 
             res.status(500).json({
-                message: "An error occurred while creating the category",
+                message: "Oops, couldn't create the category. Give it another shot.",
                 error: error.message,
             });
         }
@@ -92,7 +87,7 @@ export default {
 
             if (!category) {
                 return res.status(404).json({
-                    message: "Category not found",
+                    message: "We couldn't find that category in our records.",
                 });
             }
 
@@ -101,16 +96,16 @@ export default {
             await recordActivity(
                 req.user.id,
                 "UPDATE CATEGORY",
-                `${req.user.fullName} telah memperbarui kategori. ID kategori: ${category.id}`
+                `${req.user.fullName} updated category ID: ${category.id}`
             )
 
             res.status(200).json({
-                message: "Category updated successfully",
+                message: "Category updated! Everything looks good.",
                 data: category,
             });
         } catch (error) {
             res.status(500).json({
-                message: "An error occurred while updating the category",
+                message: "Failed to update the category. Something's not right.",
                 error: error.message,
             });
         }
@@ -124,7 +119,7 @@ export default {
 
             if (!category) {
                 return res.status(404).json({
-                    message: "Category not found",
+                    message: "Can't delete what's not there. Category not found.",
                 });
             }
 
@@ -133,15 +128,15 @@ export default {
             await recordActivity(
                 req.user.id,
                 "DELETE CATEGORY",
-                `${req.user.fullName} telah menghapus kategori. ID kategori: ${category.id}`
+                `${req.user.fullName} just removed category ID: ${category.id}`
             )
 
             res.status(200).json({
-                message: "Category deleted successfully",
+                message: "Category deleted successfully. It's gone!",
             });
         } catch (error) {
             res.status(500).json({
-                message: "An error occurred while deleting the category",
+                message: "Couldn't delete the category, something's blocking it.",
                 error: error.message,
             });
         }
