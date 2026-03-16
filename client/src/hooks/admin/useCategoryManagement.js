@@ -1,5 +1,3 @@
-"use client";
-
 import { useCallback, useEffect, useState } from "react";
 
 import api from "@/lib/api";
@@ -13,6 +11,7 @@ export function useCategory() {
     const [formData, setFormData] = useState({ name: "", description: "" });
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
+    const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
@@ -24,6 +23,8 @@ export function useCategory() {
 
     // Fetch Data From Server
     const fetchCategories = useCallback(async () => {
+        setIsLoading(true)
+
         try {
             const response = await api.get(`/categories`, {
                 params: { search, sort, page, limit },
@@ -34,6 +35,8 @@ export function useCategory() {
             setTotalItems(response.data.totalItems || 0);
         } catch (err) {
             setError(err.response?.data?.message);
+        } finally {
+            setIsLoading(false)
         }
     }, [page, limit, sort, search]);
 
@@ -73,7 +76,7 @@ export function useCategory() {
             resetForm();
             fetchCategories();
         } catch (err) {
-            alert(err.response?.data?.message);
+            setError(err.response?.data?.message);
         } finally {
             setIsSubmitting(false);
         }
@@ -107,6 +110,7 @@ export function useCategory() {
         isEditing,
         isSubmitting,
         error,
+        isLoading,
         handleChange,
         handleSubmit,
         handleEdit,
