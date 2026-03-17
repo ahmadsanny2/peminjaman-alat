@@ -18,6 +18,11 @@ const Tool = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        condition: {
+            type: DataTypes.ENUM("Bagus", "Rusak"),
+            defaultValue: "Bagus",
+            allowNull: false,
+        },
         stock: {
             type: DataTypes.INTEGER,
             allowNull: false,
