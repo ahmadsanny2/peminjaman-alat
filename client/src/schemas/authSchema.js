@@ -2,30 +2,30 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
     username: z.string().trim().min(1, {
-        message: "Username is required",
+        message: "Please enter your username.",
     }),
     password: z.string().min(1, {
-        message: "Password is required",
+        message: "Please enter your password.",
     }),
 });
 export const registerSchema = z
     .object({
-        fullName: z.string().trim().min(3, "Nama lengkap minimal 3 karakter"),
+        fullName: z.string().trim().min(3, "Full name must be at least 3 characters."),
         username: z
             .string()
             .trim()
-            .min(4, "Username minimal 4 karakter")
-            .regex(/^[a-zA-Z0-9_]+$/, "Username hanya boleh huruf, angka, dan underscore"),
+            .min(4, "Username must be at least 4 characters")
+            .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores are allowed."),
         password: z
             .string()
-            .min(8, "Password minimal 8 karakter")
-            .regex(/[a-z]/, "Harus mengandung huruf kecil")
-            .regex(/[A-Z]/, "Harus mengandung huruf besar")
-            .regex(/[0-9]/, "Harus mengandung angka")
-            .regex(/[^a-zA-Z0-9]/, "Harus mengandung simbol/karakter khusus"),
-        confirmPassword: z.string().min(1, "Konfirmasi password diperlukan"),
+            .min(8, "Password must be at least 8 characters.")
+            .regex(/[a-z]/, "Include at least one lowercase letter.")
+            .regex(/[A-Z]/, "Include at least one uppercase letter.")
+            .regex(/[0-9]/, "Include at least one number")
+            .regex(/[^a-zA-Z0-9]/, "Include at least one special character"),
+        confirmPassword: z.string().min(1, "Please confirm your password"),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: "Password tidak cocok",
+        message: "Passwords don't match",
         path: ["confirmPassword"],
     });
