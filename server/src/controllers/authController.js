@@ -10,7 +10,7 @@ export default {
         try {
             if (password !== confirmPassword) {
                 return res.status(400).json({
-                    message: "Password and confirm password do not match",
+                    message: "Passwords don't match, double-check them!",
                 });
             }
 
@@ -26,7 +26,7 @@ export default {
 
             if (existingUser) {
                 return res.status(409).json({
-                    message: "Username already exists",
+                    message: "That username is already taken, try another one!",
                 });
             }
 
@@ -43,11 +43,11 @@ export default {
             await recordActivity(
                 newUser.id,
                 "REGISTER",
-                `${newUser.fullName} telah mendaftar ke sistem.`
+                `${newUser.fullName} just joined the system.`
             )
 
             res.status(201).json({
-                message: "User registered successfully",
+                message: "Nice! User registered successfully.",
                 data: {
                     id: newUser.id,
                     fullName: newUser.fullName,
@@ -57,7 +57,7 @@ export default {
             });
         } catch (error) {
             res.status(500).json({
-                message: "An error occurred while registering the user",
+                message: "Oops, something went wrong while registering the user.",
                 error: error.message,
             });
         }
@@ -73,14 +73,14 @@ export default {
 
             if (!user) {
                 return res.status(401).json({
-                    message: "Username not found",
+                    message: "We couldn't find that username.",
                 });
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(401).json({
-                    message: "Incorrect password",
+                    message: "Incorrect password, give it another shot!",
                 });
             }
 
@@ -97,11 +97,11 @@ export default {
             await recordActivity(
                 user.id,
                 "LOGIN",
-                `${user.fullName} telah masuk ke sistem.`
+                `${user.fullName} just logged in.`
             )
 
             res.status(200).json({
-                message: "Login successfully",
+                message: "Logged in successfully. Welcome back!",
                 token: token,
                 user: {
                     id: user.id,
@@ -112,7 +112,7 @@ export default {
             });
         } catch (error) {
             res.status(500).json({
-                message: "An error occurred while logging in the user",
+                message: "Something went wrong on our end while logging you in.",
                 error: error.message,
             });
         }
