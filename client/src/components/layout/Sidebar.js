@@ -1,114 +1,16 @@
 "use client";
 
+import { useSidebar } from "@/hooks/useSidebar";
+import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import {
-    LayoutDashboard,
-    PackageSearch,
-    Users,
-    ClipboardList,
-    LogOut,
-    Tags,
-    ActivitySquare,
-} from "lucide-react";
 
 export default function Sidebar({ className = "" }) {
-    const pathname = usePathname();
-    const router = useRouter();
-    const [userRole, setUserRole] = useState("");
-    const [userName, setUserName] = useState("");
-
-    // User Cookie
-    useEffect(() => {
-        const userCookie = Cookies.get("user");
-        if (userCookie) {
-            const parsedUser = JSON.parse(userCookie);
-            setUserRole(parsedUser.role);
-            setUserName(parsedUser.fullName);
-        }
-    }, []);
-
-    // Sidebar Menu
-    const menuConfig = {
-        admin: [
-            {
-                title: "Dashboard",
-                path: "/admin",
-                icon: <LayoutDashboard size={20} />,
-            },
-            {
-                title: "Manajemen Kategori",
-                path: "/admin/management-categories",
-                icon: <Tags size={20} />,
-            },
-            {
-                title: "Manajemen Alat",
-                path: "/admin/management-tools",
-                icon: <PackageSearch size={20} />,
-            },
-            {
-                title: "Manajemen Pengguna",
-                path: "/admin/management-users",
-                icon: <Users size={20} />,
-            },
-            {
-                title: "Transaksi Peminjaman",
-                path: "/admin/loan-transactions",
-                icon: <ClipboardList size={20} />,
-            },
-            {
-                title: "Log Aktivitas",
-                path: "/admin/activity-logs",
-                icon: <ActivitySquare size={20} />,
-            },
-        ],
-        petugas: [
-            {
-                title: "Dashboard",
-                path: "/officer",
-                icon: <LayoutDashboard size={20} />,
-            },
-            {
-                title: "Daftar Peminjaman",
-                path: "/officer/loan-requests",
-                icon: <ClipboardList size={20} />,
-            },
-        ],
-        peminjam: [
-            {
-                title: "Dashboard",
-                path: "/borrower",
-                icon: <LayoutDashboard size={20} />,
-            },
-            {
-                title: "Katalog Alat",
-                path: "/borrower/tools-catalog",
-                icon: <PackageSearch size={20} />,
-            },
-            {
-                title: "Riwayat Transaksi",
-                path: "/borrower/transactions-history",
-                icon: <ClipboardList size={20} />,
-            },
-        ],
-    };
-
-    const activeMenu = menuConfig[userRole] || [];
-
-    // Handle Logout
-    const handleLogout = () => {
-        Cookies.remove("token");
-        Cookies.remove("user");
-        router.push("/login");
-    };
+    const { pathname, userName, userRole, activeMenu, handleLogout } = useSidebar();
 
     return (
         <aside
             className={`bg-slate-900 w-64 z-1 text-slate-300 min-h-screen flex flex-col shadow-xl border-r border-gray-800 ${className}`}
         >
-
             {/* Header */}
             <div className="h-16 flex items-center justify-center border-b border-slate-200">
                 <h1 className="text-white font-bold text-lg tracking-wider">
@@ -159,7 +61,6 @@ export default function Sidebar({ className = "" }) {
                     <span className="text-sm font-medium">Logout</span>
                 </button>
             </div>
-            
         </aside>
     );
 }
