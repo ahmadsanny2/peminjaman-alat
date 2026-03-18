@@ -1,14 +1,16 @@
 "use client";
 
-import StatCard from "@/components/StatsCard";
-import { useBorrower } from "@/hooks/borrower/useBorrower";
+import StatCard from "@/components/StatsCardComponent";
+import { useMyLoans } from "@/hooks/borrower/useMyLoans";
+import { useToolsCatalog } from "@/hooks/borrower/useToolsCatalog";
 import { LayoutDashboard, Clock, Activity, ArrowRight, BadgeCheck } from "lucide-react";
 import Link from "next/link";
 
 export default function PeminjamDashboardPage() {
 
     // Borrower Data
-    const { myLoans, catalog, isLoading } = useBorrower();
+    const { catalog, isLoading } = useToolsCatalog();
+    const { myLoans } = useMyLoans()
 
     const pendingCount = myLoans.filter(
         (loan) => loan.status === "pending",
