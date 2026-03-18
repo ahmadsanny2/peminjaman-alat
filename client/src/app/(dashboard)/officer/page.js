@@ -1,8 +1,8 @@
 'use client';
 
-import StatCard from '@/components/StatsCard';
+import StatCard from '@/components/StatsCardComponent';
 import { useDashboardStats } from '@/hooks/admin/useDashboardStats';
-import { Clock, Activity, ShieldCheck, AlertCircle, LayoutDashboard } from 'lucide-react';
+import { Clock, Activity, AlertCircle, LayoutDashboard } from 'lucide-react';
 
 export default function PetugasDashboardPage() {
 
@@ -57,7 +57,7 @@ export default function PetugasDashboardPage() {
                     />
                 ))}
             </div>
-            
+
         </div>
     );
 }
