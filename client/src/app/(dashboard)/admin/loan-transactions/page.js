@@ -23,18 +23,19 @@ export default function LoanManagementPage() {
         totalItems,
         limit,
         updateFilters,
-        handleSearch
+        handleSearch,
+        formatDateTime
     } = useLoanManagement();
 
     // Format Date
-    const formatDate = (dateString) => {
-        if (!dateString) return "-";
-        return new Date(dateString).toLocaleDateString("id-ID", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-        });
-    };
+    // const formatDate = (dateString) => {
+    //     if (!dateString) return "-";
+    //     return new Date(dateString).toLocaleDateString("id-ID", {
+    //         day: "numeric",
+    //         month: "long",
+    //         year: "numeric",
+    //     });
+    // };
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
@@ -119,9 +120,9 @@ export default function LoanManagementPage() {
                                                 <td className="px-6 py-4 font-medium text-slate-800 truncate max-w-sm">
                                                     {loan.Tool?.name || "Nama alat tidak ada."}
                                                 </td>
-                                                <td className="px-6 py-4 text-center min-w-60">{formatDate(loan.borrowDate)}</td>
+                                                <td className="px-6 py-4 text-center min-w-60">{formatDateTime(loan.borrowDate, false)}</td>
                                                 <td className="px-6 py-4 text-center min-w-60">
-                                                    {formatDate(loan.expectedReturnDate)}
+                                                    {formatDateTime(loan.expectedReturnDate,false)}
                                                 </td>
                                                 <td className="px-6 py-4 text-center min-w-50">
                                                     <StatusBadge status={loan.status} />
