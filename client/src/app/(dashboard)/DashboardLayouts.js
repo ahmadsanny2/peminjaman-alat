@@ -1,12 +1,11 @@
 "use client";
 
-import BreadcrumbComponent from "@/components/BreadcrumbComponen";
 import Sidebar from "@/components/layout/Sidebar";
+import { useSidebar } from "@/hooks/useSidebar";
 import { Menu } from "lucide-react";
-import { useState } from "react";
 
 export default function DashboardLayout({ children }) {
-    const [sidebar, setSidebar] = useState(false);
+    const { sidebar, setSidebar } = useSidebar()
 
     return (
         <div className="bg-slate-900 text-white flex h-screen">
@@ -31,7 +30,7 @@ export default function DashboardLayout({ children }) {
 
                     {/* Date */}
                     <div className="text-sm text-white">
-                        {new Date().toLocaleDateString("id-ID", {
+                        {new Date().toLocaleDateString("en-En", {
                             weekday: "long",
                             year: "numeric",
                             month: "long",
@@ -43,7 +42,6 @@ export default function DashboardLayout({ children }) {
                 {/* Main Content */}
                 <main className="flex-1 overflow-x-hidden bg-slate-900 p-6 w-full">
                     <div className="mx-auto container h-full">
-                        <BreadcrumbComponent />
                         {children}
                     </div>
                 </main>
