@@ -12,8 +12,7 @@ import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
 import Image from "next/image";
 import Modal from "@/components/ModalComponent";
 import Pagination from "@/components/PaginationComponent";
-import { useBorrower } from "@/hooks/borrower/useBorrower";
-import { useFilterAndSearchData } from "@/hooks/useFilterAndSearchData";
+import { useToolsCatalog } from "@/hooks/borrower/useToolsCatalog";
 
 export default function CatalogPage() {
 
@@ -38,7 +37,7 @@ export default function CatalogPage() {
         showForm,
         updateFilters,
         handleSearch
-    } = useBorrower();
+    } = useToolsCatalog();
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
@@ -71,6 +70,7 @@ export default function CatalogPage() {
                 />
 
                 {/* Main Content */}
+                
                 {/* IsLoading Response */}
                 {isLoading ? (
                     <div className="flex justify-center p-10 text-slate-500 animate-pulse font-medium">
@@ -86,7 +86,7 @@ export default function CatalogPage() {
                         {catalog.map((tool) => (
                             <div
                                 key={tool.id}
-                                className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md gap-5 h-110"
+                                className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md gap-5 h-100"
                             >
                                 <div className="flex flex-col flex-1 border-b border-slate-100 gap-2">
                                     <div className="">
