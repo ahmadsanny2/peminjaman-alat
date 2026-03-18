@@ -6,6 +6,7 @@ import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
 import Modal from "@/components/ModalComponent";
 import Pagination from "@/components/PaginationComponent";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
+import AlertComponent from "@/components/AlertComponent";
 
 export default function CategoryManagementPage() {
     // Category Management Data
@@ -28,6 +29,7 @@ export default function CategoryManagementPage() {
         limit,
         updateFilters,
         handleSearch,
+        isLoading
     } = useCategory();
 
     return (
@@ -43,9 +45,7 @@ export default function CategoryManagementPage() {
 
                 {/* Error Response */}
                 {error && (
-                    <div className="bg-red-50 text-red-700 p-3 rounded border border-red-200 text-sm">
-                        {error}
-                    </div>
+                    <AlertComponent message={error} isSuccess={false} />
                 )}
 
                 {/* Content */}
@@ -156,10 +156,19 @@ export default function CategoryManagementPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
-                                    {categories.length === 0 ? (
+                                    {isLoading ? (
                                         <tr>
                                             <td
-                                                colSpan="3"
+                                                colSpan="4"
+                                                className="px-6 py-4 text-center text-slate-500"
+                                            >
+                                                Sedang mengambil data kategori.
+                                            </td>
+                                        </tr>
+                                    ) : categories.length === 0 ? (
+                                        <tr>
+                                            <td
+                                                colSpan="4"
                                                 className="px-6 py-4 text-center text-slate-500"
                                             >
                                                 Belum ada kategori terdaftar.
