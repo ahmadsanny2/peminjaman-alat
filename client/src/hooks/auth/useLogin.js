@@ -33,11 +33,11 @@ export const useLogin = () => {
             Cookies.set("user", JSON.stringify(user), { expires: 1 });
 
             if (user.role === "admin") {
-                router.push("/admin");
+                return router.push("/admin");
             } else if (user.role === "petugas") {
-                router.push("/officer");
+                return router.push("/officer");
             } else {
-                router.push("/borrower");
+                return router.push("/borrower");
             }
         } catch (err) {
             const errorMessage = err.response?.data?.message
