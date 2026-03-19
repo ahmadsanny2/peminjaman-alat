@@ -21,6 +21,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
     (response) => response,
     (error) => {
+        const isLoginPage =
+            typeof window !== "undefined" && window.location.pathname === "/login";
+
         if (
             error.response &&
             (error.response.status === 401 || error.response.status === 403)
@@ -28,7 +31,9 @@ api.interceptors.response.use(
             Cookies.remove("token");
             Cookies.remove("user");
 
-            if (typeof window !== "undefined") window.location.href = "/login";
+            if (typeof window !== "undefined" && !isLoginPage) {
+                window.location.href = "/login";
+            }
         }
         return Promise.reject(error);
     },
