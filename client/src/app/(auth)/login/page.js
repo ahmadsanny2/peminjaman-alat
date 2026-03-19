@@ -72,19 +72,12 @@ export default function LoginPage() {
                         )}
                     </div>
 
-                    <button
+                   <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-500 transition-all active:scale-[0.98] disabled:bg-blue-800 disabled:opacity-50 shadow-lg shadow-blue-600/20 mt-2"
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed mt-4 shadow-lg shadow-blue-600/20 cursor-pointer"
                     >
-                        {isLoading ? (
-                            <div className="flex items-center gap-2 justify-center">
-                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                <span>Loading...</span>
-                            </div>
-                        ) : (
-                            "Login"
-                        )}
+                        {isLoading ? "Loading..." : "Login"}
                     </button>
                 </form>
 
