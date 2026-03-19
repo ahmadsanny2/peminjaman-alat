@@ -1,6 +1,6 @@
 "use client";
 
-import StatCard from "@/components/StatsCard";
+import StatCard from "@/components/StatsCardComponent";
 import { useDashboardStats } from "@/hooks/admin/useDashboardStats";
 import {
     Tags,
@@ -9,6 +9,7 @@ import {
     Activity,
     AlertCircle,
     LayoutDashboard,
+    Users,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
