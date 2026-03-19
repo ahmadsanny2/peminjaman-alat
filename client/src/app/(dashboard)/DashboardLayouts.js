@@ -29,7 +29,7 @@ export default function DashboardLayout({ children }) {
                     </button>
 
                     {/* Date */}
-                    <div className="text-sm text-white">
+                    <div className="text-sm">
                         {new Date().toLocaleDateString("en-En", {
                             weekday: "long",
                             year: "numeric",
