@@ -1,7 +1,7 @@
 import DashboardLayout from "./DashboardLayouts";
 
 export const metadata = {
-    title: 'Sistem Peminjaman Alat',
+    title: 'Pinjamku - Sistem Peminjaman Alat',
     description: 'Antarmuka manajemen inventaris dan sirkulasi peminjaman',
 };
 
