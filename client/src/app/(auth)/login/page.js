@@ -29,7 +29,7 @@ export default function LoginPage() {
                 )}
 
                 <form onSubmit={onSubmit} className="space-y-5">
-                    {/* Username Field */}
+                    {/* Input Username */}
                     <div>
                         <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">Username</label>
                         <input
@@ -46,7 +46,7 @@ export default function LoginPage() {
                         )}
                     </div>
 
-                    {/* Password Field */}
+                    {/* Input Password */}
                     <div>
                         <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">Password</label>
                         <div className="relative mt-1">
