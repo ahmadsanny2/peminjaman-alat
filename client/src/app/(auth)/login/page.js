@@ -11,11 +11,11 @@ export default function LoginPage() {
 
     return (
         <div className="bg-linear-to-br from-[#0f172a] via-[#1e3a5f] to-[#0f172a] h-screen flex items-center justify-center text-white p-5">
-
             <div className="bg-white/10 border-2 border-white/30 flex flex-col justify-center backdrop-blur-2xl p-5 lg:p-10 rounded-2xl w-full max-w-2xl">
-
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl lg:text-3xl font-bold">Login to Your Account</h1>
+                    <h1 className="text-2xl lg:text-3xl font-bold">
+                        Login to Your Account
+                    </h1>
                 </div>
 
                 {/* Error Response */}
@@ -28,7 +28,9 @@ export default function LoginPage() {
                 <form onSubmit={onSubmit} className="space-y-5">
                     {/* Input Username */}
                     <div>
-                        <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">Username</label>
+                        <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">
+                            Username
+                        </label>
                         <input
                             type="text"
                             {...register("username")}
@@ -45,7 +47,9 @@ export default function LoginPage() {
 
                     {/* Input Password */}
                     <div>
-                        <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">Password</label>
+                        <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">
+                            Password
+                        </label>
                         <div className="relative mt-1">
                             <input
                                 type={showPassword.password ? "text" : "password"}
@@ -59,7 +63,11 @@ export default function LoginPage() {
                                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                                 onClick={() => toggleVisibility("password")}
                             >
-                                {showPassword.password ? <Eye size={20} /> : <EyeOff size={20} />}
+                                {showPassword.password ? (
+                                    <Eye size={20} />
+                                ) : (
+                                    <EyeOff size={20} />
+                                )}
                             </button>
                         </div>
                         {errors.password && (
@@ -87,7 +95,6 @@ export default function LoginPage() {
                         Register here
                     </Link>
                 </div>
-
             </div>
         </div>
     );
