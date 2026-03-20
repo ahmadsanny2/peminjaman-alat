@@ -6,11 +6,17 @@ import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useRegister";
 import RequirementPasswordItem from "@/components/RequirementPasswordItem";
 
-
 export default function RegisterPage() {
-    const { register, errors, isLoading, serverError, onSubmit, watch, showPassword, toggleVisibility } =
-        useRegister();
-
+    const {
+        register,
+        errors,
+        isLoading,
+        serverError,
+        onSubmit,
+        watch,
+        showPassword,
+        toggleVisibility,
+    } = useRegister();
 
     const passwordValue = watch("password", "");
 
@@ -85,7 +91,7 @@ export default function RegisterPage() {
                         )}
                     </div>
 
-                    <div className="grid lg:grid-cols-2 space-y-4 lg:gap-x-4">
+                    <div className="space-y-4">
                         {/* Input Password */}
                         <div className="w-full">
                             <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">
@@ -112,67 +118,67 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-                        {/* Confirm Password */}
-                        <div className="w-full">
-                            <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">
-                                Confirm Password
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword?.confirmPassword ? "text" : "password"}
-                                    {...register("confirmPassword")}
-                                    className={`bg-white/5 border ${errors.confirmPassword ? "border-red-500" : "border-white/10"} rounded-xl w-full p-2.5 pr-10 outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
-                                    placeholder="Re-Enter Password"
+                        {/* Password Strength Bar */}
+                        <div className="flex gap-1.5 mt-3">
+                            {[1, 2, 3, 4].map((step) => (
+                                <div
+                                    key={step}
+                                    className={`h-1 w-full rounded-full transition-all duration-500 ${step <= strength ? strengthColors[strength] : "bg-white/10"
+                                        }`}
                                 />
-                                <button
-                                    type="button"
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-                                    onClick={() => toggleVisibility("confirmPassword")}
-                                >
-                                    {showPassword?.confirmPassword ? (
-                                        <Eye size={18} />
-                                    ) : (
-                                        <EyeOff size={18} />
-                                    )}
-                                </button>
-                            </div>
-                            {errors.confirmPassword && (
-                                <p className="text-red-400 text-xs mt-1 ml-1">
-                                    {errors.confirmPassword.message}
-                                </p>
-                            )}
+                            ))}
+                        </div>
+
+                        {/* Password Requirements Checklist */}
+                        <div className="gap-y-1.5 mt-3 ml-1">
+                            <RequirementPasswordItem
+                                label="At least 8 characters"
+                                met={passwordValue.length >= 8}
+                            />
+                            <RequirementPasswordItem
+                                label="Uppercase & lowercase letters"
+                                met={/[a-z]/.test(passwordValue) && /[A-Z]/.test(passwordValue)}
+                            />
+                            <RequirementPasswordItem
+                                label="At least one number"
+                                met={/[0-9]/.test(passwordValue)}
+                            />
+                            <RequirementPasswordItem
+                                label="At least one symbol (@#$)"
+                                met={/[^a-zA-Z0-9]/.test(passwordValue)}
+                            />
                         </div>
                     </div>
 
-                    {/* Password Strength Bar */}
-                    <div className="flex gap-1.5 mt-3">
-                        {[1, 2, 3, 4].map((step) => (
-                            <div
-                                key={step}
-                                className={`h-1 w-full rounded-full transition-all duration-500 ${step <= strength ? strengthColors[strength] : "bg-white/10"
-                                    }`}
+                    {/* Input Confirm Password */}
+                    <div className="w-full">
+                        <label className="block text-sm font-medium mb-1 ml-1 text-gray-300">
+                            Confirm Password
+                        </label>
+                        <div className="relative">
+                            <input
+                                type={showPassword?.confirmPassword ? "text" : "password"}
+                                {...register("confirmPassword")}
+                                className={`bg-white/5 border ${errors.confirmPassword ? "border-red-500" : "border-white/10"} rounded-xl w-full p-2.5 pr-10 outline-none focus:ring-2 focus:ring-blue-500 transition-all`}
+                                placeholder="Re-Enter Password"
                             />
-                        ))}
-                    </div>
-
-                    {/* Password Requirements Checklist */}
-                    <div className="gap-y-1.5 mt-3 ml-1">
-                        <RequirementPasswordItem
-                            label="At least 8 characters"
-                            met={passwordValue.length >= 8}
-                        />
-                        <RequirementPasswordItem
-                            label="Uppercase & lowercase letters"
-                            met={/[a-z]/.test(passwordValue) && /[A-Z]/.test(passwordValue)}
-                        />
-                        <RequirementPasswordItem
-                            label="At least one number"
-                            met={/[0-9]/.test(passwordValue)}
-                        />
-                        <RequirementPasswordItem
-                            label="At least one symbol (@#$)"
-                            met={/[^a-zA-Z0-9]/.test(passwordValue)}
-                        />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                                onClick={() => toggleVisibility("confirmPassword")}
+                            >
+                                {showPassword?.confirmPassword ? (
+                                    <Eye size={18} />
+                                ) : (
+                                    <EyeOff size={18} />
+                                )}
+                            </button>
+                        </div>
+                        {errors.confirmPassword && (
+                            <p className="text-red-400 text-xs mt-1 ml-1">
+                                {errors.confirmPassword.message}
+                            </p>
+                        )}
                     </div>
 
                     <button
