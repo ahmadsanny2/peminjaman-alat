@@ -47,9 +47,7 @@ export const useLogin = () => {
         } catch (err) {
             const errorMessage = err.response?.data?.message;
 
-            if (errorMessage.toLowerCase().includes("username")) {
-                resetField("username");
-            }
+            if (errorMessage.toLowerCase().includes("username")) resetField("username")
 
             resetField("password");
             setServerError(errorMessage);
