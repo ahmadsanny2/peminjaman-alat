@@ -39,7 +39,7 @@ const Hero = () => {
                         </div>
                     </div>
 
-                    <div className="relative animate-fade-in-up animation-delay-200">
+                    <div className="relative animate-fade-in-up animation-delay-200 max-md:my-10">
                         <div className="relative">
                             <div className="bg-slate-900 rounded-3xl shadow-2xl shadow-[#1e3a5f]/10 p-6 lg:p-8 border border-gray-100">
                                 <div className="flex items-center justify-between mb-6">
