@@ -36,7 +36,7 @@ export default function LoginPage() {
                             type="text"
                             {...register("username")}
                             className={`mt-1 bg-white/5 border ${errors.username ? "border-red-500" : "border-white/10"} rounded-xl w-full p-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all`}
-                            placeholder="Enter Username"
+                            placeholder="Username"
                             disabled={isLoading}
                         />
                         {errors.username && (
