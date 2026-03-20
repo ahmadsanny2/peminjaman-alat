@@ -14,7 +14,8 @@ export const useLogin = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors }
+        resetField,
+        formState: { errors },
     } = useForm({
         resolver: zodResolver(loginSchema),
     });
@@ -28,8 +29,14 @@ export const useLogin = () => {
             const response = await api.post("/auth/login", data);
             const { token, user } = response.data;
 
+            // console.log(response.data);
+
             // Set Token and Cookies
-            Cookies.set("token", token, { expires: 1, secure: true, sameSite: 'strict' });
+            Cookies.set("token", token, {
+                expires: 1,
+                secure: true,
+                sameSite: "strict",
+            });
             Cookies.set("user", JSON.stringify(user), { expires: 1 });
 
             if (user.role === "admin") {
@@ -40,7 +47,13 @@ export const useLogin = () => {
                 return router.push("/borrower");
             }
         } catch (err) {
-            const errorMessage = err.response?.data?.message
+            const errorMessage = err.response?.data?.message;
+
+            if (errorMessage.toLowerCase().includes("username")) {
+                resetField("username");
+            }
+
+            resetField("password");
             setServerError(errorMessage);
         } finally {
             setIsLoading(false);
