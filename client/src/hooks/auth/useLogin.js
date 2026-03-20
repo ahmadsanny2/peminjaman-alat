@@ -29,8 +29,6 @@ export const useLogin = () => {
             const response = await api.post("/auth/login", data);
             const { token, user } = response.data;
 
-            // console.log(response.data);
-
             // Set Token and Cookies
             Cookies.set("token", token, {
                 expires: 1,
