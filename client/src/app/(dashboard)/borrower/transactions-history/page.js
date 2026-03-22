@@ -7,9 +7,18 @@ import { useMyLoans } from "@/hooks/borrower/useMyLoans";
 import { History, AlertCircle } from "lucide-react";
 
 export default function LoanTransactionHistoryPage() {
-
     // Borrower Data
-    const { myLoans, isLoading, error, totalItems, page, totalPages, updateFilters, handleSearch, formatDateTime } = useMyLoans();
+    const {
+        myLoans,
+        isLoading,
+        error,
+        totalItems,
+        page,
+        totalPages,
+        updateFilters,
+        handleSearch,
+        formatDateTime,
+    } = useMyLoans();
 
     // Format Date
     // const formatDateTime = (dateString) => {
@@ -24,7 +33,6 @@ export default function LoanTransactionHistoryPage() {
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
             <div className="space-y-6">
-
                 {/* Header */}
                 <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
                     <History className="text-purple-600" size={32} />
@@ -45,15 +53,29 @@ export default function LoanTransactionHistoryPage() {
                 <FilterAndSearchData
                     hiddenSearchData={!false}
                     placeHolderName="Cari nama alat pinjaman..."
-                    sort={(e) => updateFilters('sort', e.target.value)}
+                    sort={(e) => updateFilters("sort", e.target.value)}
                     search={(e) => handleSearch(e.target.value)}
-                />
+                    hiddenFilterData={true}
+                    label="Status"
+                    showBy={(e) => updateFilters("status", e.target.value)}
+                >
+                    <option value="pending" className="bg-white/20 text-black">
+                        Menunggu Persetujuan
+                    </option>
+                    <option value="approved" className="bg-white/20 text-black">
+                        Sedang Dipinjam
+                    </option>
+                    <option value="rejected" className="bg-white/20 text-black">
+                        Pengajuan Ditolak
+                    </option>
+                    <option value="returned" className="bg-white/20 text-black">
+                        Telah Dikembalikan
+                    </option>
+                </FilterAndSearchData>
 
                 {/* Main Content */}
                 <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-
                     <div className="overflow-x-auto">
-
                         {/* Table Data Transaction History */}
                         <table className="w-full text-left text-sm text-slate-600">
                             <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
@@ -91,9 +113,11 @@ export default function LoanTransactionHistoryPage() {
                                             className="hover:bg-slate-50/80 transition-colors"
                                         >
                                             <td className="px-6 py-4">
-                                                {loan.Tool?.name || "Referensi Instrumen Hilang"}
+                                                {loan.Tool?.name || "Nama alat tidak ada."}
                                             </td>
-                                            <td className="px-6 py-4 text-center">{formatDateTime(loan.borrowDate, false)}</td>
+                                            <td className="px-6 py-4 text-center">
+                                                {formatDateTime(loan.borrowDate, false)}
+                                            </td>
                                             <td className="px-6 py-4 text-center">
                                                 {formatDateTime(loan.expectedReturnDate, false)}
                                             </td>
@@ -110,11 +134,8 @@ export default function LoanTransactionHistoryPage() {
                                 )}
                             </tbody>
                         </table>
-
                     </div>
-
                 </div>
-
             </div>
             <Pagination page={page} totalData={totalItems} totalPages={totalPages} />
         </div>
