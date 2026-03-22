@@ -31,8 +31,6 @@ export default function UserManagementPage() {
         };
         const current = config[role] || config.peminjam;
 
-
-
         return (
             <span
                 className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full border ${current.color} uppercase tracking-wider`}
@@ -79,7 +77,7 @@ export default function UserManagementPage() {
                         label="Role"
                     >
                         {userRole.map((role, index) => (
-                            <option key={index} value={role} className="bg-white/20 text-black">{role}</option>
+                            <option key={index} value={role.toLowerCase()} className="bg-white/20 text-black">{role}</option>
                         ))}
                     </FilterAndSearchData>
 
