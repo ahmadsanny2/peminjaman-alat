@@ -4,7 +4,7 @@ import api from "@/lib/api"
 import { useFormatDateTime } from "../useFormatDateTime"
 
 export function useMyLoans() {
-    const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+    const { search, sort, status, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
 
     const { formatDateTime } = useFormatDateTime()
 
@@ -19,7 +19,7 @@ export function useMyLoans() {
     const fetchData = useCallback(async () => {
         setIsLoading(true)
         try {
-            const response = await api.get("/loans/my-loans", { params: { search, sort, page, limit } })
+            const response = await api.get("/loans/my-loans", { params: { search, status, sort, page, limit } })
 
             setMyLoans(response.data.data)
             setTotalItems(response.data.totalItems || 0)
@@ -31,7 +31,7 @@ export function useMyLoans() {
         } finally {
             setIsLoading(false)
         }
-    }, [search, sort, page, limit])
+    }, [search, status, sort, page, limit])
 
     useEffect(() => {
         fetchData()
