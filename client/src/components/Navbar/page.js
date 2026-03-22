@@ -48,10 +48,10 @@ const Navbar = () => {
   return (
     <nav
       id="navbar"
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white"
     >
 
-      <div className="bg-white lg:flex  lg:justify-between lg:items-center container mx-auto px-5 lg:px-10 lg:py-5">
+      <div className="lg:flex  lg:justify-between lg:items-center container mx-auto px-5 lg:px-10 lg:py-5">
 
         {/* Header */}
         <div className="flex items-center justify-between h-16 lg:h-20">
