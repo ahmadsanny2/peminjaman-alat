@@ -14,6 +14,7 @@ export function useFilterAndSearchData(defaultLimit = "20") {
     const role = searchParams.get("role") || "";
     const activity = searchParams.get("activity") || ""
     const category = searchParams.get("category") || "";
+    const status = searchParams.get("status") || ""
 
     const [showFilterData, setShowFilterData] = useState(false);
 
@@ -48,10 +49,11 @@ export function useFilterAndSearchData(defaultLimit = "20") {
         role,
         page,
         limit,
-        updateFilters,
         handleSearch,
+        activity,
+        status,
         showFilterData,
         setShowFilterData,
-        activity
+        updateFilters,
     };
 }
