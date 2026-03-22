@@ -6,17 +6,16 @@ import { recordActivity } from "../utils/logger.js";
 export default {
     async getAllLoans(req, res) {
         try {
-
-            let { search, sort, page, limit } = req.query
+            let { search, sort, page, limit } = req.query;
             let queryOptions = {
                 where: {},
-                order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]]
-            }
+                order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]],
+            };
 
             if (search) {
                 queryOptions.where["$borrower.fullName$"] = {
-                    [Op.like]: `%${search}%`
-                }
+                    [Op.like]: `%${search}%`,
+                };
             }
 
             if (page && limit) {
@@ -63,16 +62,22 @@ export default {
     },
 
     async getMyLoans(req, res) {
-        let { search, sort, page, limit } = req.query
+        let { search, status, sort, page, limit } = req.query;
         let queryOptions = {
-            where: {},
-            order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]]
-        }
+            where: {
+                borrowerId: req.user.id,
+            },
+            order: [["createdAt", sort === "ASC" ? "ASC" : "DESC"]],
+        };
 
         if (search) {
-            queryOptions.where["$borrower.fullName$"] = {
-                [Op.like]: `%${search}%`
-            }
+            queryOptions.where["$Tool.name$"] = {
+                [Op.like]: `%${search}%`,
+            };
+        }
+
+        if (status) {
+            queryOptions.where.status = status;
         }
 
         if (page && limit) {
@@ -83,18 +88,15 @@ export default {
             queryOptions.offset = (page - 1) * limit;
         }
 
-
         try {
             const { count, rows } = await Loan.findAndCountAll({
                 ...queryOptions,
-                where: { borrowerId: req.user.id },
                 include: [
                     {
                         model: Tool,
                         attributes: ["id", "name", "image"],
                     },
                 ],
-                order: [["createdAt", "DESC"]],
             });
 
             res.status(200).json({
@@ -139,8 +141,9 @@ export default {
 
             if (pendingLoan) {
                 return res.status(409).json({
-                    message: "You've already requested this. Just hang tight until an officer approves it!"
-                })
+                    message:
+                        "You've already requested this. Just hang tight until an officer approves it!",
+                });
             }
 
             const activeLoan = await Loan.findOne({
@@ -153,7 +156,8 @@ export default {
 
             if (activeLoan) {
                 return res.status(409).json({
-                    message: "You're still using this tool! Return it first before borrowing it again.",
+                    message:
+                        "You're still using this tool! Return it first before borrowing it again.",
                 });
             }
 
@@ -171,7 +175,8 @@ export default {
             );
 
             return res.status(201).json({
-                message: "Loan request submitted! Wait for the green light from our team.",
+                message:
+                    "Loan request submitted! Wait for the green light from our team.",
                 data: newLoan,
             });
         } catch (error) {
@@ -179,7 +184,7 @@ export default {
                 message: "Oops, something went wrong while processing your request.",
                 error: error.message,
             });
-            console.log(error)
+            console.log(error);
         }
     },
 
