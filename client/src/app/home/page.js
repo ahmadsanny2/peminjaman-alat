@@ -3,6 +3,7 @@ import Hero from "./hero-section/page";
 import Why from "./why-section/page";
 import Feature from "./main-feature-section/page";
 import LevelUser from "./level-user-section/page";
+import Footer from "./footer/page";
 
 const HomePage = () => {
   return (
@@ -12,6 +13,7 @@ const HomePage = () => {
       <Why />
       <Feature />
       <LevelUser />
+      <Footer />
     </div>
   );
 };
