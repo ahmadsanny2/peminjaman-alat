@@ -98,5 +98,35 @@ export default {
         }
     },
 
-    
+    async deleteUser(req, res) {
+        try {
+            const { id } = req.params
+
+            const user = await User.findByPk(id)
+
+            if (!user) {
+                return res.status(404).json({
+                    message: "Can't delete what's not there. User not found.",
+                });
+            }
+
+            if (user.id === req.user.id) {
+                return res.status(403).json({
+                    message: "Access denied. You cannot delete your own account.",
+                });
+            }
+
+            await user.destroy()
+
+            res.status(200).json({
+                message: "User deleted successfully. It's gone!"
+            })
+        } catch (error) {
+            res.status(500).json({
+                message: "Couldn't delete the user, try again!",
+                error: error.message,
+            });
+        }
+
+    }
 };
