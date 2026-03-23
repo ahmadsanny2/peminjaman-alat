@@ -109,7 +109,16 @@ export const useUserManagement = () => {
         setShowForm(true)
     };
 
-    
+    const handleDelete = async (id) => {
+        try {
+            if (!confirm("Yakin mau hapus user ini?")) return
+
+            await api.delete(`/users/${id}`)
+            fetchUsers()
+        } catch (err) {
+            setError(err.response?.data?.message)
+        }
+    }
 
     return {
         users,
