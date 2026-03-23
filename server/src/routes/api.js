@@ -20,6 +20,7 @@ router.use(verifyToken);
 
 router.get("/users", checkRole(["admin"]), userController.getAllUsers);
 router.put("/users/:id", checkRole(["admin"]), userController.updateUser);
+router.delete("/users/:id", checkRole(["admin"]), userController.deleteUser);
 
 router.get("/categories", categoryController.getAllCategories);
 router.post(
