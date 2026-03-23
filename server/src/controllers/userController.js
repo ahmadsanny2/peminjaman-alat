@@ -23,7 +23,7 @@ export default {
             }
 
             if (page && limit) {
-                page = parseInt(page) 
+                page = parseInt(page)
                 limit = parseInt(limit)
 
                 queryOptions.limit = limit
@@ -49,12 +49,13 @@ export default {
         }
     },
 
-    async updateRole(req, res) {
+    async updateUser(req, res) {
         const { id } = req.params;
-        const { role } = req.body;
+        const { fullName, role } = req.body;
 
 
         const validRoles = ["admin", "petugas", "peminjam"];
+
         if (!validRoles.includes(role)) {
             return res.status(400).json({
                 message:
@@ -77,23 +78,25 @@ export default {
                 });
             }
 
-            await user.update({ role });
+            await user.update({ fullName, role });
 
             await recordActivity(
                 req.user.id,
-                "UPDATE ROLE",
-                `${req.user.fullName} just updated the role for ${user.fullName}.`
+                "UPDATE USER",
+                `${req.user.fullName} just updated the user for ${user.fullName}.`
             )
 
             res.status(200).json({
-                message: "Role updated successfully!",
+                message: "User updated successfully!",
                 data: { id: user.id, username: user.username, role: user.role },
             });
         } catch (error) {
             res.status(500).json({
-                message: "Failed to update role user.",
+                message: "Failed to update user.",
                 error: error.message,
             });
         }
     },
+
+    
 };
