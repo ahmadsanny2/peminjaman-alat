@@ -19,7 +19,7 @@ router.post("/auth/login", authController.login);
 router.use(verifyToken);
 
 router.get("/users", checkRole(["admin"]), userController.getAllUsers);
-router.put("/users/:id/role", checkRole(["admin"]), userController.updateRole);
+router.put("/users/:id", checkRole(["admin"]), userController.updateUser);
 
 router.get("/categories", categoryController.getAllCategories);
 router.post(
