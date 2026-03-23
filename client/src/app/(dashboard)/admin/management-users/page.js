@@ -1,14 +1,18 @@
 "use client";
 
-import { AlertCircle, ShieldAlert, ShieldCheck, Users } from "lucide-react";
+import {
+    AlertCircle, ShieldAlert, ShieldCheck, Users, Edit2, Trash2, X,
+    Edit
+} from "lucide-react";
 
 import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
 import Pagination from "@/components/PaginationComponent";
 import { useUserManagement } from "@/hooks/admin/useUserManagement";
+import Modal from "@/components/ModalComponent";
 
 export default function UserManagementPage() {
 
-    const { users, isLoading, isUpdating, error, updateRole, handleShowForm, totalItems, totalPages, page, updateFilters, handleSearch, limit } =
+    const { users, isLoading, isEditing, error, handleShowForm, totalItems, totalPages, page, updateFilters, handleSearch, limit, handleEdit, formData, handleChange, isSubmitting, showForm, handleSubmit, resetForm, handleDelete } =
         useUserManagement();
 
     const userRole = ["Admin", "Petugas", "Peminjam"]
@@ -90,7 +94,7 @@ export default function UserManagementPage() {
                                         <th className="px-6 py-4 text-left">Nama Lengkap</th>
                                         <th className="px-6 py-4">Username</th>
                                         <th className="px-6 py-4">Role</th>
-                                        <th className="px-6 py-4">Ubah Role</th>
+                                        <th className="px-6 py-4">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
@@ -134,18 +138,21 @@ export default function UserManagementPage() {
                                                     <td className="px-6 py-4">
                                                         <RoleBadge role={user.role} />
                                                     </td>
-                                                    <td className="px-6 py-4">
-                                                        <select
-                                                            value={user.role}
-                                                            onChange={(e) => updateRole(user.id, e.target.value)}
-                                                            disabled={isUpdating}
-                                                            className="p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm bg-slate-50 disabled:opacity-50 cursor-pointer"
+                                                    <td className="px-6 py-4 text-center min-w-30">
+                                                        <button
+                                                            onClick={() => handleEdit(user)}
+                                                            className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
+                                                            title="Edit"
                                                         >
-                                                            {userRole.map((role, index) => (
-                                                                <option key={index} value={role.toLowerCase()}>{role}</option>
-                                                            ))}
-
-                                                        </select>
+                                                            <Edit2 size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(user.id)}
+                                                            className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
+                                                            title="Hapus"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             )
@@ -155,6 +162,90 @@ export default function UserManagementPage() {
                             </table>
                         </div>
                     </div>
+
+                    <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center z-50' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
+                        <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                            <Edit size={18} /> Ubah Data Pengguna
+                        </h2>
+
+                        {/* Form Update Users */}
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="flex flex-col space-y-4">
+
+                                {/* Input Full Name */}
+                                <div className="">
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                                        Nama Lengkap
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleChange}
+                                        className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
+                                        placeholder="Nama Lengkap"
+                                        disabled={isSubmitting}
+                                    />
+                                </div>
+
+                                {/* Select Role */}
+                                <div className="w-full">
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                                        Role
+                                    </label>
+                                    <div className="relative">
+                                        <Users
+                                            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                                            size={16}
+                                        />
+                                        <select
+                                            name="role"
+                                            value={formData.role}
+                                            onChange={handleChange}
+                                            className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
+                                            disabled={isSubmitting}
+                                        >
+                                            <option value="">Pilih Role</option>
+                                            {userRole.map((item, index) => (
+                                                <option key={index} value={item.toLowerCase()}>
+                                                    {item}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    {/* {error.categoryId && (
+                                        <span className="text-red-500 text-xs mt-1 block">
+                                            {error.categoryId.message}
+                                        </span>
+                                    )} */}
+                                </div>
+
+                            </div>
+
+                            {/* Button Save Update */}
+                            <div className="flex gap-2 pt-2">
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 cursor-pointer"
+                                >
+                                    Simpan
+                                </button>
+
+                                {(isEditing || showForm) && (
+                                    <button
+                                        type="button"
+                                        onClick={resetForm}
+                                        disabled={isSubmitting}
+                                        className="px-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
+                                        title="Batalkan"
+                                    >
+                                        <X size={20} />
+                                    </button>
+                                )}
+                            </div>
+                        </form>
+                    </Modal>
 
                 </div>
 
