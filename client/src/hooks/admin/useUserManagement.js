@@ -9,8 +9,14 @@ export const useUserManagement = () => {
 
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editId, setEditId] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
+    const [formData, setFormData] = useState({
+        fullName: "",
+        role: "",
+    });
 
     const [showForm, setShowForm] = useState(false);
 
@@ -45,33 +51,71 @@ export const useUserManagement = () => {
         setShowForm(!showForm);
     };
 
-    // Handle Update Role Form
-    const updateRole = async (userId, newRole) => {
-        if (
-            !window.confirm(
-                `Apakah Anda yakin ingin ubah role pengguna ini menjadi: ${newRole.toUpperCase()}?`,
-            )
-        )
-            return;
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
-        setIsUpdating(true);
-        setError("");
+    const resetForm = () => {
+        setFormData({
+            fullName: "",
+            role: ""
+        })
+        setIsEditing(false)
+        setShowForm(false)
+        setEditId(null)
+        setError("")
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!formData.fullName || !formData.role) {
+            alert("Semua field harus diisi!");
+        }
+
+        setIsSubmitting(true);
+
+        const url = `/users/${editId}`;
+        const method = "put";
+
         try {
-            await api.put(`/users/${userId}/role`, { role: newRole });
-            await fetchUsers();
+            await api({
+                method,
+                url,
+                data: formData,
+            });
+
+            resetForm()
+            fetchUsers()
         } catch (err) {
-            setError(err.response?.data?.message);
+            setError(err.response?.data?.message)
+            setShowForm(false)
         } finally {
-            setIsUpdating(false);
+            setIsSubmitting(false)
         }
     };
+
+    const handleEdit = (user) => {
+        setFormData({
+            fullName: user.fullName || "",
+            role: user.role || "",
+        });
+        setEditId(user.id)
+        setIsEditing(true)
+        setShowForm(true)
+    };
+
+    
 
     return {
         users,
         isLoading,
-        isUpdating,
+        isEditing,
         error,
-        updateRole,
         handleShowForm,
         page,
         limit,
@@ -80,5 +124,13 @@ export const useUserManagement = () => {
         updateFilters,
         handleSearch,
         role,
+        handleEdit,
+        formData,
+        handleChange,
+        isSubmitting,
+        showForm,
+        handleSubmit,
+        resetForm,
+        handleDelete
     };
 };
