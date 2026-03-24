@@ -39,8 +39,6 @@ const Workflow = () => {
                     </div>
                 </div>
 
-
-
             </div>
         </section>
     )
