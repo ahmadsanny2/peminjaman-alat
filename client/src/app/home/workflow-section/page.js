@@ -23,7 +23,7 @@ const Workflow = () => {
 
                                 <div className={`max-lg:flex max-lg:gap-5 items-center lg:text-center animate-fade-in-up ${item.animationDelay}`} key={index}>
                                     <div className="relative inline-flex items-center justify-center w-32 h-32 mb-6">
-                                        
+
                                         <div className={`relative w-28 h-28 bg-linear-to-br ${item.background} rounded-3xl flex items-center justify-center shadow-xl`}>
                                             <span className="text-3xl font-bold text-white">{item.nomor}</span>
                                         </div>
@@ -34,9 +34,6 @@ const Workflow = () => {
                                     </div>
                                 </div>
                             ))}
-
-
-                            
 
                         </div>
                     </div>
