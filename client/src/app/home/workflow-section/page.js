@@ -36,52 +36,7 @@ const Workflow = () => {
                             ))}
 
 
-                            {/* <div className="text-center animate-fade-in-up animation-delay-100">
-                                <div className="relative inline-flex items-center justify-center w-32 h-32 mb-6">
-                                    <div className="absolute inset-0 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-3xl rotate-6 opacity-20"></div>
-                                    <div className="relative w-28 h-28 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-xl">
-                                        <span className="text-3xl font-bold text-white">2</span>
-                                    </div>
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">Ajukan Peminjaman</h3>
-                                <p className="text-sm text-gray-600">Pilih alat dan ajukan permohonan peminjaman</p>
-                            </div>
-
-
-                            <div className="text-center animate-fade-in-up animation-delay-200">
-                                <div className="relative inline-flex items-center justify-center w-32 h-32 mb-6">
-                                    <div className="absolute inset-0 bg-linear-to-br from-blue-500 to-blue-600 rounded-3xl rotate-6 opacity-20"></div>
-                                    <div className="relative w-28 h-28 bg-linear-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-xl">
-                                        <span className="text-3xl font-bold text-white">3</span>
-                                    </div>
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">Verifikasi Petugas</h3>
-                                <p className="text-sm text-gray-600">Petugas memvalidasi dan menyetujui peminjaman</p>
-                            </div>
-
-
-                            <div className="text-center animate-fade-in-up animation-delay-300">
-                                <div className="relative inline-flex items-center justify-center w-32 h-32 mb-6">
-                                    <div className="absolute inset-0 bg-linear-to-br from-purple-500 to-purple-600 rounded-3xl rotate-6 opacity-20"></div>
-                                    <div className="relative w-28 h-28 bg-linear-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl">
-                                        <span className="text-3xl font-bold text-white">4</span>
-                                    </div>
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">Sistem Mencatat</h3>
-                                <p className="text-sm text-gray-600">Transaksi tercatat otomatis dalam log sistem</p>
-                            </div>
-
-
-                            <div className="text-center animate-fade-in-up animation-delay-400">
-                                <div className="relative inline-flex items-center justify-center w-32 h-32 mb-6">
-                                    <div className="absolute inset-0 bg-linear-to-br from-orange-500 to-orange-600 rounded-3xl rotate-6 opacity-20"></div>
-                                    <div className="relative w-28 h-28 bg-linear-to-br from-orange-500 to-orange-600 rounded-3xl flex items-center justify-center shadow-xl">
-                                        <span className="text-3xl font-bold text-white">5</span>
-                                    </div>
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">Monitoring & Laporan</h3>
-                                <p className="text-sm text-gray-600">Pantau status dan cetak laporan kapanpun</p>
-                            </div> */}
+                            
 
                         </div>
                     </div>
