@@ -118,6 +118,12 @@ export default {
 
             await user.destroy()
 
+            await recordActivity(
+                req.user.id,
+                "DELETE USER",
+                `${req.user.fullName} just deleted the user ${user.fullName}.`
+            )
+
             res.status(200).json({
                 message: "User deleted successfully. It's gone!"
             })
