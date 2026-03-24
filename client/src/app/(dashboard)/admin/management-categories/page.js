@@ -183,6 +183,7 @@ export default function CategoryManagementPage() {
                                                     className="hover:bg-slate-50/80 transition-colors"
                                                 >
                                                     <td className="px-6 py-4 text-center">
+                                                        
                                                         {no}
                                                     </td>
                                                     <td className="px-6 py-4 truncate min-w-xs max-w-xs">
