@@ -40,53 +40,6 @@ const Workflow = () => {
                 </div>
 
 
-                {/* <div className="lg:hidden space-y-6">
-                    <div className="flex items-start space-x-4 animate-fade-in-up">
-                        <div className="shrink-0 w-14 h-14 bg-linear-to-br from-navy-800 to-navy-900 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span className="text-xl font-bold text-white">1</span>
-                        </div>
-                        <div className="flex-1 pt-1">
-                            <h3 className="text-lg font-bold text-gray-900">Login Sesuai Role</h3>
-                            <p className="text-sm text-gray-600">Masuk ke sistem dengan akun sesuai hak akses Anda</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start space-x-4 animate-fade-in-up animation-delay-100">
-                        <div className="shrink-0 w-14 h-14 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span className="text-xl font-bold text-white">2</span>
-                        </div>
-                        <div className="flex-1 pt-1">
-                            <h3 className="text-lg font-bold text-gray-900">Ajukan Peminjaman</h3>
-                            <p className="text-sm text-gray-600">Pilih alat dan ajukan permohonan peminjaman</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start space-x-4 animate-fade-in-up animation-delay-200">
-                        <div className="shrink-0 w-14 h-14 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span className="text-xl font-bold text-white">3</span>
-                        </div>
-                        <div className="flex-1 pt-1">
-                            <h3 className="text-lg font-bold text-gray-900">Verifikasi Petugas</h3>
-                            <p className="text-sm text-gray-600">Petugas memvalidasi dan menyetujui peminjaman</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start space-x-4 animate-fade-in-up animation-delay-300">
-                        <div className="shrink-0 w-14 h-14 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span className="text-xl font-bold text-white">4</span>
-                        </div>
-                        <div className="flex-1 pt-1">
-                            <h3 className="text-lg font-bold text-gray-900">Sistem Mencatat</h3>
-                            <p className="text-sm text-gray-600">Transaksi tercatat otomatis dalam log sistem</p>
-                        </div>
-                    </div>
-                    <div className="flex items-start space-x-4 animate-fade-in-up animation-delay-400">
-                        <div className="shrink-0 w-14 h-14 bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <span className="text-xl font-bold text-white">5</span>
-                        </div>
-                        <div className="flex-1 pt-1">
-                            <h3 className="text-lg font-bold text-gray-900">Monitoring & Laporan</h3>
-                            <p className="text-sm text-gray-600">Pantau status dan cetak laporan kapanpun</p>
-                        </div>
-                    </div>
-                </div> */}
 
             </div>
         </section>
