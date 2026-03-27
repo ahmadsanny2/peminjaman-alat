@@ -66,6 +66,15 @@ export const useToolsCatalog = () => {
         fetchData();
     }, [fetchData]);
 
+    // Handle Open Request Form
+    const openRequestForm = (tool) => {
+        setSelectedTool(tool);
+        setValue("toolId", tool.id);
+        setValue("expectedReturnDate", "");
+        setShowForm(true);
+        setError("");
+    };
+
     // Handle Loan Request
     const executeRequest = async (data) => {
         setIsSubmitting(true);
@@ -84,15 +93,6 @@ export const useToolsCatalog = () => {
         } finally {
             setIsSubmitting(false);
         }
-    };
-
-    // Handle Open Request Form
-    const openRequestForm = (tool) => {
-        setSelectedTool(tool);
-        setValue("toolId", tool.id);
-        setValue("expectedReturnDate", "");
-        setShowForm(true);
-        setError("");
     };
 
     // Handle Close Request Form
