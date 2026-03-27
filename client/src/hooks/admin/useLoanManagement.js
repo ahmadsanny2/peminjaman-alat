@@ -39,7 +39,7 @@ export const useLoanManagement = () => {
         fetchLoans();
     }, [fetchLoans]);
 
-    // Handle Approve Loan Form
+    // Approve Loan Form
     const approveLoan = async (loanId) => {
         if (!window.confirm("Yakin mau setujui peminjaman ini?")) return;
 
@@ -55,7 +55,7 @@ export const useLoanManagement = () => {
         }
     };
 
-    // Handle Reject Loan Form
+    // Reject Loan
     const rejectLoan = async (loanId) => {
         if (!window.confirm("Yakin mau tolak peminjaman ini?")) return;
 
@@ -71,7 +71,7 @@ export const useLoanManagement = () => {
         }
     };
 
-    // Handle Return Loan Form
+    // Return Loan
     const returnLoan = async (loanId) => {
         if (!window.confirm("Yakin barang sudah dikembalikan?")) return;
 
@@ -87,6 +87,8 @@ export const useLoanManagement = () => {
         }
     };
 
+
+
     return {
         loans,
         isLoading,
@@ -94,13 +96,13 @@ export const useLoanManagement = () => {
         error,
         approveLoan,
         rejectLoan,
-        returnLoan,
         page,
         totalPages,
         totalItems,
         limit,
         updateFilters,
         handleSearch,
-        formatDateTime
+        formatDateTime,
+        returnLoan
     };
 };
