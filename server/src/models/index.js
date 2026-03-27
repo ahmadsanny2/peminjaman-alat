@@ -1,9 +1,9 @@
 import sequelize from "../config/db.js";
-import User from "./User.js";
-import Category from "./Category.js";
-import Tool from "./Tool.js";
-import Loan from "./Loan.js";
-import ActivityLog from "./ActivityLog.js";
+import User from "./user.model.js";
+import Category from "./category.model.js";
+import Tool from "./tool.model.js";
+import Loan from "./loan.model.js"
+import ActivityLog from "./activity.model.js";
 
 Category.hasMany(Tool, { foreignKey: "categoryId" });
 Tool.belongsTo(Category, { foreignKey: "categoryId" });
