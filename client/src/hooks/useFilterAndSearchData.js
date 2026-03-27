@@ -55,5 +55,6 @@ export function useFilterAndSearchData(defaultLimit = "20") {
         showFilterData,
         setShowFilterData,
         updateFilters,
+        searchParams
     };
 }
