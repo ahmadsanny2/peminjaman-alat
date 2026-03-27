@@ -1,27 +1,30 @@
 import express from "express";
 
-import authController from "../controllers/authController.js";
-import categoryController from "../controllers/categoryController.js";
-import toolController from "../controllers/toolController.js";
-import loanController from "../controllers/loanController.js";
-import userController from "../controllers/userController.js";
+import authController from "../controllers/auth.controller.js";
+import categoryController from "../controllers/category.controller.js";
+import toolController from "../controllers/tool.controller.js";
+import loanController from "../controllers/loan.controller.js";
+import userController from "../controllers/user.controller.js";
+import activityController from "../controllers/activity.controller.js";
 
 import { verifyToken } from "../middleware/authMiddleware.js";
 import { checkRole } from "../middleware/roleMiddleware.js";
-import activityController from "../controllers/activityController.js";
 import upload from "../middleware/uploadsMiddleware.js";
 
 const router = express.Router();
 
+// Auth
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
 
 router.use(verifyToken);
 
+// Management User
 router.get("/users", checkRole(["admin"]), userController.getAllUsers);
 router.put("/users/:id", checkRole(["admin"]), userController.updateUser);
 router.delete("/users/:id", checkRole(["admin"]), userController.deleteUser);
 
+// Management Category
 router.get("/categories", categoryController.getAllCategories);
 router.post(
     "/categories",
@@ -39,11 +42,13 @@ router.delete(
     categoryController.deleteCategory,
 );
 
+// Management Tool
 router.get("/tools", toolController.getAllTools);
 router.post("/tools", checkRole(["admin"]), upload.single("image"), toolController.createTools);
 router.put("/tools/:id", checkRole(["admin"]), upload.single("image"), toolController.updateTool);
 router.delete("/tools/:id", checkRole(["admin"]), toolController.deleteTool);
 
+// Management Loan
 router.post(
     "/loans/request",
     checkRole(["peminjam"]),
@@ -60,6 +65,11 @@ router.get(
     loanController.getAllLoans,
 );
 router.put(
+    "/loans/:id/cancel",
+    checkRole(["peminjam"]),
+    loanController.cancelLoan,
+);
+router.put(
     "/loans/:id/approve",
     checkRole(["admin", "petugas"]),
     loanController.approveLoan,
@@ -71,7 +81,7 @@ router.put(
 );
 router.put(
     "/loans/:id/return",
-    checkRole(["admin", "petugas"]),
+    checkRole(["admin", "petugas", "peminjam"]),
     loanController.returnLoan,
 );
 
