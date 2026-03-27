@@ -11,6 +11,7 @@ export function useMyLoans() {
     const [myLoans, setMyLoans] = useState([])
 
     const [isLoading, setIsLoading] = useState(true)
+    const [isProcessing, setIsProcessing] = useState(false)
     const [error, setError] = useState("")
 
     const [totalItems, setTotalItems] = useState(0)
@@ -37,6 +38,37 @@ export function useMyLoans() {
         fetchData()
     }, [fetchData])
 
+    const cancelLoan = async (loanId) => {
+        if (!window.confirm("Yakin ingin membatalkan pengajuan peminjaman?")) return;
+
+        setIsProcessing(true);
+        setError("");
+        try {
+            await api.put(`/loans/${loanId}/cancel`);
+            await fetchData();
+        } catch (err) {
+            setError(err.response?.data?.message);
+        } finally {
+            setIsProcessing(false);
+        }
+    }
+
+    // Handle Return Loan Form
+    const returnLoan = async (loanId) => {
+        if (!window.confirm("Yakin barang sudah dikembalikan?")) return;
+
+        setIsProcessing(true);
+        setError("");
+        try {
+            await api.put(`/loans/${loanId}/return`);
+            await fetchData();
+        } catch (err) {
+            setError(err.response?.data?.message);
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     return {
         page,
         updateFilters,
@@ -46,6 +78,9 @@ export function useMyLoans() {
         error,
         totalItems,
         totalPages,
-        formatDateTime
+        formatDateTime,
+        cancelLoan,
+        returnLoan,
+        isProcessing
     }
 }
