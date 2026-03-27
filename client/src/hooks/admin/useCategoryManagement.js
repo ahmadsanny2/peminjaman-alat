@@ -11,7 +11,7 @@ export function useCategory() {
     const [formData, setFormData] = useState({ name: "", description: "" });
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
-    const [isLoading, setIsLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
@@ -23,7 +23,7 @@ export function useCategory() {
 
     // Fetch Data From Server
     const fetchCategories = useCallback(async () => {
-        setIsLoading(true)
+        setIsLoading(true);
 
         try {
             const response = await api.get(`/categories`, {
@@ -36,7 +36,7 @@ export function useCategory() {
         } catch (err) {
             setError(err.response?.data?.message);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }, [page, limit, sort, search]);
 
@@ -75,6 +75,7 @@ export function useCategory() {
             await api({ method, url, data: formData });
             resetForm();
             fetchCategories();
+            setError("");
         } catch (err) {
             setError(err.response?.data?.message);
         } finally {
