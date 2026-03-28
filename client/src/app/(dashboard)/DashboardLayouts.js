@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }) {
 
                     {/* Date */}
                     <div className="text-sm">
-                        {new Date().toLocaleDateString("en-En", {
+                        {new Date().toLocaleDateString("id-ID", {
                             weekday: "long",
                             year: "numeric",
                             month: "long",
