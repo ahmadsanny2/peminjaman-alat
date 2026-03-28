@@ -5,10 +5,10 @@ import {
     Edit
 } from "lucide-react";
 
-import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
-import Pagination from "@/components/PaginationComponent";
+import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Pagination from "@/components/Pagination";
 import { useUserManagement } from "@/hooks/admin/useUserManagement";
-import Modal from "@/components/ModalComponent";
+import Modal from "@/components/Modal";
 
 export default function UserManagementPage() {
 
