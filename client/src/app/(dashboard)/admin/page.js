@@ -1,6 +1,6 @@
 "use client";
 
-import StatCard from "@/components/StatsCardComponent";
+import StatCard from "@/components/StatsCard";
 import { useDashboardStats } from "@/hooks/admin/useDashboardStats";
 import {
     Tags,
