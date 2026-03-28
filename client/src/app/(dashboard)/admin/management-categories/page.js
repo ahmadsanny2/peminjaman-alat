@@ -2,11 +2,15 @@
 
 import { Edit, Edit2, Plus, Tags, Trash2, X } from "lucide-react";
 
-import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
-import Modal from "@/components/ModalComponent";
-import Pagination from "@/components/PaginationComponent";
+import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Modal from "@/components/Modal";
+import Pagination from "@/components/Pagination";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
-import AlertComponent from "@/components/AlertComponent";
+import AlertComponent from "@/components/Alert";
+import Input from "@/components/Form/Input";
+import TextArea from "@/components/Form/TextArea";
+import Label from "@/components/Form/Label";
+import Button from "@/components/Button";
 
 export default function CategoryManagementPage() {
     // Category Management Data
@@ -84,55 +88,41 @@ export default function CategoryManagementPage() {
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">
-                                    Nama Kategori
-                                </label>
-                                <input
+                                <Label name=" Nama Kategori" />
+                                <Input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="w-full text-gray-900 p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm border-slate-300"
                                     placeholder="Contoh: Alat Kelistrikan"
                                     disabled={isSubmitting}
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">
-                                    Deskripsi
-                                </label>
-                                <textarea
+                                <Label name="Deskripsi" />
+                                <TextArea
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
                                     rows="4"
-                                    className="w-full text-gray-900 p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-colors text-sm resize-none"
                                     placeholder="Definisi operasional dari kategori ini..."
                                     disabled={isSubmitting}
-                                ></textarea>
+                                />
                             </div>
 
                             <div className="flex gap-2 pt-2">
-                                <button
-                                    type="submit"
+                                <Button
                                     disabled={isSubmitting}
-                                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 cursor-pointer"
-                                >
-                                    {isEditing ? "Simpan" : "Tambah"}
-                                </button>
-
-                                {(isEditing || showForm) && (
-                                    <button
-                                        type="button"
-                                        onClick={resetForm}
-                                        disabled={isSubmitting}
-                                        className="px-3 bg-red-500 rounded-lg hover:bg-red-600 text-white transition-colors cursor-pointer"
-                                        title="Batalkan"
-                                    >
-                                        <X size={20} />
-                                    </button>
-                                )}
+                                    name={isEditing ? "Simpan" : "Tambah"}
+                                />
+                                <Button
+                                    buttonType
+                                    disabled={isSubmitting}
+                                    onClick={resetForm}
+                                    cancel
+                                    icon={<X size={20} />}
+                                />
                             </div>
                         </form>
                     </Modal>
@@ -183,7 +173,7 @@ export default function CategoryManagementPage() {
                                                     className="hover:bg-slate-50/80 transition-colors"
                                                 >
                                                     <td className="px-6 py-4 text-center">
-                                                        
+
                                                         {no}
                                                     </td>
                                                     <td className="px-6 py-4 truncate min-w-xs max-w-xs">
