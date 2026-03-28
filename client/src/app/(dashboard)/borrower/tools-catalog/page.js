@@ -7,11 +7,11 @@ import {
     X,
 } from "lucide-react";
 
-import AlertComponent from "@/components/AlertComponent";
-import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
+import AlertComponent from "@/components/Alert";
+import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Image from "next/image";
-import Modal from "@/components/ModalComponent";
-import Pagination from "@/components/PaginationComponent";
+import Modal from "@/components/Modal";
+import Pagination from "@/components/Pagination";
 import { useToolsCatalog } from "@/hooks/borrower/useToolsCatalog";
 
 export default function CatalogPage() {
@@ -70,13 +70,14 @@ export default function CatalogPage() {
                 />
 
                 {/* Main Content */}
-                
                 {/* IsLoading Response */}
-                {isLoading ? (
+                {isLoading && (
                     <div className="flex justify-center p-10 text-slate-500 animate-pulse font-medium">
                         Sedang memuat data...
                     </div>
-                ) : catalog.length === 0 ? (
+                )}
+                
+                {catalog.length === 0 ? (
                     <div className="text-center p-10 bg-white rounded-xl border border-slate-200 shadow-sm text-slate-500">
                         Belum ada alat yang bisa dipinjam.
                     </div>
@@ -86,7 +87,7 @@ export default function CatalogPage() {
                         {catalog.map((tool) => (
                             <div
                                 key={tool.id}
-                                className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md gap-5 h-100"
+                                className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md gap-5 h-120"
                             >
                                 <div className="flex flex-col flex-1 border-b border-slate-100 gap-2">
                                     <div className="">
@@ -105,18 +106,28 @@ export default function CatalogPage() {
                                             {tool.Category?.name || "Tanpa Kategori"}
                                         </div>
                                         <h3 className="text-sm font-bold text-slate-800 mb-2 leading-tight">
-                                            {tool.name.substring(0, 50)}
+                                            {tool.name}
                                         </h3>
 
-                                        <div className="flex items-center gap-2 mt-4 text-sm">
-                                            <span className="text-slate-500">Stok:</span>
-                                            <span
-                                                className={`font-bold ${tool.stock > 0 ? "text-emerald-600" : "text-red-500"}`}
-                                            >
-                                                {tool.stock} unit
-                                            </span>
-                                        </div>
                                     </div>
+                                </div>
+
+                                <div className="flex flex-col gap-y-4 p-4 bg-slate-50">
+                                    <div className="flex items-center gap-2 mt-4 text-sm">
+                                        <span className="text-slate-500">Stok:</span>
+                                        <span
+                                            className={`font-bold ${tool.stock > 0 ? "text-emerald-600" : "text-red-500"}`}
+                                        >
+                                            {tool.stock} unit
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => openRequestForm(tool)}
+                                        disabled={tool.stock < 1}
+                                        className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white p-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
+                                    >
+                                        {tool.stock > 0 ? "Ajukan Peminjaman" : "Stok Habis"}
+                                    </button>
                                 </div>
 
                                 {selectedTool?.id === tool.id ? (
@@ -132,7 +143,6 @@ export default function CatalogPage() {
                                             <h1 className="max-md:text-lg text-xl font-semibold text-slate-800 flex items-center gap-1.5">
                                                 Form Pengajuan Peminjaman Alat
                                             </h1>
-
                                         </div>
 
                                         {/* Form */}
@@ -201,15 +211,7 @@ export default function CatalogPage() {
                                     </Modal>
 
                                 ) : ""}
-                                <div className="p-4 bg-slate-50">
-                                    <button
-                                        onClick={() => openRequestForm(tool)}
-                                        disabled={tool.stock < 1}
-                                        className="w-full py-2 rounded text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200 disabled:cursor-default bg-white text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer"
-                                    >
-                                        {tool.stock > 0 ? "Ajukan Peminjaman" : "Stok Habis"}
-                                    </button>
-                                </div>
+
                             </div>
                         ))}
 
