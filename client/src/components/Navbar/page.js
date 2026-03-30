@@ -35,7 +35,7 @@ const Navbar = () => {
     },
     {
       name: "Cara Kerja",
-      url: "#how-to-work",
+      url: "#workflow",
       icon: <Workflow size={20} />,
     },
     {
