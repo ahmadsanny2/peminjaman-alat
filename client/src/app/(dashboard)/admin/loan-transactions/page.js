@@ -2,8 +2,8 @@
 
 import { AlertCircle, CheckCircle, ClipboardList, Undo2, XCircle } from "lucide-react";
 
-import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
-import Pagination from "@/components/PaginationComponent";
+import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Pagination from "@/components/Pagination";
 import StatusBadge from "@/components/StatusBadge";
 import { useLoanManagement } from "@/hooks/admin/useLoanManagement";
 
@@ -26,16 +26,6 @@ export default function LoanManagementPage() {
         handleSearch,
         formatDateTime
     } = useLoanManagement();
-
-    // Format Date
-    // const formatDate = (dateString) => {
-    //     if (!dateString) return "-";
-    //     return new Date(dateString).toLocaleDateString("id-ID", {
-    //         day: "numeric",
-    //         month: "long",
-    //         year: "numeric",
-    //     });
-    // };
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
@@ -122,7 +112,7 @@ export default function LoanManagementPage() {
                                                 </td>
                                                 <td className="px-6 py-4 text-center min-w-60">{formatDateTime(loan.borrowDate, false)}</td>
                                                 <td className="px-6 py-4 text-center min-w-60">
-                                                    {formatDateTime(loan.expectedReturnDate,false)}
+                                                    {formatDateTime(loan.expectedReturnDate, false)}
                                                 </td>
                                                 <td className="px-6 py-4 text-center min-w-50">
                                                     <StatusBadge status={loan.status} />
@@ -160,7 +150,7 @@ export default function LoanManagementPage() {
                                                         </button>
                                                     )}
 
-                                                    {(loan.status === "returned" || loan.status === "rejected") && (
+                                                    {(loan.status === "returned" || loan.status === "rejected" || loan.status === "canceled") && (
                                                         <span className="text-xs font-semibold text-slate-400 italic">
                                                             Selesai
                                                         </span>
