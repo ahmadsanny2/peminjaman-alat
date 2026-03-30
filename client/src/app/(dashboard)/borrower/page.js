@@ -1,6 +1,6 @@
 "use client";
 
-import StatCard from "@/components/StatsCardComponent";
+import StatCard from "@/components/StatsCard";
 import { useMyLoans } from "@/hooks/borrower/useMyLoans";
 import { useToolsCatalog } from "@/hooks/borrower/useToolsCatalog";
 import { LayoutDashboard, Clock, Activity, ArrowRight, BadgeCheck } from "lucide-react";
