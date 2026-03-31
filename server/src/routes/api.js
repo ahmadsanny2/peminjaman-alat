@@ -82,6 +82,7 @@ router.put(
 router.put(
     "/loans/:id/return",
     checkRole(["admin", "petugas", "peminjam"]),
+    upload.single("image"),
     loanController.returnLoan,
 );
 
