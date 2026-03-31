@@ -11,6 +11,10 @@ import Input from "@/components/Form/Input";
 import TextArea from "@/components/Form/TextArea";
 import Label from "@/components/Form/Label";
 import Button from "@/components/Button";
+import ActionButton from "@/components/ActionButton";
+import HeaderPage from "@/components/HeaderPage";
+import HeaderForm from "@/components/Form/HeaderForm";
+import TableCell from "@/components/Table/TableCell";
 
 export default function CategoryManagementPage() {
     // Category Management Data
@@ -33,24 +37,20 @@ export default function CategoryManagementPage() {
         limit,
         updateFilters,
         handleSearch,
-        isLoading
+        isLoading,
     } = useCategory();
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <Tags className="text-emerald-600" size={32} />
-                    <div>
-                        <h1 className="text-2xl font-bold">Manajemen Kategori</h1>
-                    </div>
-                </div>
+                <HeaderPage
+                    icon={<Tags className="text-emerald-600" size={32} />}
+                    title="Manajemen Kategori"
+                />
 
                 {/* Error Response */}
-                {error && (
-                    <AlertComponent message={error} isSuccess={false} />
-                )}
+                {error && <AlertComponent message={error} isSuccess={false} />}
 
                 {/* Content */}
                 <div className="space-y-6">
@@ -74,17 +74,10 @@ export default function CategoryManagementPage() {
                         isOpen={handleShowForm}
                         onClose={handleShowForm}
                     >
-                        <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                            {isEditing ? (
-                                <>
-                                    <Edit size={18} /> Ubah Kategori
-                                </>
-                            ) : (
-                                <>
-                                    <Plus size={18} /> Tambah Kategori
-                                </>
-                            )}
-                        </h2>
+                        <HeaderForm
+                            icon={isEditing ? <Edit size={18} /> : <Plus size={18} />}
+                            title={isEditing ? "Ubah Kategori" : "Tambah Kategori"}
+                        />
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
@@ -133,73 +126,58 @@ export default function CategoryManagementPage() {
                             <table className="w-full text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr>
-                                        <th className="border-slate-200 px-6 py-4 border text-center">
+                                        <TableCell isHeader={true} className="text-center">
                                             No
-                                        </th>
-                                        <th className="border-slate-200 px-6 py-4 border text-left min-w-xs max-w-xs">
-                                            Nama Kategori
-                                        </th>
-                                        <th className="border-slate-200 px-6 py-4 border text-left min-w-xl max-w-xl">
-                                            Deskripsi
-                                        </th>
-                                        <th className="border-slate-200 px-6 py-4 border">Aksi</th>
+                                        </TableCell>
+                                        <TableCell isHeader={true} className="text-left min-w-50">Nama Kategori</TableCell>
+                                        <TableCell isHeader={true} className="text-left">Deskripsi</TableCell>
+                                        <TableCell isHeader={true} className="text-center min-w-30">
+                                            Aksi
+                                        </TableCell>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
                                     {isLoading ? (
                                         <tr>
-                                            <td
-                                                colSpan="4"
-                                                className="px-6 py-4 text-center text-slate-500"
-                                            >
+                                            <TableCell colspan="4" className="text-center">
                                                 Sedang mengambil data kategori.
-                                            </td>
+                                            </TableCell>
                                         </tr>
                                     ) : categories.length === 0 ? (
                                         <tr>
-                                            <td
-                                                colSpan="4"
-                                                className="px-6 py-4 text-center text-slate-500"
-                                            >
+                                            <TableCell colspan="4" className="text-center">
                                                 Belum ada kategori terdaftar.
-                                            </td>
+                                            </TableCell>
                                         </tr>
                                     ) : (
                                         categories.map((category, index) => {
-                                            const no = index + 1 + (page - 1) * limit
+                                            const no = index + 1 + (page - 1) * limit;
                                             return (
                                                 <tr
                                                     key={category.id}
                                                     className="hover:bg-slate-50/80 transition-colors"
                                                 >
-                                                    <td className="px-6 py-4 text-center">
-
-                                                        {no}
-                                                    </td>
-                                                    <td className="px-6 py-4 truncate min-w-xs max-w-xs">
-                                                        {category.name}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-justify min-w-xl max-w-xl">
+                                                    <TableCell className="text-center">{no}</TableCell>
+                                                    <TableCell className="text-left min-w-50">{category.name}</TableCell>
+                                                    <TableCell className="text-justify min-w-150">
                                                         {category.description || "-"}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center min-w-30">
-                                                        <button
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <ActionButton
                                                             onClick={() => handleEdit(category)}
-                                                            className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
+                                                            className="text-blue-600 bg-blue-50"
                                                             title="Edit"
-                                                        >
-                                                            <Edit2 size={16} />
-                                                        </button>
-                                                        <button
+                                                            icon={<Edit2 size={16} />}
+                                                        />
+                                                        <ActionButton
                                                             onClick={() => handleDelete(category.id)}
-                                                            className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
+                                                            className="text-red-600 bg-red-50"
                                                             title="Hapus"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </td>
+                                                            icon={<Trash2 size={16} />}
+                                                        />
+                                                    </TableCell>
                                                 </tr>
-                                            )
+                                            );
                                         })
                                     )}
                                 </tbody>
