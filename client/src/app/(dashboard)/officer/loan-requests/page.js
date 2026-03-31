@@ -1,7 +1,7 @@
 "use client";
 
-import FilterAndSearchData from "@/components/FilterAndSearchDataComponent";
-import Pagination from "@/components/PaginationComponent";
+import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Pagination from "@/components/Pagination";
 import StatusBadge from "@/components/StatusBadge";
 import { useLoanManagement } from "@/hooks/admin/useLoanManagement";
 import { ClipboardCheck, CheckCircle, Undo2, AlertCircle, XCircle } from "lucide-react";
