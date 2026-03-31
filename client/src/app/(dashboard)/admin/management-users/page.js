@@ -1,21 +1,48 @@
 "use client";
 
 import {
-    AlertCircle, ShieldAlert, ShieldCheck, Users, Edit2, Trash2, X,
-    Edit
+    AlertCircle,
+    ShieldAlert,
+    ShieldCheck,
+    Users,
+    Edit2,
+    Trash2,
+    X,
+    Edit,
 } from "lucide-react";
 
 import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Pagination from "@/components/Pagination";
 import { useUserManagement } from "@/hooks/admin/useUserManagement";
 import Modal from "@/components/Modal";
+import HeaderPage from "@/components/HeaderPage";
+import TableCell from "@/components/Table/TableCell";
+import ActionButton from "@/components/ActionButton";
 
 export default function UserManagementPage() {
+    const {
+        users,
+        isLoading,
+        isEditing,
+        error,
+        handleShowForm,
+        totalItems,
+        totalPages,
+        page,
+        updateFilters,
+        handleSearch,
+        limit,
+        handleEdit,
+        formData,
+        handleChange,
+        isSubmitting,
+        showForm,
+        handleSubmit,
+        resetForm,
+        handleDelete,
+    } = useUserManagement();
 
-    const { users, isLoading, isEditing, error, handleShowForm, totalItems, totalPages, page, updateFilters, handleSearch, limit, handleEdit, formData, handleChange, isSubmitting, showForm, handleSubmit, resetForm, handleDelete } =
-        useUserManagement();
-
-    const userRole = ["Admin", "Petugas", "Peminjam"]
+    const userRole = ["Admin", "Petugas", "Peminjam"];
 
     // Role Badge
     const RoleBadge = ({ role }) => {
@@ -46,18 +73,12 @@ export default function UserManagementPage() {
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
-
             <div className="space-y-6">
-
                 {/* Header */}
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <Users className="text-purple-600" size={32} />
-                    <div>
-                        <h1 className="text-2xl font-bold">
-                            Manajemen Pengguna
-                        </h1>
-                    </div>
-                </div>
+                <HeaderPage
+                    icon={<Users className="text-purple-600" size={32} />}
+                    title="Manajemen Pengguna"
+                />
 
                 {/* Error Response */}
                 {error && (
@@ -69,19 +90,24 @@ export default function UserManagementPage() {
 
                 {/* Content */}
                 <div className="space-y-6">
-
                     <FilterAndSearchData
                         search={(e) => handleSearch(e.target.value)}
                         isShowForm={handleShowForm}
-                        sort={(e) => updateFilters('sort', e.target.value)}
+                        sort={(e) => updateFilters("sort", e.target.value)}
                         hiddenSearchData={!false}
                         placeHolderName="Cari nama user..."
                         hiddenFilterData={!false}
-                        showBy={(e) => updateFilters('role', e.target.value)}
+                        showBy={(e) => updateFilters("role", e.target.value)}
                         label="Role"
                     >
                         {userRole.map((role, index) => (
-                            <option key={index} value={role.toLowerCase()} className="bg-white/20 text-black">{role}</option>
+                            <option
+                                key={index}
+                                value={role.toLowerCase()}
+                                className="bg-white/20 text-black"
+                            >
+                                {role}
+                            </option>
                         ))}
                     </FilterAndSearchData>
 
@@ -89,73 +115,68 @@ export default function UserManagementPage() {
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm text-slate-600">
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
-                                    <tr className="text-center">
-                                        <th className="px-6 py-4 text-center">No</th>
-                                        <th className="px-6 py-4 text-left">Nama Lengkap</th>
-                                        <th className="px-6 py-4">Username</th>
-                                        <th className="px-6 py-4">Role</th>
-                                        <th className="px-6 py-4">Aksi</th>
+                                    <tr className="">
+                                        <TableCell isHeader={true} className="text-center">
+                                            No
+                                        </TableCell>
+                                        <TableCell isHeader={true} className="text-left">
+                                            Nama Lengkap
+                                        </TableCell>
+                                        <TableCell isHeader={true} className="text-center">
+                                            Username
+                                        </TableCell>
+                                        <TableCell isHeader={true} className="text-center">
+                                            Role
+                                        </TableCell>
+                                        <TableCell isHeader={true} className="text-center">
+                                            Aksi
+                                        </TableCell>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">
                                     {isLoading ? (
                                         <tr>
-                                            <td
-                                                colSpan="5"
-                                                className="px-6 py-10 text-center text-slate-500 animate-pulse"
-                                            >
+                                            <TableCell className="text-center" colspan="5">
                                                 Sedang mengambil data users...
-                                            </td>
+                                            </TableCell>
                                         </tr>
                                     ) : users.length === 0 ? (
                                         <tr>
-                                            <td
-                                                colSpan="5"
-                                                className="px-6 py-10 text-center text-slate-500"
-                                            >
+                                            <TableCell className="text-center" colspan="5">
                                                 Belum ada pengguna pada sistem ini.
-                                            </td>
+                                            </TableCell>
                                         </tr>
                                     ) : (
                                         users.map((user, index) => {
-                                            const no = index + 1 + (page - 1) * limit
-
+                                            const no = index + 1 + (page - 1) * limit;
 
                                             return (
                                                 <tr
                                                     key={user.id}
-                                                    className="hover:bg-slate-50/80 transition-colors text-center"
+                                                    className="hover:bg-slate-50/80 transition-colors"
                                                 >
-                                                    <td className="px-6 py-4 text-center">
-                                                        {no}
-                                                    </td>
-                                                    <td className="px-6 py-4 truncate max-w-xs text-left">
-                                                        {user.fullName}
-                                                    </td>
-                                                    <td className="px-6 py-4 text-slate-500">
-                                                        @{user.username}
-                                                    </td>
-                                                    <td className="px-6 py-4">
+                                                    <TableCell className="text-center">{no}</TableCell>
+                                                    <TableCell className="text-left">{user.fullName}</TableCell>
+                                                    <TableCell className="text-center"> @{user.username}</TableCell>
+                                                    <TableCell className="text-center">
                                                         <RoleBadge role={user.role} />
-                                                    </td>
-                                                    <td className="px-6 py-4 text-center min-w-30">
-                                                        <button
+                                                    </TableCell>
+                                                    <TableCell className="text-center">
+                                                        <ActionButton
                                                             onClick={() => handleEdit(user)}
                                                             className="p-1 text-blue-600 bg-blue-50 rounded-lg cursor-pointer"
                                                             title="Edit"
-                                                        >
-                                                            <Edit2 size={16} />
-                                                        </button>
-                                                        <button
+                                                            icon={<Edit2 size={16} />}
+                                                        />
+                                                        <ActionButton
                                                             onClick={() => handleDelete(user.id)}
                                                             className="p-1 text-red-600 bg-red-50 rounded-lg cursor-pointer"
                                                             title="Hapus"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
-                                                    </td>
+                                                            icon={<Trash2 size={16} />}
+                                                        />
+                                                    </TableCell>
                                                 </tr>
-                                            )
+                                            );
                                         })
                                     )}
                                 </tbody>
@@ -163,7 +184,15 @@ export default function UserManagementPage() {
                         </div>
                     </div>
 
-                    <Modal customClass={showForm ? 'fixed inset-0 flex items-center justify-center z-50' : 'hidden'} isOpen={handleShowForm} onClose={handleShowForm}>
+                    <Modal
+                        customClass={
+                            showForm
+                                ? "fixed inset-0 flex items-center justify-center z-50"
+                                : "hidden"
+                        }
+                        isOpen={handleShowForm}
+                        onClose={handleShowForm}
+                    >
                         <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                             <Edit size={18} /> Ubah Data Pengguna
                         </h2>
@@ -171,7 +200,6 @@ export default function UserManagementPage() {
                         {/* Form Update Users */}
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="flex flex-col space-y-4">
-
                                 {/* Input Full Name */}
                                 <div className="">
                                     <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -219,7 +247,6 @@ export default function UserManagementPage() {
                                         </span>
                                     )} */}
                                 </div>
-
                             </div>
 
                             {/* Button Save Update */}
@@ -246,9 +273,7 @@ export default function UserManagementPage() {
                             </div>
                         </form>
                     </Modal>
-
                 </div>
-
             </div>
 
             <Pagination page={page} totalPages={totalPages} totalData={totalItems} />
