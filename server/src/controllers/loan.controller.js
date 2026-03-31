@@ -372,6 +372,7 @@ export default {
 
     async returnLoan(req, res) {
         const { id } = req.params;
+        const { actualReturnDate } = req.body;
         const transaction = await sequelize.transaction();
 
         try {
@@ -385,10 +386,13 @@ export default {
 
             const tool = await Tool.findByPk(loan.toolId, { transaction });
 
+            const imagePath = req.file ? `uploads/${req.file.filename}` : null
+
             await loan.update(
                 {
                     status: "returned",
-                    actualReturnDate: new Date(),
+                    actualReturnDate: actualReturnDate,
+                    image: imagePath
                 },
                 { transaction },
             );
@@ -402,7 +406,7 @@ export default {
             await recordActivity(
                 req.user.id,
                 "RETURN LOAN",
-                `${req.user.fullName} validated the return of: ${tool.name}`,
+                `${req.user.fullName} validated the return of: ${tool?.name || "Unknown"}`,
             );
 
             res.status(200).json({
