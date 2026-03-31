@@ -2,10 +2,10 @@ import { workflowList } from "@/constants/workflow"
 
 const Workflow = () => {
     return (
-        <section id="cara-kerja" className="py-16 lg:py-24 bg-gray-50">
+        <section id="workflow" className="py-16 lg:py-24 bg-gray-50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16 animate-fade-in-up">
-                    <span className="inline-block px-4 py-2 bg-navy-100 text-navy-800 rounded-full text-sm font-semibold mb-4">Cara Kerja</span>
+                    <span className="inline-block px-4 py-2 bg-[#e0e9ff] text-[#1e3a5f] rounded-full text-sm font-semibold mb-4">Cara Kerja</span>
                     <h2 className="text-3xl lg:text-4xl font-bold text-navy-900 mb-4">Alur Peminjaman yang Mudah</h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">5 langkah sederhana untuk mengelola peminjaman alat</p>
                 </div>
