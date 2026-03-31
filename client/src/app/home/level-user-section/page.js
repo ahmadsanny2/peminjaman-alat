@@ -1,4 +1,4 @@
-import LevelUserComponent from "@/components/LevelUserComponent";
+import LevelUserComponent from "@/components/LevelUser";
 
 const LevelUser = () => {
     return (
