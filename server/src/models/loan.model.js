@@ -24,6 +24,9 @@ const Loan = sequelize.define(
         actualReturnDate: {
             type: DataTypes.DATE,
         },
+        image: {
+            type: DataTypes.STRING
+        }
     },
     {
         tableName: "loans",
