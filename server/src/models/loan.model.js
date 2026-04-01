@@ -10,7 +10,14 @@ const Loan = sequelize.define(
             primaryKey: true,
         },
         status: {
-            type: DataTypes.ENUM("pending", "approved", "canceled", "rejected", "returned"),
+            type: DataTypes.ENUM(
+                "pending",
+                "approved",
+                "canceled",
+                "rejected",
+                "returned",
+                "verifying",
+            ),
             defaultValue: "pending",
         },
         borrowDate: {
@@ -25,8 +32,8 @@ const Loan = sequelize.define(
             type: DataTypes.DATE,
         },
         image: {
-            type: DataTypes.STRING
-        }
+            type: DataTypes.STRING,
+        },
     },
     {
         tableName: "loans",
