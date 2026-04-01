@@ -72,13 +72,13 @@ export const useLoanManagement = () => {
     };
 
     // Return Loan
-    const returnLoan = async (loanId) => {
+    const verifying = async (loanId) => {
         if (!window.confirm("Yakin barang sudah dikembalikan?")) return;
 
         setIsProcessing(true);
         setError("");
         try {
-            await api.put(`/loans/${loanId}/return`);
+            await api.put(`/loans/${loanId}/verifying`);
             await fetchLoans();
         } catch (err) {
             setError(err.response?.data?.message);
@@ -103,6 +103,6 @@ export const useLoanManagement = () => {
         updateFilters,
         handleSearch,
         formatDateTime,
-        returnLoan
+        verifying
     };
 };
