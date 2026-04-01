@@ -28,6 +28,7 @@ export function useTool() {
     const [editId, setEditId] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false)
 
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
@@ -36,6 +37,8 @@ export function useTool() {
 
     // Fetch Data From Server
     const fetchTools = useCallback(async () => {
+        setIsLoading(true)
+
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
                 api.get(`/tools`, { params: { search, sort, category, page, limit } }),
@@ -51,6 +54,8 @@ export function useTool() {
             setCategories(categories);
         } catch (err) {
             setError(err.response?.data?.message);
+        } finally {
+            setIsLoading(false)
         }
     }, [page, limit, search, sort, category]);
 
@@ -209,5 +214,6 @@ export function useTool() {
         previewUrl,
         selectedFile,
         condition,
+        isLoading
     };
 }
