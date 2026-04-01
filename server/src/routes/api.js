@@ -44,8 +44,18 @@ router.delete(
 
 // Management Tool
 router.get("/tools", toolController.getAllTools);
-router.post("/tools", checkRole(["admin"]), upload.single("image"), toolController.createTools);
-router.put("/tools/:id", checkRole(["admin"]), upload.single("image"), toolController.updateTool);
+router.post(
+    "/tools",
+    checkRole(["admin"]),
+    upload.single("image"),
+    toolController.createTools,
+);
+router.put(
+    "/tools/:id",
+    checkRole(["admin"]),
+    upload.single("image"),
+    toolController.updateTool,
+);
 router.delete("/tools/:id", checkRole(["admin"]), toolController.deleteTool);
 
 // Management Loan
@@ -81,11 +91,16 @@ router.put(
 );
 router.put(
     "/loans/:id/return",
-    checkRole(["admin", "petugas", "peminjam"]),
+    checkRole(["peminjam"]),
     upload.single("image"),
     loanController.returnLoan,
 );
+router.put(
+    "/loans/:id/verifying",
+    checkRole(["admin", "petugas"]),
+    loanController.verifying,
+);
 
-router.get('/logs', checkRole(['admin']), activityController.getLogs);
+router.get("/logs", checkRole(["admin"]), activityController.getLogs);
 
 export default router;
