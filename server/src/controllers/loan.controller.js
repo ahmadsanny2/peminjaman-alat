@@ -386,20 +386,17 @@ export default {
 
             const tool = await Tool.findByPk(loan.toolId, { transaction });
 
+
             const imagePath = req.file ? `uploads/${req.file.filename}` : null
 
             await loan.update(
                 {
-                    status: "returned",
+                    status: "verifying",
                     actualReturnDate: actualReturnDate,
                     image: imagePath
                 },
                 { transaction },
             );
-
-            if (tool) {
-                await tool.increment("stock", { by: 1, transaction });
-            }
 
             await transaction.commit();
 
@@ -421,4 +418,56 @@ export default {
             });
         }
     },
+
+    async verifying(req, res) {
+        const { id } = req.params
+        const officerId = req.user.id
+        const transaction = await sequelize.transaction()
+
+        try {
+            const loan = await Loan.findByPk(id, { transaction })
+
+            if (loan.status !== "verifying") {
+                await transaction.rollback()
+                return res.status(400).json({
+                    message: "Loan is not in verifying status"
+                })
+            }
+
+            const tool = await Tool.findByPk(loan.toolId, { transaction });
+
+            await loan.update(
+                {
+                    status: "returned",
+                    officerId
+                },
+                {
+                    transaction
+                }
+            )
+
+            if (tool) {
+                await tool.increment("stock", { by: 1, transaction });
+            }
+
+            await transaction.commit()
+
+            await recordActivity(
+                req.user.id,
+                "VERIFY RETURN",
+                `${req.user.fullName} verified the return of: ${tool?.name || "Unknown"}`,
+            );
+
+            res.status(200).json({
+                message: "Return verified successfully. The tool is now back in stock!",
+                data: loan
+            })
+        } catch (error) {
+            await transaction.rollback()
+            res.status(500).json({
+                message: "There was an error while processing the verification.",
+                error: error.message
+            })
+        }
+    }
 };
