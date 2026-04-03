@@ -5,6 +5,8 @@ import { ActivitySquare, AlertCircle } from "lucide-react";
 import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Pagination from "@/components/Pagination";
 import { useActivityLog } from "@/hooks/admin/useActivityLog";
+import HeaderPage from "@/components/HeaderPage";
+import TableCell from "@/components/Table/TableCell";
 
 export default function ActivityLogContent() {
     const {
@@ -18,21 +20,94 @@ export default function ActivityLogContent() {
         limit,
         updateFilters,
         handleSearch,
-        formatDateTime
+        formatDateTime,
     } = useActivityLog();
 
-    console.log(dataActivity)
+    console.log(dataActivity);
+
+    const tableTH = [
+        {
+            name: "No",
+            className: "w-20 text-center",
+        },
+        {
+            name: "Waktu Operasi",
+            className: "min-w-60 text-center",
+        },
+        {
+            name: "User",
+            className: "text-center",
+        },
+        {
+            name: "Aktivitas",
+            className: "text-center",
+        },
+        {
+            name: "Deskripsi",
+            className: "min-w-100 text-left",
+        },
+    ];
+
+    let content;
+
+    if (isLoading) {
+        content = (
+            <tr>
+                <TableCell colspan="5" className="text-center">
+                    Sedang mengambil data...
+                </TableCell>
+            </tr>
+        );
+    } else if (logs.length === 0) {
+        content = (
+            <tr>
+                <TableCell colspan="5" className="text-center">
+                    Belum ada aktivitas yang direkam oleh sistem.
+                </TableCell>
+            </tr>
+        );
+    } else {
+        content = logs.map((log, index) => {
+            const no = index + 1 + (page - 1) * limit;
+            return (
+                <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+
+                    {/* No */}
+                    <TableCell className="text-center">{no}</TableCell>
+
+                    {/* Operating Time */}
+                    <TableCell className="text-center">
+                        {formatDateTime(log.createdAt)}
+                    </TableCell>
+
+                    {/* User */}
+                    <TableCell className="text-center">
+                        <div className="font-medium">{log.actor?.fullName}</div>
+                        <div className="text-[10px] uppercase">{log.actor?.role}</div>
+                    </TableCell>
+
+                    {/* Activity */}
+                    <TableCell className="text-center font-semibold text-xs">
+                        <span className="bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                            {log.action}
+                        </span>
+                    </TableCell>
+
+                    {/* Description */}
+                    <TableCell className="text-left">{log.description}</TableCell>
+                </tr>
+            );
+        });
+    }
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <ActivitySquare className="text-cyan-600" size={28} />
-                    <div>
-                        <h1 className="text-2xl font-bold">Log Aktivitas</h1>
-                    </div>
-                </div>
+                <HeaderPage
+                    icon={<ActivitySquare className="text-cyan-600" size={28} />}
+                    title="Log Aktivitas"
+                />
 
                 {/* Error Response */}
                 {error && (
@@ -67,75 +142,18 @@ export default function ActivityLogContent() {
                         <table className="w-full text-left text-sm text-slate-600">
                             <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                 <tr>
-                                    <th className="px-6 py-4 border border-slate-200 text-center">
-                                        No
-                                    </th>
-                                    <th className="px-6 py-4 border border-slate-200">
-                                        Waktu Operasi
-                                    </th>
-                                    <th className="px-6 py-4 border border-slate-200">User</th>
-                                    <th className="px-6 py-4 border border-slate-200 text-center">
-                                        Aktivitas
-                                    </th>
-                                    <th className="px-6 py-4 border border-slate-200">
-                                        Deskripsi
-                                    </th>
+                                    {tableTH.map((th, index) => (
+                                        <TableCell
+                                            key={index}
+                                            isHeader={true}
+                                            className={th.className}
+                                        >
+                                            {th.name}
+                                        </TableCell>
+                                    ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {isLoading ? (
-                                    <tr>
-                                        <td
-                                            colSpan="5"
-                                            className="px-6 py-8 text-center animate-pulse"
-                                        >
-                                            Sedang mengambil data log aktivitas...
-                                        </td>
-                                    </tr>
-                                ) : logs.length === 0 ? (
-                                    <tr>
-                                        <td
-                                            colSpan="5"
-                                            className="px-6 py-8 text-center text-slate-500"
-                                        >
-                                            Belum ada aktivitas yang direkam oleh sistem.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    logs.map((log, index) => {
-                                        const no = index + 1 + (page - 1) * limit;
-                                        return (
-                                            <tr
-                                                key={log.id}
-                                                className="hover:bg-slate-50 transition-colors"
-                                            >
-                                                <td className="px-6 py-4 font text-slate-500 text-center">
-                                                    {no}
-                                                </td>
-                                                <td className="px-6 py-4 truncate max-w-xs whitespace-nowrap text-xs font-mono text-slate-500">
-                                                    {formatDateTime(log.createdAt)}
-                                                </td>
-                                                <td className="px-6 py-4 truncate max-w-xs">
-                                                    <div className="font-medium text-slate-800">
-                                                        {log.actor?.fullName}
-                                                    </div>
-                                                    <div className="text-[10px] uppercase text-slate-400 font-bold tracking-wider">
-                                                        {log.actor?.role}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 truncate text-center max-w-3xs font-semibold text-slate-700 text-xs">
-                                                    <span className="bg-slate-100 px-2 py-1 rounded border border-slate-200">
-                                                        {log.action}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-3 truncate min-w-sm max-w-sm">
-                                                    {log.description}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
-                                )}
-                            </tbody>
+                            <tbody className="divide-y divide-slate-100">{content}</tbody>
                         </table>
                     </div>
                 </div>
