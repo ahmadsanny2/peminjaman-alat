@@ -1,5 +1,6 @@
 "use client";
 
+import HeaderPage from "@/components/HeaderPage";
 import StatCard from "@/components/StatsCard";
 import { useDashboardStats } from "@/hooks/admin/useDashboardStats";
 import {
@@ -48,12 +49,10 @@ export default function AdminDashboardPage() {
         <div className="space-y-6">
 
             {/* Header */}
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                <LayoutDashboard className="text-blue-600" size={32} />
-                <div>
-                    <h1 className="text-2xl font-bold">Dashboard</h1>
-                </div>
-            </div>
+            <HeaderPage
+                icon={<LayoutDashboard className="text-blue-600" size={32} />}
+                title="Dashboard"
+            />
 
             {/* Error Response */}
             {error && (
