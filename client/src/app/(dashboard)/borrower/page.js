@@ -1,16 +1,22 @@
 "use client";
 
+import HeaderPage from "@/components/HeaderPage";
 import StatCard from "@/components/StatsCard";
 import { useMyLoans } from "@/hooks/borrower/useMyLoans";
 import { useToolsCatalog } from "@/hooks/borrower/useToolsCatalog";
-import { LayoutDashboard, Clock, Activity, ArrowRight, BadgeCheck } from "lucide-react";
+import {
+    LayoutDashboard,
+    Clock,
+    Activity,
+    ArrowRight,
+    BadgeCheck,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function PeminjamDashboardPage() {
-
     // Borrower Data
     const { catalog, isLoading } = useToolsCatalog();
-    const { myLoans } = useMyLoans()
+    const { myLoans } = useMyLoans();
 
     const pendingCount = myLoans.filter(
         (loan) => loan.status === "pending",
@@ -20,9 +26,7 @@ export default function PeminjamDashboardPage() {
         (loan) => loan.status === "approved",
     ).length;
 
-    const availableTools = catalog.filter(
-        (tool) => tool.stock > 0
-    ).length
+    const availableTools = catalog.filter((tool) => tool.stock > 0).length;
 
     // Stats Card Data
     const statCardData = [
@@ -46,17 +50,13 @@ export default function PeminjamDashboardPage() {
         },
     ];
 
-
     return (
         <div className="space-y-6">
-
             {/* Header */}
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                <LayoutDashboard className="text-blue-600" size={32} />
-                <div>
-                    <h1 className="text-2xl font-bold">Dashboard</h1>
-                </div>
-            </div>
+            <HeaderPage
+                icon={<LayoutDashboard className="text-blue-600" size={32} />}
+                title="Dashboard"
+            />
 
             {/* Statistical Data */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -105,7 +105,6 @@ export default function PeminjamDashboardPage() {
                     </Link>
                 </div>
             </div>
-
         </div>
     );
 }
