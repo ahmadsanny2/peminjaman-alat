@@ -13,6 +13,8 @@ export function useCategory() {
     const [editId, setEditId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
     const [totalPages, setTotalPages] = useState(1);
@@ -72,12 +74,15 @@ export function useCategory() {
         const method = isEditing ? "PUT" : "POST";
 
         try {
-            await api({ method, url, data: formData });
+            const response = await api({ method, url, data: formData });
             resetForm();
             fetchCategories();
             setError("");
+
+            setSuccess(response?.data?.message);
         } catch (err) {
             setError(err.response?.data?.message);
+            resetForm()
         } finally {
             setIsSubmitting(false);
         }
@@ -96,8 +101,9 @@ export function useCategory() {
         if (!confirm("Yakin ingin menghapus kategori ini?")) return;
 
         try {
-            await api.delete(`/categories/${id}`);
+            const response = await api.delete(`/categories/${id}`);
             fetchCategories();
+            setSuccess(response?.data?.message);
         } catch (err) {
             alert(err.response?.data?.message);
         }
@@ -123,5 +129,6 @@ export function useCategory() {
         limit,
         updateFilters,
         handleSearch,
+        success
     };
 }
