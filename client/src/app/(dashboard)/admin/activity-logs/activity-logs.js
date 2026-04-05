@@ -32,15 +32,15 @@ export default function ActivityLogContent() {
         },
         {
             name: "Waktu Operasi",
-            className: "min-w-60 text-center",
+            className: "min-w-70 text-center",
         },
         {
             name: "User",
-            className: "text-center",
+            className: "min-w-50 text-center",
         },
         {
             name: "Aktivitas",
-            className: "text-center",
+            className: "min-w-50 text-center",
         },
         {
             name: "Deskripsi",
@@ -73,28 +73,28 @@ export default function ActivityLogContent() {
                 <tr key={log.id} className="hover:bg-slate-50 transition-colors">
 
                     {/* No */}
-                    <TableCell className="text-center">{no}</TableCell>
+                    <TableCell className="w-20 text-center">{no}</TableCell>
 
                     {/* Operating Time */}
-                    <TableCell className="text-center">
+                    <TableCell className="min-w-70 text-center">
                         {formatDateTime(log.createdAt)}
                     </TableCell>
 
                     {/* User */}
-                    <TableCell className="text-center">
-                        <div className="font-medium">{log.actor?.fullName}</div>
+                    <TableCell className="min-w-50 text-center">
+                        <div className="font-semibold">{log.actor?.fullName}</div>
                         <div className="text-[10px] uppercase">{log.actor?.role}</div>
                     </TableCell>
 
                     {/* Activity */}
-                    <TableCell className="text-center font-semibold text-xs">
+                    <TableCell className="min-w-50 text-center font-semibold text-xs">
                         <span className="bg-slate-100 px-2 py-1 rounded border border-slate-200">
                             {log.action}
                         </span>
                     </TableCell>
 
                     {/* Description */}
-                    <TableCell className="text-left">{log.description}</TableCell>
+                    <TableCell className="min-w-100 text-left">{log.description}</TableCell>
                 </tr>
             );
         });
@@ -105,7 +105,7 @@ export default function ActivityLogContent() {
             <div className="space-y-6">
                 {/* Header */}
                 <HeaderPage
-                    icon={<ActivitySquare className="text-cyan-600" size={28} />}
+                    icon={<ActivitySquare className="text-cyan-600" size={32} />}
                     title="Log Aktivitas"
                 />
 
