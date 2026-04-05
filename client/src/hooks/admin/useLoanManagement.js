@@ -5,9 +5,10 @@ import { useFilterAndSearchData } from "../useFilterAndSearchData";
 import { useFormatDateTime } from "../useFormatDateTime";
 
 export const useLoanManagement = () => {
-    const { search, sort, page, limit, updateFilters, handleSearch } = useFilterAndSearchData()
+    const { search, sort, page, limit, updateFilters, handleSearch } =
+        useFilterAndSearchData();
 
-    const { formatDateTime } = useFormatDateTime()
+    const { formatDateTime } = useFormatDateTime();
 
     const [loans, setLoans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -15,18 +16,23 @@ export const useLoanManagement = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState("");
 
-    const [totalItems, setTotalItems] = useState(0)
-    const [totalPages, setTotalPages] = useState(1)
+    const [selectedLoan, setSelectedLoan] = useState(null);
+    const [showProofModal, setShowProofModal] = useState(false);
+
+    const [totalItems, setTotalItems] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
 
     // Fetch Data From Server
     const fetchLoans = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get("/loans", { params: { search, sort, page, limit } });
+            const response = await api.get("/loans", {
+                params: { search, sort, page, limit },
+            });
 
             setLoans(response.data.data);
-            setTotalItems(response.data.totalItems || 0)
-            setTotalPages(response.data.totalPages || 1)
+            setTotalItems(response.data.totalItems || 0);
+            setTotalPages(response.data.totalPages || 1);
             setError("");
         } catch (err) {
             setError(err.response?.data?.message);
@@ -87,7 +93,14 @@ export const useLoanManagement = () => {
         }
     };
 
+    const openProofImage = (loan) => {
+        setShowProofModal(true);
+        setSelectedLoan(loan);
+    };
 
+    const closeProofModal = () => {
+        setShowProofModal(false);
+    };
 
     return {
         loans,
@@ -103,6 +116,12 @@ export const useLoanManagement = () => {
         updateFilters,
         handleSearch,
         formatDateTime,
-        verifying
+        verifying,
+        openProofImage,
+        selectedLoan,
+        showProofModal,
+        closeProofModal,
+        verifying,
+        limit
     };
 };
