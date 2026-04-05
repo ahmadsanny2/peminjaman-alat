@@ -15,6 +15,7 @@ import ActionButton from "@/components/ActionButton";
 import HeaderPage from "@/components/HeaderPage";
 import HeaderForm from "@/components/Form/HeaderForm";
 import TableCell from "@/components/Table/TableCell";
+import Alert from "@/components/Alert";
 
 export default function CategoryManagementContent() {
     // Category Management Data
@@ -38,6 +39,7 @@ export default function CategoryManagementContent() {
         updateFilters,
         handleSearch,
         isLoading,
+        success
     } = useCategory();
 
     const tableTH = [
@@ -130,8 +132,10 @@ export default function CategoryManagementContent() {
                     title="Manajemen Kategori"
                 />
 
-                {/* Error Response */}
-                {error && <AlertComponent message={error} isSuccess={false} />}
+                {/* Alert */}
+                {(error || success) && (
+                    <Alert type={error ? "error" : "success"} message={error || success} />
+                )}
 
                 {/* Content */}
                 <div className="space-y-6">
@@ -162,13 +166,13 @@ export default function CategoryManagementContent() {
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <Label name=" Nama Kategori" />
+                                <Label name="Nama Kategori" />
                                 <Input
                                     type="text"
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Contoh: Alat Kelistrikan"
+                                    placeholder="Nama Kategori"
                                     disabled={isSubmitting}
                                 />
                             </div>
@@ -180,7 +184,7 @@ export default function CategoryManagementContent() {
                                     value={formData.description}
                                     onChange={handleChange}
                                     rows="4"
-                                    placeholder="Definisi operasional dari kategori ini..."
+                                    placeholder="Deskripsi"
                                     disabled={isSubmitting}
                                 />
                             </div>
