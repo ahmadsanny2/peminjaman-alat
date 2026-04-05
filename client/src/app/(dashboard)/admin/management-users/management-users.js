@@ -24,13 +24,14 @@ import Input from "@/components/Form/Input";
 import Select from "@/components/Form/Select";
 import Option from "@/components/Form/Option";
 import Button from "@/components/Form/Button";
+import Alert from "@/components/Alert";
 
 export default function UserManagementContent() {
     const {
         users,
         isLoading,
-        isEditing,
         error,
+        success,
         handleShowForm,
         totalItems,
         totalPages,
@@ -41,7 +42,6 @@ export default function UserManagementContent() {
         handleEdit,
         formData,
         handleChange,
-        isSubmitting,
         showForm,
         handleSubmit,
         resetForm,
@@ -167,11 +167,8 @@ export default function UserManagementContent() {
                 />
 
                 {/* Error Response */}
-                {error && (
-                    <div className="bg-red-50 text-red-700 p-4 rounded-lg border border-red-200 text-sm flex items-start gap-3">
-                        <AlertCircle className="mt-0.5 text-red-500" size={18} />
-                        <span>{error}</span>
-                    </div>
+                {(error || success) && (
+                    <Alert type={error ? "error" : "success"} message={error || success} />
                 )}
 
                 {/* Content */}
@@ -242,7 +239,7 @@ export default function UserManagementContent() {
                                         value={formData.fullName}
                                         onChange={handleChange}
                                         placeholder="Nama Lengkap"
-                                        disabled={isSubmitting}
+                                        disabled={isLoading}
                                     />
                                 </div>
 
@@ -259,7 +256,7 @@ export default function UserManagementContent() {
                                             value={formData.role}
                                             onChange={handleChange}
                                             className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
-                                            disabled={isSubmitting}
+                                            disabled={isLoading}
                                         >
                                             <Option optionValue="" optionName="Pilih Role" />
                                             {userRole.map((item, index) => (
@@ -273,13 +270,13 @@ export default function UserManagementContent() {
                             {/* Button Save Update */}
                             <div className="flex gap-2 pt-2">
                                 <Button
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     name="Simpan"
                                 />
                                 <Button
                                     buttonType
                                     onClick={resetForm}
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     title="Batalkan"
                                     icon={<X size={20} />}
                                     cancel
