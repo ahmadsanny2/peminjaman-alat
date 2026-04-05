@@ -1,5 +1,6 @@
 import { useFilterAndSearchData } from "@/hooks/useFilterAndSearchData";
 import { Filter, Search, Plus } from "lucide-react";
+import Option from "./Form/Option";
 
 export default function FilterAndSearchData({
   sort,
@@ -84,9 +85,7 @@ export default function FilterAndSearchData({
                   className="outline-none cursor-pointer w-full"
                   onChange={showBy}
                 >
-                  <option className="bg-white/20 text-black" value="">
-                    Semua
-                  </option>
+                  <Option optionName="Semua" optionValue="" />
                   {children}
                 </select>
               </div>
