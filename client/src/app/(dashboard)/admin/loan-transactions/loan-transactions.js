@@ -1,20 +1,14 @@
 "use client";
 
-import {
-    AlertCircle,
-    CheckCircle,
-    ClipboardList,
-    XCircle,
-    ClipboardCheck,
-} from "lucide-react";
+import { AlertCircle, ClipboardList } from "lucide-react";
 
 import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Pagination from "@/components/Pagination";
 import StatusBadge from "@/components/StatusBadge";
-import { useLoanManagement } from "@/hooks/admin/useLoanManagement";
-import ActionButton from "@/components/ActionButton";
 import TableCell from "@/components/Table/TableCell";
 import ProofImageReturnLoan from "@/components/Modals/ProofImageReturnLoan";
+import { useLoanTransactions } from "@/hooks/admin/useLoanTransactions";
+import HeaderPage from "@/components/HeaderPage";
 
 export default function LoanManagementContent() {
     // Loan Management Data
@@ -23,9 +17,6 @@ export default function LoanManagementContent() {
         isLoading,
         isProcessing,
         error,
-        approveLoan,
-        rejectLoan,
-        verifying,
         page,
         totalPages,
         totalItems,
@@ -37,7 +28,7 @@ export default function LoanManagementContent() {
         selectedLoan,
         showProofModal,
         closeProofModal,
-    } = useLoanManagement();
+    } = useLoanTransactions();
 
     const tableTH = [
         {
@@ -63,14 +54,6 @@ export default function LoanManagementContent() {
         {
             name: "Status Peminjaman",
             className: "min-w-50 text-center",
-        },
-        {
-            name: "Bukti",
-            className: "min-w-30 text-center",
-        },
-        {
-            name: "Aksi",
-            className: "w-30 text-center",
         },
     ];
 
@@ -105,7 +88,7 @@ export default function LoanManagementContent() {
                         <div className="font-semibold">
                             {loan.borrower?.fullName || "Identitas tidak dikenal"}
                         </div>
-                        <div className="">@{loan.borrower?.username}</div>
+                        <div className="">@{loan.borrower?.username || "unknown"}</div>
                     </TableCell>
 
                     {/* Name Tool */}
@@ -127,49 +110,6 @@ export default function LoanManagementContent() {
                     <TableCell className="text-center">
                         <StatusBadge status={loan.status} />
                     </TableCell>
-
-                    {/* Proof Image */}
-                    <TableCell className="text-center">
-                        <button
-                            onClick={() => openProofImage(loan)}
-                            disabled={!loan.image}
-                            className={`text-xs font-medium transition-colors ${loan.image
-                                ? "text-blue-600 hover:text-blue-800 cursor-pointer underline underline-offset-2"
-                                : "text-slate-400 cursor-not-allowed"
-                                }`}
-                        >
-                            Lihat Bukti
-                        </button>
-                    </TableCell>
-
-                    {/* Actions */}
-                    <TableCell className="text-center">
-                        <div className="flex flex-col gap-2">
-                            <ActionButton
-                                disabled={loan.status !== "pending" || isProcessing}
-                                onClick={() => approveLoan(loan.id)}
-                                name="Setujui"
-                                color="emerald"
-                                icon={<CheckCircle size={16} />}
-                            />
-
-                            <ActionButton
-                                disabled={loan.status !== "pending" || isProcessing}
-                                onClick={() => rejectLoan(loan.id)}
-                                name="Tolak"
-                                color="rose"
-                                icon={<XCircle size={16} />}
-                            />
-
-                            <ActionButton
-                                disabled={loan.status !== "verifying" || isProcessing}
-                                onClick={() => verifying(loan.id)}
-                                name="Verifikasi"
-                                color="indigo"
-                                icon={<ClipboardCheck size={16} />}
-                            />
-                        </div>
-                    </TableCell>
                 </tr>
             );
         });
@@ -179,12 +119,10 @@ export default function LoanManagementContent() {
         <div className="flex flex-col justify-between h-full space-y-6">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <ClipboardList className="text-yellow-600" size={32} />
-                    <div>
-                        <h1 className="text-2xl font-bold">Transaksi Peminjaman</h1>
-                    </div>
-                </div>
+                <HeaderPage
+                    icon={<ClipboardList className="text-yellow-600" size={32} />}
+                    title="Transaksi Peminjaman"
+                />
 
                 {/* Error Response */}
                 {error && (
@@ -221,14 +159,6 @@ export default function LoanManagementContent() {
                             </thead>
                             <tbody className="divide-y divide-slate-100">{content}</tbody>
                         </table>
-
-                        {selectedLoan && (
-                            <ProofImageReturnLoan
-                                closeProofModal={closeProofModal}
-                                selectedLoan={selectedLoan}
-                                showProofModal={showProofModal}
-                            />
-                        )}
                     </div>
                 </div>
             </div>
