@@ -1,6 +1,6 @@
 const Option = ({ optionValue, optionName }) => {
     return (
-        <option value={optionValue}>{optionName}</option>
+        <option className="text-black" value={optionValue}>{optionName}</option>
     )
 }
 
