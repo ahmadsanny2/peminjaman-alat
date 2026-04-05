@@ -6,7 +6,6 @@ import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Modal from "@/components/Modal";
 import Pagination from "@/components/Pagination";
 import { useCategory } from "@/hooks/admin/useCategoryManagement";
-import AlertComponent from "@/components/Alert";
 import Input from "@/components/Form/Input";
 import TextArea from "@/components/Form/TextArea";
 import Label from "@/components/Form/Label";
@@ -16,6 +15,7 @@ import HeaderPage from "@/components/HeaderPage";
 import HeaderForm from "@/components/Form/HeaderForm";
 import TableCell from "@/components/Table/TableCell";
 import Alert from "@/components/Alert";
+import Confirmation from "@/components/Modals/Confirmation";
 
 export default function CategoryManagementContent() {
     // Category Management Data
@@ -24,7 +24,6 @@ export default function CategoryManagementContent() {
         totalPages,
         formData,
         isEditing,
-        isSubmitting,
         error,
         handleChange,
         handleSubmit,
@@ -39,7 +38,11 @@ export default function CategoryManagementContent() {
         updateFilters,
         handleSearch,
         isLoading,
-        success
+        success,
+        setShowConfirm,
+        showConfirm,
+        openDeleteConfirm,
+        setSelectedId
     } = useCategory();
 
     const tableTH = [
@@ -110,7 +113,7 @@ export default function CategoryManagementContent() {
                                 name="Edit"
                             />
                             <ActionButton
-                                onClick={() => handleDelete(category.id)}
+                                onClick={() => openDeleteConfirm(category.id)}
                                 color="rose"
                                 icon={<Trash2 size={16} />}
                                 title="Hapus"
@@ -173,7 +176,7 @@ export default function CategoryManagementContent() {
                                     value={formData.name}
                                     onChange={handleChange}
                                     placeholder="Nama Kategori"
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                 />
                             </div>
 
@@ -185,18 +188,18 @@ export default function CategoryManagementContent() {
                                     onChange={handleChange}
                                     rows="4"
                                     placeholder="Deskripsi"
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                 />
                             </div>
 
                             <div className="flex gap-2 pt-2">
                                 <Button
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     name={isEditing ? "Simpan" : "Tambah"}
                                 />
                                 <Button
                                     buttonType
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     onClick={resetForm}
                                     cancel
                                     icon={<X size={20} />}
@@ -224,6 +227,18 @@ export default function CategoryManagementContent() {
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">{content}</tbody>
                             </table>
+
+                            <Confirmation
+                                isOpen={showConfirm}
+                                title="Konfirmasi Hapus"
+                                message="Yakin ingin menghapus kategori ini? Data yang dihapus tidak dapat dikembalikan."
+                                onConfirm={handleDelete} 
+                                onCancel={() => {
+                                    setShowConfirm(false);
+                                    setSelectedId(null);
+                                }}
+                                confirmText="Hapus"
+                            />
                         </div>
                     </div>
                 </div>
