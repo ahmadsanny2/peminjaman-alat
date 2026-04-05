@@ -25,6 +25,8 @@ import HeaderPage from "@/components/HeaderPage";
 import HeaderForm from "@/components/Form/HeaderForm";
 import TableCell from "@/components/Table/TableCell";
 import ActionButton from "@/components/ActionButton";
+import Alert from "@/components/Alert";
+import Confirmation from "@/components/Modals/Confirmation";
 
 export default function ToolManagementContent() {
     // Tools Management Data
@@ -33,8 +35,8 @@ export default function ToolManagementContent() {
         categories,
         formData,
         isEditing,
-        isSubmitting,
         error,
+        success,
         handleChange,
         handleSubmit,
         handleEdit,
@@ -53,38 +55,42 @@ export default function ToolManagementContent() {
         condition,
         limit,
         isLoading,
+        showConfirm,
+        setShowConfirm,
+        setSelectedId,
+        openDeleteConfirm
     } = useTool();
 
     const tableTH = [
         {
             name: "No",
-            className: "w-20 text-center"
+            className: "w-20 text-center",
         },
         {
             name: "Nama Alat",
-            className: "min-w-80 text-left"
+            className: "min-w-80 text-left",
         },
         {
             name: "Deskripsi",
-            className: "min-w-100 text-left"
+            className: "min-w-100 text-left",
         },
         {
             name: "Kategori",
-            className: "min-w-70 text-left"
+            className: "min-w-70 text-left",
         },
         {
             name: "Kondisi",
-            className: "text-center"
+            className: "text-center",
         },
         {
             name: "Stok",
-            className: "text-center"
+            className: "text-center",
         },
         {
             name: "Aksi",
             className: "w-30 text-center",
         },
-    ]
+    ];
 
     let content;
 
@@ -124,7 +130,7 @@ export default function ToolManagementContent() {
                                 name="Edit"
                             />
                             <ActionButton
-                                onClick={() => handleDelete(tool.id)}
+                                onClick={() => openDeleteConfirm(tool.id)}
                                 icon={<Trash2 size={16} />}
                                 color="rose"
                                 title="Hapus"
@@ -147,10 +153,11 @@ export default function ToolManagementContent() {
                 />
 
                 {/* Error Response */}
-                {error && (
-                    <div className="bg-red-50 text-red-700 p-3 rounded border border-red-200 text-sm">
-                        {error}
-                    </div>
+                {(error || success) && (
+                    <Alert
+                        type={error ? "error" : "success"}
+                        message={error || success}
+                    />
                 )}
 
                 {/* Content */}
@@ -201,7 +208,7 @@ export default function ToolManagementContent() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         placeholder="Masukan Nama Alat"
-                                        disabled={isSubmitting}
+                                        disabled={isLoading}
                                     />
                                 </div>
 
@@ -215,7 +222,7 @@ export default function ToolManagementContent() {
                                         value={formData.description}
                                         onChange={handleChange}
                                         placeholder="Masukkan Deskripsi Alat"
-                                        disabled={isSubmitting}
+                                        disabled={isLoading}
                                     />
                                 </div>
 
@@ -232,7 +239,7 @@ export default function ToolManagementContent() {
                                             value={formData.categoryId}
                                             onChange={handleChange}
                                             className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
-                                            disabled={isSubmitting}
+                                            disabled={isLoading}
                                         >
                                             <Option optionName="Pilih Kategori" optionValue="" />
                                             {categories.map((category) => (
@@ -264,7 +271,7 @@ export default function ToolManagementContent() {
                                                 name="condition"
                                                 value={formData.condition}
                                                 onChange={handleChange}
-                                                disabled={isSubmitting}
+                                                disabled={isLoading}
                                             >
                                                 <Option optionName="Pilih Kondisi" optionValue="" />
                                                 {condition.map((con) => (
@@ -293,7 +300,7 @@ export default function ToolManagementContent() {
                                             min={0}
                                             onChange={handleChange}
                                             placeholder="0"
-                                            disabled={isSubmitting}
+                                            disabled={isLoading}
                                         />
                                     </div>
                                 </div>
@@ -309,7 +316,7 @@ export default function ToolManagementContent() {
                                             type="file"
                                             onChange={handleFileChange}
                                             className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                                            disabled={isSubmitting}
+                                            disabled={isLoading}
                                             accept="image/*"
                                         />
 
@@ -362,14 +369,14 @@ export default function ToolManagementContent() {
                             {/* Button Save Tools */}
                             <div className="flex gap-2 pt-2">
                                 <Button
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     name={isEditing ? "Simpan" : "Tambah"}
                                 />
                                 <Button
                                     buttonType
                                     cancel
                                     onClick={resetForm}
-                                    disabled={isSubmitting}
+                                    disabled={isLoading}
                                     icon={<X size={20} />}
                                 />
                             </div>
@@ -383,7 +390,11 @@ export default function ToolManagementContent() {
                                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
                                     <tr>
                                         {tableTH.map((th, index) => (
-                                            <TableCell key={index} isHeader={true} className={th.className}>
+                                            <TableCell
+                                                key={index}
+                                                isHeader={true}
+                                                className={th.className}
+                                            >
                                                 {th.name}
                                             </TableCell>
                                         ))}
@@ -391,6 +402,18 @@ export default function ToolManagementContent() {
                                 </thead>
                                 <tbody className="divide-y divide-slate-100">{content}</tbody>
                             </table>
+
+                            <Confirmation
+                                isOpen={showConfirm}
+                                title="Konfirmasi Hapus"
+                                message="Yakin ingin menghapus alat ini? Data yang dihapus tidak dapat dikembalikan."
+                                onConfirm={handleDelete} 
+                                onCancel={() => {
+                                    setShowConfirm(false);
+                                    setSelectedId(null);
+                                }}
+                                confirmText="Hapus"
+                            />
                         </div>
                     </div>
                 </div>
