@@ -1,15 +1,26 @@
 "use client";
 
+import ActionButton from "@/components/ActionButton";
 import FilterAndSearchData from "@/components/FilterAndSearchData";
+import Option from "@/components/Form/Option";
+import HeaderPage from "@/components/HeaderPage";
 import Modal from "@/components/Modal";
+import ProofImageReturnLoan from "@/components/Modals/ProofImageReturnLoan";
 import Pagination from "@/components/Pagination";
 import StatusBadge from "@/components/StatusBadge";
+import TableCell from "@/components/Table/TableCell";
 import { useMyLoans } from "@/hooks/borrower/useMyLoans";
-import { CheckCircle2, X, Package, Undo2, History, AlertCircle, XCircle } from "lucide-react";
-import Image from "next/image";
+import {
+    CheckCircle2,
+    X,
+    Package,
+    Undo2,
+    History,
+    AlertCircle,
+    XCircle,
+} from "lucide-react";
 
 export default function LoanTransactionHistoryPage() {
-    // Mengekstraksi seluruh logika operasional dari Custom Hook
     const {
         page,
         updateFilters,
@@ -23,32 +34,106 @@ export default function LoanTransactionHistoryPage() {
         cancelLoan,
         isProcessing,
         showForm,
-        setShowForm,
         openRetunLoanForm,
         handleChange,
         selectedLoan,
-        handleSubmit, // Diekspor agar bisa dipanggil oleh <form onSubmit={handleSubmit}> di UI
+        handleSubmit,
         openProofImage,
         closeProofModal,
         showProofModal,
-        calculateFine
+        calculateFine,
+        closeReturnForm,
+        limit,
     } = useMyLoans();
 
-    // Fungsi utilitas untuk menutup form dan membersihkan state
-    const closeReturnForm = () => {
-        setShowForm(false);
-    };
+    let content;
+
+    if (isLoading) {
+        content = (
+            <tr>
+                <TableCell colspan="8" className="text-center">
+                    Data riwayat transaksi peminjaman sedang memuat...
+                </TableCell>
+            </tr>
+        );
+    } else if (myLoans.length === 0) {
+        content = (
+            <tr>
+                <TableCell colspan="8" className="text-center">
+                    Data riwayat transaksi peminjaman belum ada.
+                </TableCell>
+            </tr>
+        );
+    } else {
+        content = myLoans.map((loan, index) => {
+            const no = index + 1 + (page - 1) * limit
+            return (
+                <tr key={loan.id} className="hover:bg-slate-50/80 transition-colors">
+                    <TableCell className="text-center">{no}</TableCell>
+                    <TableCell className="text-left">
+                        {loan.Tool?.name || "Nama alat tidak ada."}
+                    </TableCell>
+                    <TableCell className="text-center min-w-fit">
+                        {formatDateTime(loan.borrowDate, false)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                        {formatDateTime(loan.expectedReturnDate, false)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                        {loan.actualReturnDate
+                            ? formatDateTime(loan.actualReturnDate, false)
+                            : "-"}
+                    </TableCell>
+                    <TableCell className="text-center">
+                        {calculateFine(loan.expectedReturnDate, loan.actualReturnDate)}
+                    </TableCell>
+                    <TableCell className="text-center">
+                        <StatusBadge status={loan.status} />
+                    </TableCell>
+                    <TableCell className="text-center">
+                        <button
+                            onClick={() => openProofImage(loan)}
+                            disabled={!loan.image}
+                            className={`text-xs font-medium transition-colors ${loan.image
+                                ? "text-blue-600 hover:text-blue-800 cursor-pointer underline underline-offset-2"
+                                : "text-slate-400 cursor-not-allowed"
+                                }`}
+                        >
+                            Lihat Bukti
+                        </button>
+                    </TableCell>
+                    <td className="px-6 py-4 text-center space-x-2 min-w-30">
+                        <div className="flex flex-col w-full gap-2">
+                            <ActionButton
+                                disabled={loan.status !== "approved" || isProcessing}
+                                onClick={() => openRetunLoanForm(loan)}
+                                name="Kembalikan"
+                                color="amber"
+                                icon={<Undo2 size={16} />}
+                            />
+
+                            <ActionButton
+                                disabled={loan.status !== "pending" || isProcessing}
+                                onClick={() => cancelLoan(loan.id)}
+                                name="Batalkan"
+                                color="slate"
+                                icon={<XCircle size={16} />}
+                            />
+                        </div>
+                    </td>
+                </tr>
+            )
+        });
+    }
 
     return (
         <div className="flex flex-col justify-between h-full space-y-6">
             <div className="space-y-6">
                 {/* Header */}
-                <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                    <History className="text-purple-600" size={32} />
-                    <div>
-                        <h1 className="text-2xl font-bold">Riwayat Transaksi</h1>
-                    </div>
-                </div>
+                <HeaderPage
+                    icon={<History className="text-purple-600" size={32} />}
+                    title="Riwayat Transaksi"
+                />
 
                 {/* Error Response */}
                 {error && (
@@ -68,18 +153,11 @@ export default function LoanTransactionHistoryPage() {
                     label="Status"
                     showBy={(e) => updateFilters("status", e.target.value)}
                 >
-                    <option value="pending" className="bg-white/20 text-black">
-                        Menunggu Persetujuan
-                    </option>
-                    <option value="approved" className="bg-white/20 text-black">
-                        Sedang Dipinjam
-                    </option>
-                    <option value="rejected" className="bg-white/20 text-black">
-                        Pengajuan Ditolak
-                    </option>
-                    <option value="returned" className="bg-white/20 text-black">
-                        Telah Dikembalikan
-                    </option>
+                    <Option optionName="Menunggu Persetujuan" optionValue="pending" />
+                    <Option optionName="Dipinjam" optionValue="approved" />
+                    <Option optionName="Ditolak" optionValue="rejected" />
+                    <Option optionName="Dikembalikan" optionValue="returned" />
+                    <Option optionName="Dibatalkan" optionValue="canceled" />
                 </FilterAndSearchData>
 
                 {/* Main Content */}
@@ -87,105 +165,37 @@ export default function LoanTransactionHistoryPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm text-slate-600">
                             <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 font-semibold">
-                                <tr className="text-center">
-                                    <th className="px-6 py-4 text-left">Nama Alat</th>
-                                    <th className="px-6 py-4">Tanggal Pengajuan</th>
-                                    <th className="px-6 py-4">Tenggat Pengembalian</th>
-                                    <th className="px-6 py-4">Tanggal Dikembalikan</th>
-                                    <th className="px-6 py-4">Denda</th>
-                                    <th className="px-6 py-4 text-center">Status</th>
-                                    <th className="px-6 py-4 text-center">Bukti</th>
-                                    <th className="px-6 py-4 text-center">Aksi</th>
+                                <tr className="">
+                                    <TableCell className="text-center">No</TableCell>
+                                    <TableCell className="text-left">Nama Alat</TableCell>
+                                    <TableCell className="text-center">
+                                        Tanggal Pengajuan
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        Tenggat Pengembalian
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                        Tanggal Dikembalikan
+                                    </TableCell>
+                                    <TableCell className="text-center">Denda</TableCell>
+                                    <TableCell className="text-center">Status</TableCell>
+                                    <TableCell className="text-center">Bukti</TableCell>
+                                    <TableCell className="text-center">Aksi</TableCell>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {isLoading ? (
-                                    <tr>
-                                        <td colSpan="7" className="px-6 py-10 text-center text-slate-500 animate-pulse">
-                                            Data riwayat transaksi peminjaman sedang memuat...
-                                        </td>
-                                    </tr>
-                                ) : !isLoading && myLoans.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="7" className="px-6 py-10 text-center text-slate-500">
-                                            Data riwayat transaksi peminjaman belum ada.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    myLoans.map((loan) => (
-                                        <tr key={loan.id} className="hover:bg-slate-50/80 transition-colors">
-                                            <td className="px-6 py-4 text-left">
-                                                {loan.Tool?.name || "Nama alat tidak ada."}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                {formatDateTime(loan.borrowDate, false)}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                {formatDateTime(loan.expectedReturnDate, false)}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                {loan.actualReturnDate ? formatDateTime(loan.actualReturnDate, false) : "-"}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                {calculateFine(loan.expectedReturnDate, loan.actualReturnDate)}
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <StatusBadge status={loan.status} />
-                                            </td>
-                                            <td className="px-6 py-4 text-center">
-                                                <button
-                                                    // Kirim SELURUH objek loan, bukan cuma loan.id
-                                                    onClick={() => openProofImage(loan)}
-                                                    disabled={!loan.image}
-                                                    className={`text-xs font-medium transition-colors ${loan.image
-                                                        ? "text-blue-600 hover:text-blue-800 cursor-pointer underline underline-offset-2"
-                                                        : "text-slate-400 cursor-not-allowed"
-                                                        }`}
-                                                >
-                                                    Lihat Bukti
-                                                </button>
-                                            </td>
-                                            <td className="px-6 py-4 text-center space-x-2 min-w-30">
-                                                {loan.status === "pending" && (
-                                                    <button
-                                                        onClick={() => cancelLoan(loan.id)}
-                                                        disabled={isProcessing}
-                                                        className="text-red-600 rounded transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
-                                                        title="Batalkan Pengajuan"
-                                                    >
-                                                        <XCircle size={18} />
-                                                    </button>
-                                                )}
-
-                                                {loan.status === "approved" && (
-                                                    <button
-                                                        onClick={() => openRetunLoanForm(loan)}
-                                                        disabled={isProcessing}
-                                                        className="text-yellow-600 transition-colors text-xs font-medium disabled:opacity-50 cursor-pointer disabled:cursor-default"
-                                                        title="Kembalikan Alat"
-                                                    >
-                                                        <Undo2 size={18} />
-                                                    </button>
-                                                )}
-
-                                                {["returned", "rejected", "canceled"].includes(loan.status) && (
-                                                    <span className="text-xs font-semibold text-slate-400 italic">
-                                                        Selesai
-                                                    </span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
+                            <tbody className="divide-y divide-slate-100">{content}</tbody>
                         </table>
                     </div>
                 </div>
 
-                {/* MODAL PENGEMBALIAN */}
+                {/* Return Loan Modal */}
                 {selectedLoan && (
                     <Modal
-                        customClass={showForm ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50" : "hidden"}
+                        customClass={
+                            showForm
+                                ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50"
+                                : "hidden"
+                        }
                         isOpen={showForm}
                         onClose={closeReturnForm}
                     >
@@ -249,7 +259,13 @@ export default function LoanTransactionHistoryPage() {
                                     disabled={isProcessing} // Menggunakan isProcessing
                                     className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white p-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
                                 >
-                                    {isProcessing ? "Memproses..." : <><CheckCircle2 size={16} /> Kirim Bukti</>}
+                                    {isProcessing ? (
+                                        "Memproses..."
+                                    ) : (
+                                        <>
+                                            <CheckCircle2 size={16} /> Kirim Bukti
+                                        </>
+                                    )}
                                 </button>
                                 <button
                                     type="button"
@@ -262,71 +278,15 @@ export default function LoanTransactionHistoryPage() {
                             </div>
                         </form>
                     </Modal>
-
-
-
                 )}
 
-                {/* MODAL PRATINJAU BUKTI GAMBAR - DITARUH DI LUAR TABEL */}
+                {/* Proof Image Return Loan */}
                 {selectedLoan && (
-                    <Modal
-                        // Pastikan lo udah bikin state showProofModal di useMyLoans.js
-                        customClass={showProofModal ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm" : "hidden"}
-                        isOpen={showProofModal}
-                        onClose={closeProofModal}
-                    >
-                        {/* Header */}
-                        <div className="flex items-center gap-2 mb-4 border-b pb-3">
-                            <Package size={24} className="text-blue-600" />
-                            <h1 className="text-lg font-semibold text-slate-800 flex items-center gap-1.5">
-                                Dokumentasi Pengembalian Alat
-                            </h1>
-                        </div>
-
-                        {/* Konten Display (Bukan Form) */}
-                        <div className="space-y-4">
-
-                            {/* Kontainer Gambar */}
-                            <div className="relative w-full h-64 bg-slate-100 rounded-xl border border-slate-200 overflow-hidden flex items-center justify-center">
-                                {selectedLoan.image ? (
-                                    <Image
-                                        // Hapus slash ganda jika ada dari database
-                                        src={`http://localhost:5000/${selectedLoan.image.replace(/^\//, '')}`}
-                                        alt={selectedLoan.Tool?.name || "Bukti"}
-                                        fill
-                                        className="object-contain p-2"
-                                        unoptimized
-                                    />
-                                ) : (
-                                    <span className="text-sm text-slate-400 font-medium">Visual tidak tersedia</span>
-                                )}
-                            </div>
-
-                            {/* Info Nama Alat */}
-                            <div>
-                                <label className="block text-xs font-medium text-slate-700 mb-1">
-                                    Instrumen Terkait
-                                </label>
-                                <input
-                                    type="text"
-                                    // Ambil nama dari relasi Tool
-                                    value={selectedLoan.Tool?.name || "Instrumen tidak diketahui"}
-                                    className="w-full p-2.5 border bg-slate-50 text-slate-600 font-medium rounded-lg outline-none text-sm border-slate-300"
-                                    disabled
-                                />
-                            </div>
-
-                            {/* Tombol Tutup */}
-                            <div className="flex justify-end pt-2">
-                                <button
-                                    onClick={closeProofModal}
-                                    className="px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium text-sm rounded-lg transition-colors cursor-pointer"
-                                >
-                                    Tutup
-                                </button>
-                            </div>
-                        </div>
-                    </Modal>
+                    <ProofImageReturnLoan
+                        closeProofModal={closeProofModal}
+                        selectedLoan={selectedLoan}
+                        showProofModal={showProofModal}
+                    />
                 )}
             </div>
             <Pagination page={page} totalData={totalItems} totalPages={totalPages} />
