@@ -25,6 +25,8 @@ import Select from "@/components/Form/Select";
 import Option from "@/components/Form/Option";
 import Button from "@/components/Form/Button";
 import Alert from "@/components/Alert";
+import ConfirmationModal from "@/components/Modals/Confirmation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function UserManagementContent() {
     const {
@@ -46,7 +48,14 @@ export default function UserManagementContent() {
         handleSubmit,
         resetForm,
         handleDelete,
+        confirmState,
+        ask,
+        close,
+        showPassword,
+        setShowPassword
     } = useUserManagement();
+
+    
 
     const userRole = ["Admin", "Petugas", "Peminjam"];
 
@@ -143,7 +152,14 @@ export default function UserManagementContent() {
                                     name="Edit"
                                 />
                                 <ActionButton
-                                    onClick={() => handleDelete(user.id)}
+                                    onClick={() =>
+                                        ask({
+                                            title: "Hapus User",
+                                            message: "Yakin ingin menghapus user ini?",
+                                            color: "rose",
+                                            action: () => handleDelete(user.id),
+                                        })
+                                    }
                                     icon={<Trash2 size={16} />}
                                     color="rose"
                                     title="Hapus"
@@ -210,6 +226,16 @@ export default function UserManagementContent() {
                                     {content}
                                 </tbody>
                             </table>
+
+                            <ConfirmationModal
+                                isOpen={confirmState.isOpen}
+                                title={confirmState.title}
+                                message={confirmState.message}
+                                color={confirmState.color}
+                                confirmText={confirmState.confirmText}
+                                onConfirm={confirmState.onConfirm}
+                                onCancel={close}
+                            />
                         </div>
                     </div>
 
@@ -241,6 +267,24 @@ export default function UserManagementContent() {
                                         placeholder="Nama Lengkap"
                                         disabled={isLoading}
                                     />
+                                </div>
+
+                                {/* Input Password */}
+                                <div className="">
+                                    <Label name="New Password" />
+                                    <div className="relative flex items-center">
+                                        <Input
+                                            type={!showPassword ? "password" : "text"}
+                                            name="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            placeholder="********"
+                                            disabled={isLoading}
+                                        />
+                                        <div className="absolute right-3 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
+                                            {!showPassword ? <EyeOff /> : <Eye />}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {/* Select Role */}
