@@ -26,7 +26,7 @@ import HeaderForm from "@/components/Form/HeaderForm";
 import TableCell from "@/components/Table/TableCell";
 import ActionButton from "@/components/ActionButton";
 import Alert from "@/components/Alert";
-import Confirmation from "@/components/Modals/Confirmation";
+import ConfirmationModal from "@/components/Modals/Confirmation";
 
 export default function ToolManagementContent() {
     // Tools Management Data
@@ -55,10 +55,9 @@ export default function ToolManagementContent() {
         condition,
         limit,
         isLoading,
-        showConfirm,
-        setShowConfirm,
-        setSelectedId,
-        openDeleteConfirm
+        confirmState,
+        ask,
+        close,
     } = useTool();
 
     const tableTH = [
@@ -130,7 +129,14 @@ export default function ToolManagementContent() {
                                 name="Edit"
                             />
                             <ActionButton
-                                onClick={() => openDeleteConfirm(tool.id)}
+                                onClick={() =>
+                                    ask({
+                                        title: "Hapus Alat",
+                                        message: "Yakin ingin menghapus alat ini?",
+                                        color: "rose",
+                                        action: () => handleDelete(tool.id),
+                                    })
+                                }
                                 icon={<Trash2 size={16} />}
                                 color="rose"
                                 title="Hapus"
@@ -403,16 +409,14 @@ export default function ToolManagementContent() {
                                 <tbody className="divide-y divide-slate-100">{content}</tbody>
                             </table>
 
-                            <Confirmation
-                                isOpen={showConfirm}
-                                title="Konfirmasi Hapus"
-                                message="Yakin ingin menghapus alat ini? Data yang dihapus tidak dapat dikembalikan."
-                                onConfirm={handleDelete} 
-                                onCancel={() => {
-                                    setShowConfirm(false);
-                                    setSelectedId(null);
-                                }}
-                                confirmText="Hapus"
+                            <ConfirmationModal
+                                isOpen={confirmState.isOpen}
+                                title={confirmState.title}
+                                message={confirmState.message}
+                                color={confirmState.color}
+                                confirmText={confirmState.confirmText}
+                                onConfirm={confirmState.onConfirm}
+                                onCancel={close}
                             />
                         </div>
                     </div>
