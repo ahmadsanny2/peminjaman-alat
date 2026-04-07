@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import StatCard from '@/components/StatsCard';
-import { useDashboardStats } from '@/hooks/admin/useDashboardStats';
-import { Clock, Activity, AlertCircle, LayoutDashboard } from 'lucide-react';
+import Alert from "@/components/Alert";
+import HeaderPage from "@/components/HeaderPage";
+import StatCard from "@/components/StatsCard";
+import { useDashboardStats } from "@/hooks/admin/useDashboardStats";
+import { Clock, Activity, AlertCircle, LayoutDashboard } from "lucide-react";
 
 export default function PetugasDashboardPage() {
-
     // Dashboard Data
     const { stats, isLoading, error } = useDashboardStats();
 
@@ -27,21 +28,15 @@ export default function PetugasDashboardPage() {
 
     return (
         <div className="space-y-6">
-
             {/* Header */}
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-                <LayoutDashboard className="text-blue-600" size={32} />
-                <div>
-                    <h1 className="text-2xl font-bold">Dashboard</h1>
-                </div>
-            </div>
+            <HeaderPage
+                icon={<LayoutDashboard className="text-blue-600" size={32} />}
+                title="Dashboard"
+            />
 
             {/* Error Response */}
             {error && (
-                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded flex items-start gap-3">
-                    <AlertCircle className="text-red-500 mt-0.5" size={20} />
-                    <p className="text-red-700 text-sm">{error}</p>
-                </div>
+                <Alert type="error" message={error} />
             )}
 
             {/* Statistical Data */}
@@ -57,7 +52,6 @@ export default function PetugasDashboardPage() {
                     />
                 ))}
             </div>
-
         </div>
     );
 }
