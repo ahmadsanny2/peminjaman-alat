@@ -6,6 +6,7 @@ import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Option from "@/components/Form/Option";
 import HeaderPage from "@/components/HeaderPage";
 import Modal from "@/components/Modal";
+import ConfirmationModal from "@/components/Modals/Confirmation";
 import ProofImageReturnLoan from "@/components/Modals/ProofImageReturnLoan";
 import Pagination from "@/components/Pagination";
 import StatusBadge from "@/components/StatusBadge";
@@ -45,28 +46,31 @@ export default function LoanTransactionHistoryContent() {
         showProofModal,
         closeReturnForm,
         limit,
+        confirmState,
+        ask,
+        close,
     } = useMyLoans();
 
     const tableTH = [
         {
             name: "No",
-            className: "text-center",
+            className: "w-20 text-center",
         },
         {
             name: "Nama Alat",
-            className: "text-left",
+            className: "min-w-50 text-left",
         },
         {
             name: "Tanggal Pengajuan",
-            className: "text-center",
+            className: "min-w-50 text-center",
         },
         {
             name: "Tenggat Pengembalian",
-            className: "text-center",
+            className: "min-w-50 text-center",
         },
         {
             name: "Tanggal Dikembalikan",
-            className: "text-center",
+            className: "min-w-50 text-center",
         },
         {
             name: "Denda",
@@ -74,7 +78,7 @@ export default function LoanTransactionHistoryContent() {
         },
         {
             name: "Status",
-            className: "text-center",
+            className: "min-w-50 text-center",
         },
         {
             name: "Bukti",
@@ -109,7 +113,6 @@ export default function LoanTransactionHistoryContent() {
             const no = index + 1 + (page - 1) * limit;
             return (
                 <tr key={loan.id} className="hover:bg-slate-50/80 transition-colors">
-
                     {/* Number */}
                     <TableCell className="text-center">{no}</TableCell>
 
@@ -171,7 +174,12 @@ export default function LoanTransactionHistoryContent() {
 
                             <ActionButton
                                 disabled={loan.status !== "pending" || isProcessing}
-                                onClick={() => cancelLoan(loan.id)}
+                                onClick={() => ask({
+                                    title: "Batalkan Pengajuan",
+                                    message: "Yakin ingin membatalkan pengajuan peminjaman ini?",
+                                    color: "indigo",
+                                    action: () => cancelLoan(loan.id)
+                                })}
                                 name="Batalkan"
                                 color="slate"
                                 icon={<XCircle size={16} />}
@@ -194,12 +202,15 @@ export default function LoanTransactionHistoryContent() {
 
                 {/* Alert Message */}
                 {(error || success) && (
-                    <Alert type={error ? "error" : "success"} message={error || success} />
+                    <Alert
+                        type={error ? "error" : "success"}
+                        message={error || success}
+                    />
                 )}
 
                 {/* Filter and Search Data */}
                 <FilterAndSearchData
-                    hiddenSearchData={false}
+                    hiddenSearchData={true}
                     placeHolderName="Cari nama alat pinjaman..."
                     sort={(e) => updateFilters("sort", e.target.value)}
                     search={(e) => handleSearch(e.target.value)}
@@ -336,6 +347,16 @@ export default function LoanTransactionHistoryContent() {
                         showProofModal={showProofModal}
                     />
                 )}
+
+                <ConfirmationModal
+                    isOpen={confirmState.isOpen}
+                    title={confirmState.title}
+                    message={confirmState.message}
+                    color={confirmState.color}
+                    confirmText={confirmState.confirmText}
+                    onConfirm={confirmState.onConfirm}
+                    onCancel={close}
+                />
             </div>
             <Pagination page={page} totalData={totalItems} totalPages={totalPages} />
         </div>
