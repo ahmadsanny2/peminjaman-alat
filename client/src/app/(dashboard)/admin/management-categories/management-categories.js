@@ -15,7 +15,7 @@ import HeaderPage from "@/components/HeaderPage";
 import HeaderForm from "@/components/Form/HeaderForm";
 import TableCell from "@/components/Table/TableCell";
 import Alert from "@/components/Alert";
-import Confirmation from "@/components/Modals/Confirmation";
+import ConfirmationModal from "@/components/Modals/Confirmation";
 
 export default function CategoryManagementContent() {
     // Category Management Data
@@ -39,10 +39,9 @@ export default function CategoryManagementContent() {
         handleSearch,
         isLoading,
         success,
-        setShowConfirm,
-        showConfirm,
-        openDeleteConfirm,
-        setSelectedId
+        confirmState,
+        ask,
+        close,
     } = useCategory();
 
     const tableTH = [
@@ -113,7 +112,14 @@ export default function CategoryManagementContent() {
                                 name="Edit"
                             />
                             <ActionButton
-                                onClick={() => openDeleteConfirm(category.id)}
+                                onClick={() =>
+                                    ask({
+                                        title: "Hapus Kategori",
+                                        message: "Yakin ingin menghapus kategori ini?",
+                                        color: "rose",
+                                        action: () => handleDelete(category.id),
+                                    })
+                                }
                                 color="rose"
                                 icon={<Trash2 size={16} />}
                                 title="Hapus"
@@ -137,7 +143,10 @@ export default function CategoryManagementContent() {
 
                 {/* Alert */}
                 {(error || success) && (
-                    <Alert type={error ? "error" : "success"} message={error || success} />
+                    <Alert
+                        type={error ? "error" : "success"}
+                        message={error || success}
+                    />
                 )}
 
                 {/* Content */}
@@ -228,16 +237,14 @@ export default function CategoryManagementContent() {
                                 <tbody className="divide-y divide-slate-100">{content}</tbody>
                             </table>
 
-                            <Confirmation
-                                isOpen={showConfirm}
-                                title="Konfirmasi Hapus"
-                                message="Yakin ingin menghapus kategori ini? Data yang dihapus tidak dapat dikembalikan."
-                                onConfirm={handleDelete} 
-                                onCancel={() => {
-                                    setShowConfirm(false);
-                                    setSelectedId(null);
-                                }}
-                                confirmText="Hapus"
+                            <ConfirmationModal
+                                isOpen={confirmState.isOpen}
+                                title={confirmState.title}
+                                message={confirmState.message}
+                                color={confirmState.color}
+                                confirmText={confirmState.confirmText}
+                                onConfirm={confirmState.onConfirm}
+                                onCancel={close}
                             />
                         </div>
                     </div>
