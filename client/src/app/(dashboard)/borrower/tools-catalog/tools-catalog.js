@@ -2,7 +2,6 @@
 
 import { CheckCircle2, Package, PackageSearch, X } from "lucide-react";
 
-import AlertComponent from "@/components/Alert";
 import FilterAndSearchData from "@/components/FilterAndSearchData";
 import Image from "next/image";
 import Modal from "@/components/Modal";
@@ -35,6 +34,7 @@ export default function CatalogContent() {
         showForm,
         updateFilters,
         handleSearch,
+        categories
     } = useToolsCatalog();
 
     let content;
@@ -212,7 +212,16 @@ export default function CatalogContent() {
                     placeHolderName="Cari nama alat..."
                     sort={(e) => updateFilters("sort", e.target.value)}
                     search={(e) => handleSearch(e.target.value)}
-                />
+                    showBy={(e) => updateFilters("category", e.target.value)}
+                    hiddenFilterData={!false}
+                    label="Kategori"
+                >
+                    {categories.map((cat) => (
+                        <option key={cat.id} className="bg-white/20 text-black">
+                            {cat.name}
+                        </option>
+                    ))}
+                </FilterAndSearchData>
 
                 {/* Main Content */}
                 {content}
