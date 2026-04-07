@@ -83,11 +83,11 @@ export default function AdminDashboardPage() {
                     </li>
                     <li>
                         Registrasikan spesifikasi fisik barang pada menu{" "}
-                        <strong>Inventaris Alat</strong>.
+                        <strong>Manajemen Alat</strong>.
                     </li>
                     <li>
                         Pantau dan validasi arus keluar-masuk barang melalui menu{" "}
-                        <strong>Rekapitulasi Peminjaman</strong>.
+                        <strong>Transaksi Peminjaman</strong>.
                     </li>
                 </ol>
             </div>
