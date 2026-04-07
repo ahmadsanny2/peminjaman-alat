@@ -2,17 +2,19 @@ import { useCallback, useEffect, useState } from "react";
 
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
+import { useConfirm } from "../useConfirm";
 
 export function useCategory() {
     const { search, sort, page, limit, updateFilters, handleSearch } =
         useFilterAndSearchData();
+
+    const { confirmState, ask, close } = useConfirm();
 
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({ name: "", description: "" });
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
@@ -69,7 +71,7 @@ export function useCategory() {
         e.preventDefault();
         if (!formData.name) return alert("Nama kategori wajib diisi");
 
-        setIsSubmitting(true);
+        setIsLoading(true);
         const url = isEditing ? `/categories/${editId}` : `/categories`;
         const method = isEditing ? "PUT" : "POST";
 
@@ -82,9 +84,9 @@ export function useCategory() {
             setSuccess(response?.data?.message);
         } catch (err) {
             setError(err.response?.data?.message);
-            resetForm()
+            resetForm();
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
@@ -98,14 +100,13 @@ export function useCategory() {
 
     // Handle Delete Form
     const handleDelete = async (id) => {
-        if (!confirm("Yakin ingin menghapus kategori ini?")) return;
-
         try {
             const response = await api.delete(`/categories/${id}`);
             fetchCategories();
+
             setSuccess(response?.data?.message);
         } catch (err) {
-            alert(err.response?.data?.message);
+            setError(err.response?.data?.message);
         }
     };
 
@@ -115,7 +116,6 @@ export function useCategory() {
         totalItems,
         formData,
         isEditing,
-        isSubmitting,
         error,
         isLoading,
         handleChange,
@@ -129,6 +129,9 @@ export function useCategory() {
         limit,
         updateFilters,
         handleSearch,
-        success
+        success,
+        confirmState,
+        ask,
+        close,
     };
 }
