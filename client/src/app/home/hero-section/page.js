@@ -55,37 +55,51 @@ const Hero = () => {
 
                                 <div className="grid lg:grid-cols-3 gap-4 mb-6">
                                     <div className="bg-linear-to-br from-[#1e3a5f] to-[#1e3a5f] rounded-2xl p-4 text-white">
-                                        <p className="text-xs opacity-80 mb-1">Total Alat</p>
+                                        <p className="text-xs opacity-80 mb-1">Alat Tersedia</p>
                                         <p className="text-2xl font-bold">248</p>
                                     </div>
                                     <div className="bg-linear-to-br from-emerald-500 to-emerald-600 rounded-2xl p-4 text-white">
-                                        <p className="text-xs opacity-80 mb-1">Dipinjam</p>
+                                        <p className="text-xs opacity-80 mb-1">Menunggu Persetujuan</p>
                                         <p className="text-2xl font-bold">56</p>
                                     </div>
                                     <div className="bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl p-4 text-white">
-                                        <p className="text-xs opacity-80 mb-1">Tersedia</p>
+                                        <p className="text-xs opacity-80 mb-1">Alat Dipinjam</p>
                                         <p className="text-2xl font-bold">192</p>
                                     </div>
                                 </div>
 
-                                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mt-8">
-                                    <h2 className="text-lg font-bold text-slate-800 mb-4">
-                                        Prosedur Konfigurasi Sistem
-                                    </h2>
-                                    <ol className="list-decimal list-inside space-y-2 text-slate-600 text-sm">
-                                        <li>
-                                            Konfigurasikan entitas referensi pada menu{" "}
-                                            <strong>Manajemen Kategori</strong> terlebih dahulu.
-                                        </li>
-                                        <li>
-                                            Registrasikan spesifikasi fisik barang pada menu{" "}
-                                            <strong>Inventaris Alat</strong>.
-                                        </li>
-                                        <li>
-                                            Pantau dan validasi arus keluar-masuk barang melalui menu{" "}
-                                            <strong>Rekapitulasi Peminjaman</strong>.
-                                        </li>
-                                    </ol>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mt-8">
+                                    <div className="bg-linear-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 shadow-sm">
+                                        <h2 className="text-lg font-bold text-slate-800 mb-2">
+                                            Eksplorasi Katalog
+                                        </h2>
+                                        <p className="text-slate-600 text-sm mb-4">
+                                            Tinjau spesifikasi dan ketersediaan stok instrumen fisik yang
+                                            diregistrasikan oleh administrator untuk kebutuhan simulasi Anda.
+                                        </p>
+                                        <Link
+                                            href="/borrower/tools-catalog"
+                                            className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                                        >
+                                            Buka Katalog Alat <ArrowRight size={16} />
+                                        </Link>
+                                    </div>
+
+                                    <div className="bg-linear-to-br from-purple-50 to-white p-6 rounded-xl border border-purple-100 shadow-sm">
+                                        <h2 className="text-lg font-bold text-slate-800 mb-2">
+                                            Pantau Status Transaksi
+                                        </h2>
+                                        <p className="text-slate-600 text-sm mb-4">
+                                            Verifikasi persetujuan dari petugas dan pastikan Anda mengembalikan
+                                            instrumen sesuai dengan tenggat waktu operasional.
+                                        </p>
+                                        <Link
+                                            href="/borrower/transactions-history"
+                                            className="inline-flex items-center gap-2 text-sm font-medium text-purple-600 hover:text-purple-800 transition-colors"
+                                        >
+                                            Lihat Riwayat Saya <ArrowRight size={16} />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
 
