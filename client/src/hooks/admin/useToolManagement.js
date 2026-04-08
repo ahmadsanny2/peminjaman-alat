@@ -3,12 +3,15 @@ import { useCallback, useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
 import { useShowForm } from "../useShowForm";
+import { useConfirm } from "../useConfirm";
 
 export function useTool() {
     const { search, sort, category, page, limit, updateFilters, handleSearch } =
         useFilterAndSearchData();
 
-    const { handleShowForm, showForm, setShowForm } = useShowForm()
+    const { handleShowForm, showForm, setShowForm } = useShowForm();
+
+    const { confirmState, ask, close } = useConfirm();
 
     const [tools, setTools] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -26,9 +29,11 @@ export function useTool() {
 
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState(false)
+
+    const [isLoading, setIsLoading] = useState(false);
 
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
@@ -37,7 +42,7 @@ export function useTool() {
 
     // Fetch Data From Server
     const fetchTools = useCallback(async () => {
-        setIsLoading(true)
+        setIsLoading(true);
 
         try {
             const [toolsRes, categoriesRes] = await Promise.all([
@@ -55,7 +60,7 @@ export function useTool() {
         } catch (err) {
             setError(err.response?.data?.message);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }, [page, limit, search, sort, category]);
 
@@ -119,13 +124,22 @@ export function useTool() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name) {
-            return alert("Nama alat harus diisi!");
-        } else if (!formData.description) {
-            return alert("Deskripsi alat harus diisi!");
+        if (
+            !formData.name ||
+            !formData.description ||
+            !formData.condition ||
+            formData.stock === "" ||
+            formData.stock === null ||
+            formData.stock === undefined ||
+            !formData.categoryId ||
+            (!formData.image && !isEditing)
+        ) {
+            setError("All fields are required");
+            resetForm();
+            return;
         }
 
-        setIsSubmitting(true);
+        setIsLoading(true);
 
         const url = isEditing ? `/tools/${editId}` : `/tools`;
         const method = isEditing ? "put" : "post";
@@ -135,6 +149,7 @@ export function useTool() {
 
             data.append("name", formData.name);
             data.append("description", formData.description);
+            data.append("condition", formData.condition);
             data.append("stock", formData.stock);
             data.append("categoryId", formData.categoryId);
 
@@ -142,7 +157,7 @@ export function useTool() {
                 data.append("image", formData.image);
             }
 
-            await api({
+            const response = await api({
                 method,
                 url,
                 data,
@@ -153,12 +168,15 @@ export function useTool() {
 
             resetForm();
             fetchTools();
+
+            setSuccess(response?.data?.message);
         } catch (err) {
-            alert(err.response?.data?.message);
             resetForm();
             fetchTools();
+
+            setError(err.response?.data?.message);
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
     };
 
@@ -179,13 +197,13 @@ export function useTool() {
 
     // Handle Delete Form
     const handleDelete = async (id) => {
-        if (!confirm("Yakin ingin menghapus tool ini?")) return;
-
         try {
-            await api.delete(`/tools/${id}`);
+            const response = await api.delete(`/tools/${id}`);
             fetchTools();
+
+            setSuccess(response?.data?.message);
         } catch (err) {
-            alert(err.response?.data?.message);
+            setError(err.response?.data?.message);
         }
     };
 
@@ -194,8 +212,8 @@ export function useTool() {
         categories,
         formData,
         isEditing,
-        isSubmitting,
         error,
+        success,
         handleChange,
         handleSubmit,
         handleEdit,
@@ -214,6 +232,7 @@ export function useTool() {
         previewUrl,
         selectedFile,
         condition,
-        isLoading
+        isLoading,
+        confirmState, ask, close
     };
 }
