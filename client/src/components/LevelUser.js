@@ -44,7 +44,7 @@ const LevelUserComponent = () => {
     ];
 
     return (
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {levelUserCard.map((item, index) => {
                 let color = "";
 
