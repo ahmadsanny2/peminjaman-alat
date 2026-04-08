@@ -2,19 +2,27 @@ import { useCallback, useEffect, useState } from "react";
 
 import api from "@/lib/api";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
+import { useConfirm } from "../useConfirm";
 
 export const useUserManagement = () => {
     const { search, sort, role, page, limit, updateFilters, handleSearch } =
         useFilterAndSearchData();
 
+    const { confirmState, ask, close } = useConfirm();
+
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false)
+
     const [formData, setFormData] = useState({
         fullName: "",
+        password: "",
         role: "",
     });
 
@@ -62,69 +70,75 @@ export const useUserManagement = () => {
     const resetForm = () => {
         setFormData({
             fullName: "",
-            role: ""
-        })
-        setIsEditing(false)
-        setShowForm(false)
-        setEditId(null)
-        setError("")
-    }
+            password: "",
+            role: "",
+        });
+        setIsEditing(false);
+        setShowForm(false);
+        setEditId(null);
+        setShowPassword(false)
+        setError("");
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.fullName || !formData.role) {
+        if (!formData.fullName || !formData.password || !formData.role) {
             alert("Semua field harus diisi!");
         }
 
-        setIsSubmitting(true);
+        setIsLoading(true);
 
         const url = `/users/${editId}`;
         const method = "put";
 
         try {
-            await api({
+            const response = await api({
                 method,
                 url,
                 data: formData,
             });
 
-            resetForm()
-            fetchUsers()
+            resetForm();
+            fetchUsers();
+
+            setSuccess(response?.data?.message);
         } catch (err) {
-            setError(err.response?.data?.message)
-            setShowForm(false)
+            setError(err.response?.data?.message);
+            setShowForm(false);
         } finally {
-            setIsSubmitting(false)
+            setIsLoading(false);
         }
     };
 
     const handleEdit = (user) => {
         setFormData({
             fullName: user.fullName || "",
+            password: "",
             role: user.role || "",
         });
-        setEditId(user.id)
-        setIsEditing(true)
-        setShowForm(true)
+        setEditId(user.id);
+        setIsEditing(true);
+        setShowForm(true);
     };
 
     const handleDelete = async (id) => {
         try {
-            if (!confirm("Yakin mau hapus user ini?")) return
+            const response = await api.delete(`/users/${id}`);
+            fetchUsers();
 
-            await api.delete(`/users/${id}`)
-            fetchUsers()
+            setSuccess(response?.data?.message);
         } catch (err) {
-            setError(err.response?.data?.message)
+            setError(err.response?.data?.message);
         }
-    }
+    };
 
     return {
         users,
         isLoading,
         isEditing,
         error,
+        success,
         handleShowForm,
         page,
         limit,
@@ -136,10 +150,14 @@ export const useUserManagement = () => {
         handleEdit,
         formData,
         handleChange,
-        isSubmitting,
         showForm,
         handleSubmit,
         resetForm,
-        handleDelete
+        handleDelete,
+        confirmState,
+        ask,
+        close,
+        showPassword,
+        setShowPassword
     };
 };
