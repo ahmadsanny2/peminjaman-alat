@@ -1,6 +1,7 @@
 import { Op } from "sequelize";
 import { User } from "../models/index.js";
 import { recordActivity } from "../utils/logger.js"
+import bcrypt from "bcryptjs";
 
 export default {
     async getAllUsers(req, res) {
@@ -51,7 +52,7 @@ export default {
 
     async updateUser(req, res) {
         const { id } = req.params;
-        const { fullName, role } = req.body;
+        const { fullName, password, role } = req.body;
 
 
         const validRoles = ["admin", "petugas", "peminjam"];
@@ -78,7 +79,10 @@ export default {
                 });
             }
 
-            await user.update({ fullName, role });
+            const salt = await bcrypt.genSalt(10)
+            const hashedPassword = await bcrypt.hash(password, salt)
+
+            await user.update({ fullName, password: hashedPassword, role });
 
             await recordActivity(
                 req.user.id,
