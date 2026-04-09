@@ -98,7 +98,7 @@ export default {
     },
 
     async createTools(req, res) {
-        const { name, description, stock, condition, image, categoryId } = req.body;
+        const { name, description, stock, condition, categoryId } = req.body;
 
         try {
             const categoryExists = await Category.findByPk(categoryId);
@@ -183,6 +183,7 @@ export default {
                 name: req.body.name,
                 description: req.body.description,
                 stock: req.body.stock,
+                condition: req.body.condition,
                 categoryId: req.body.categoryId,
                 image: imagePath,
             };
