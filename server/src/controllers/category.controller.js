@@ -104,6 +104,12 @@ export default {
                 data: category,
             });
         } catch (error) {
+            if (error.name === "SequelizeUniqueConstraintError") {
+                return res.status(400).json({
+                    message: "That category name already exists, try a different one.",
+                });
+            }
+
             res.status(500).json({
                 message: "Failed to update the category. Something's not right.",
                 error: error.message,
