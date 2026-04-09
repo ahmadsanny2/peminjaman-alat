@@ -2,39 +2,21 @@ import { useCallback, useEffect, useState } from "react";
 import { useFilterAndSearchData } from "../useFilterAndSearchData";
 import api from "@/lib/api";
 import { useFormatDateTime } from "../useFormatDateTime";
-
-const calculateFine = (expected, actual) => {
-    if (!actual) return "-";
-
-    const expectedDate = new Date(expected);
-    const actualDate = new Date(actual);
-
-    expectedDate.setHours(0, 0, 0, 0);
-    actualDate.setHours(0, 0, 0, 0);
-
-    if (actualDate <= expectedDate) return "-";
-
-    const timeDiff = actualDate.getTime() - expectedDate.getTime();
-
-    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-    const totalFine = diffDays * 5000;
-
-    return new Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR",
-        minimumFractionDigits: 0,
-    }).format(totalFine);
-};
+import calculateFine from "@/constants/calculateFine";
+import { useConfirm } from "../useConfirm";
 
 export function useMyLoans() {
     const { search, sort, status, page, limit, updateFilters, handleSearch } =
         useFilterAndSearchData();
     const { formatDateTime } = useFormatDateTime();
 
+    const { confirmState, ask, close } = useConfirm();
+
     const [myLoans, setMyLoans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState(false);
+
+    const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
 
     const [totalItems, setTotalItems] = useState(0);
@@ -45,9 +27,8 @@ export function useMyLoans() {
         actualReturnDate: "",
         image: "",
     });
-    const [selectedLoan, setSelectedLoan] = useState(null);
     const [showForm, setShowForm] = useState(false);
-
+    const [selectedLoan, setSelectedLoan] = useState(null);
     const [showProofModal, setShowProofModal] = useState(false);
 
     const fetchData = useCallback(async () => {
@@ -72,14 +53,13 @@ export function useMyLoans() {
     }, [fetchData]);
 
     const cancelLoan = async (loanId) => {
-        if (!window.confirm("Yakin ingin membatalkan pengajuan peminjaman?"))
-            return;
-
         setIsProcessing(true);
         setError("");
         try {
-            await api.put(`/loans/${loanId}/cancel`);
-            await fetchData();
+            const response = await api.put(`/loans/${loanId}/cancel`);
+            fetchData();
+
+            setSuccess(response?.data?.message);
         } catch (err) {
             setError(err.response?.data?.message || "Gagal membatalkan peminjaman.");
         } finally {
@@ -124,7 +104,7 @@ export function useMyLoans() {
             data.append("actualReturnDate", formData.actualReturnDate);
             data.append("image", formData.image);
 
-            await api({
+            const response = await api({
                 method: "put",
                 url: `/loans/${formData.id}/return`,
                 data: data,
@@ -135,13 +115,11 @@ export function useMyLoans() {
 
             setShowForm(false);
             setSelectedLoan(null);
-            await fetchData();
-            alert("Bukti pengembalian berhasil dikirim.");
+            fetchData();
+
+            setSuccess(response?.data?.message);
         } catch (err) {
-            setError(
-                err.response?.data?.message ||
-                "Terjadi anomali saat mengirimkan formulir pengembalian.",
-            );
+            setError(err.response?.data?.message);
         } finally {
             setIsProcessing(false);
         }
@@ -156,6 +134,10 @@ export function useMyLoans() {
         setShowProofModal(false);
     };
 
+    const closeReturnForm = () => {
+        setShowForm(false);
+    };
+
     return {
         page,
         updateFilters,
@@ -163,6 +145,7 @@ export function useMyLoans() {
         myLoans,
         isLoading,
         error,
+        success,
         totalItems,
         totalPages,
         formatDateTime,
@@ -178,5 +161,10 @@ export function useMyLoans() {
         closeProofModal,
         showProofModal,
         calculateFine,
+        closeReturnForm,
+        limit,
+        confirmState,
+        ask,
+        close,
     };
 }
