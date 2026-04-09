@@ -17,16 +17,18 @@ export const useToolsCatalog = () => {
         resolver: zodResolver(loanRequestSchema),
     });
 
-    const { search, sort, page, limit, updateFilters, handleSearch } =
+    const { search, sort, page, category, limit, updateFilters, handleSearch } =
         useFilterAndSearchData("20");
 
     const [catalog, setCatalog] = useState([]);
+    const [categories, setCategories] = useState([]);
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedTool, setSelectedTool] = useState(null);
+
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
-    const [selectedTool, setSelectedTool] = useState(null);
 
     const [totalItems, setTotalItems] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
@@ -49,18 +51,22 @@ export const useToolsCatalog = () => {
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
-            const response = await api.get("/tools", { params: { search, sort, page, limit } })
+            const [tools, categories] = await Promise.all([
+                await api.get("/tools", { params: { search, sort, category, page, limit } }),
+                await api.get("/categories"),
+            ]);
 
-            setCatalog(response.data.data);
-            setTotalItems(response.data.totalItems || 0);
-            setTotalPages(response.data.totalPages || 1);
+            setCatalog(tools.data.data);
+            setTotalItems(tools.data.totalItems || 0);
+            setTotalPages(tools.data.totalPages || 1);
+            setCategories(categories.data.data);
             setError("");
         } catch (err) {
             setError(err.response?.data?.message);
         } finally {
             setIsLoading(false);
         }
-    }, [search, sort, page, limit]);
+    }, [search, sort, category, page, limit]);
 
     useEffect(() => {
         fetchData();
@@ -79,14 +85,15 @@ export const useToolsCatalog = () => {
     const executeRequest = async (data) => {
         setIsSubmitting(true);
         setError("");
-        setSuccess("")
+        setSuccess("");
 
         try {
             const response = await api.post("/loans/request", data);
 
             closeRequestForm();
             await fetchData();
-            setSuccess(response.data?.message)
+
+            setSuccess(response?.data?.message);
         } catch (err) {
             closeRequestForm();
             setError(err.response?.data?.message);
@@ -124,5 +131,6 @@ export const useToolsCatalog = () => {
         showForm,
         updateFilters,
         handleSearch,
+        categories
     };
 };
