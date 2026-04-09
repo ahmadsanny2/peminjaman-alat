@@ -81,12 +81,12 @@ router.put(
 );
 router.put(
     "/loans/:id/approve",
-    checkRole(["admin", "petugas"]),
+    checkRole(["petugas"]),
     loanController.approveLoan,
 );
 router.put(
     "/loans/:id/reject",
-    checkRole(["admin", "petugas"]),
+    checkRole(["petugas"]),
     loanController.rejectLoan,
 );
 router.put(
@@ -97,7 +97,7 @@ router.put(
 );
 router.put(
     "/loans/:id/verifying",
-    checkRole(["admin", "petugas"]),
+    checkRole(["petugas"]),
     loanController.verifying,
 );
 
