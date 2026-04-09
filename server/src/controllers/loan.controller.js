@@ -150,7 +150,7 @@ export default {
                 where: {
                     borrowerId,
                     toolId,
-                    status: ["approved"],
+                    status: ["approved", "verifying"],
                 },
             });
 
@@ -259,6 +259,7 @@ export default {
             const loan = await Loan.findByPk(id, { transaction });
             if (!loan) {
                 await transaction.rollback();
+
                 return res.status(404).json({
                     message: "Loan request not found.",
                 });
@@ -274,6 +275,7 @@ export default {
             const tool = await Tool.findByPk(loan.toolId, { transaction });
             if (!tool || tool.stock < 1) {
                 await transaction.rollback();
+
                 return res.status(400).json({
                     message: "Can't approve this—the tool is currently out of stock.",
                 });
@@ -302,6 +304,7 @@ export default {
             });
         } catch (error) {
             await transaction.rollback();
+            
             res.status(500).json({
                 message: "Failed to approve the loan. Try again?",
                 error: error.message,
@@ -377,6 +380,7 @@ export default {
 
         try {
             const loan = await Loan.findByPk(id, { transaction });
+            
             if (!loan || loan.status !== "approved") {
                 await transaction.rollback();
                 return res.status(404).json({
