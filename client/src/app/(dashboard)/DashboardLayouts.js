@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }) {
 
                 {/* Main Content Area */}
                 <main className="flex-1 overflow-y-auto bg-app-bg p-6 lg:p-8 w-full">
-                    <div className="mx-auto container max-w-7xl h-full">
+                    <div className="mx-auto container h-full">
                         {children}
                     </div>
                 </main>
