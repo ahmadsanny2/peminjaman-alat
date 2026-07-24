@@ -15,10 +15,12 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { useDarkMode } from "@/hooks/useDarkMode";
+import { useSettings } from "@/context/SettingsContext";
 
 const Navbar = () => {
   const [navbar, setNavbar] = useState(false);
   const { isDark, toggle } = useDarkMode();
+  const { settings, getLogoUrl } = useSettings();
 
   // List Menu
   const listMenu = [
@@ -59,11 +61,19 @@ const Navbar = () => {
         {/* Header Logo */}
         <div className="flex items-center justify-between h-12 lg:h-14">
           <Link href="/" className="flex items-center space-x-2.5">
-            <div className="bg-emerald-500/15 p-2 rounded-xl border border-emerald-500/30">
-              <Wrench className="text-emerald-600" size={20} />
+            <div className="bg-emerald-500/15 text-emerald-600 border border-emerald-500/30 w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center relative shrink-0">
+              {settings.siteLogo ? (
+                <img
+                  src={getLogoUrl(settings.siteLogo)}
+                  alt={settings.siteName}
+                  className="w-full h-full object-contain p-1"
+                />
+              ) : (
+                <Wrench className="text-emerald-600" size={20} />
+              )}
             </div>
             <span className="text-xl font-extrabold text-text-primary tracking-tight">
-              Pinjam<span className="text-emerald-600">ku</span>
+              {settings.siteName}
             </span>
           </Link>
 
