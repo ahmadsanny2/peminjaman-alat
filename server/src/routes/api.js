@@ -6,6 +6,7 @@ import toolController from "../controllers/tool.controller.js";
 import loanController from "../controllers/loan.controller.js";
 import userController from "../controllers/user.controller.js";
 import activityController from "../controllers/activity.controller.js";
+import settingController from "../controllers/setting.controller.js";
 
 import { verifyToken } from "../middleware/authMiddleware.js";
 import { checkRole } from "../middleware/roleMiddleware.js";
@@ -17,7 +18,13 @@ const router = express.Router();
 router.post("/auth/register", authController.register);
 router.post("/auth/login", authController.login);
 
+// Public Settings
+router.get("/settings", settingController.getSettings);
+
 router.use(verifyToken);
+
+// Admin Settings
+router.put("/settings", checkRole(["admin"]), upload.single("logo"), settingController.updateSettings);
 
 // Management User
 router.get("/users", checkRole(["admin"]), userController.getAllUsers);
