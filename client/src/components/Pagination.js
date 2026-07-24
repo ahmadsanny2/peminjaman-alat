@@ -13,7 +13,7 @@ export default function Pagination({ page, totalPages, totalData = 0 }) {
     };
 
     return (
-        <div className="pt-2">
+        <div className="pb-4">
             <div className="flex items-center justify-between px-5 py-3.5 bg-card-bg border border-border-subtle text-xs text-text-secondary rounded-2xl shadow-xs">
                 <span className="font-semibold text-text-primary">
                     Halaman <span className="text-emerald-600 font-bold">{page}</span> dari <span className="font-bold">{totalPages || 1}</span>
