@@ -1,7 +1,11 @@
+"use client";
+
 import { CheckCircle, ArrowRight, Users } from "lucide-react";
 import Link from "next/link";
+import { useSettings } from "@/context/SettingsContext";
 
 const Hero = () => {
+    const { settings } = useSettings();
     return (
         <section
             id="hero"
@@ -11,20 +15,16 @@ const Hero = () => {
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     <div className="text-center lg:text-left animate-fade-in-up">
                         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-text-primary leading-tight mb-6 tracking-tight">
-                            Sistem Peminjaman Alat Digital yang{" "}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-500">
-                                Terstruktur
-                            </span>{" "}
-                            dan{" "}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-emerald-500">
-                                Transparan
-                            </span>
+                            {settings.landingTitle}
                         </h1>
-                        <p className="text-lg lg:text-xl text-text-secondary mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                            Platform modern dengan sistem 3 level pengguna yang memudahkan
-                            pengelolaan, monitoring, dan pelaporan peminjaman alat secara
-                            real-time.
+                        <p className="text-lg lg:text-xl text-text-secondary mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                            {settings.landingSubtitle}
                         </p>
+                        {settings.landingDescription && (
+                            <p className="text-sm text-text-secondary/70 mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+                                {settings.landingDescription}
+                            </p>
+                        )}
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                             <Link
                                 href="/login"
