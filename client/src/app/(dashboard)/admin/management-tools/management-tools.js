@@ -150,7 +150,7 @@ export default function ToolManagementContent() {
     }
 
     return (
-        <div className="flex flex-col justify-between h-full space-y-6">
+        <div className="space-y-6">
             <div className="space-y-6">
                 {/* Header */}
                 <HeaderPage
