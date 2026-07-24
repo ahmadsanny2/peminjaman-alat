@@ -4,6 +4,7 @@ import Category from "./category.model.js";
 import Tool from "./tool.model.js";
 import Loan from "./loan.model.js"
 import ActivityLog from "./activity.model.js";
+import Setting from "./setting.model.js";
 
 Category.hasMany(Tool, { foreignKey: "categoryId" });
 Tool.belongsTo(Category, { foreignKey: "categoryId" });
@@ -20,4 +21,4 @@ Loan.belongsTo(Tool, { foreignKey: "toolId" });
 User.hasMany(ActivityLog, { foreignKey: "userId", as: "activities" });
 ActivityLog.belongsTo(User, { foreignKey: "userId", as: "actor" });
 
-export { sequelize, User, Category, Tool, Loan, ActivityLog };
+export { sequelize, User, Category, Tool, Loan, ActivityLog, Setting };
