@@ -14,12 +14,15 @@ import {
     Users,
     ClipboardList,
     ActivitySquare,
+    Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function Sidebar({ className = "" }) {
     const { pathname, userName, userRole, handleLogout } = useSidebar();
+    const { settings, getLogoUrl } = useSettings();
     const [isManageDataOpen, setIsManageDataOpen] = useState(true);
 
     const renderMenuItems = () => {
@@ -41,7 +44,7 @@ export default function Sidebar({ className = "" }) {
 
                     {/* Group Label */}
                     <span className="block px-3.5 pt-4 pb-1 text-[10px] font-bold text-text-secondary/60 uppercase tracking-wider">
-                        Menu Utama
+                        Manajemen Data
                     </span>
 
                     {/* Collapsible Manajemen Data */}
@@ -102,6 +105,11 @@ export default function Sidebar({ className = "" }) {
                         )}
                     </div>
 
+                    {/* Group Label */}
+                    <span className="block px-3.5 pt-4 pb-1 text-[10px] font-bold text-text-secondary/60 uppercase tracking-wider">
+                        Transaksi
+                    </span>
+
                     {/* Transaksi Peminjaman */}
                     <Link
                         href="/admin/loan-transactions"
@@ -115,6 +123,11 @@ export default function Sidebar({ className = "" }) {
                         <span>Transaksi Peminjaman</span>
                     </Link>
 
+                    {/* Group Label */}
+                    <span className="block px-3.5 pt-4 pb-1 text-[10px] font-bold text-text-secondary/60 uppercase tracking-wider">
+                        Sistem
+                    </span>
+
                     {/* Log Aktivitas */}
                     <Link
                         href="/admin/activity-logs"
@@ -126,6 +139,19 @@ export default function Sidebar({ className = "" }) {
                     >
                         <ActivitySquare size={18} className="shrink-0" />
                         <span>Log Aktivitas</span>
+                    </Link>
+
+                    {/* Settings */}
+                    <Link
+                        href="/admin/settings"
+                        className={`group flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 ${
+                            pathname === "/admin/settings"
+                                ? "bg-emerald-600 text-white font-semibold shadow-lg shadow-emerald-600/25"
+                                : "text-text-secondary hover:bg-app-bg hover:text-text-primary"
+                        }`}
+                    >
+                        <Settings size={18} className="shrink-0" />
+                        <span>Pengaturan</span>
                     </Link>
                 </div>
             );
@@ -149,7 +175,7 @@ export default function Sidebar({ className = "" }) {
 
                     {/* Group Label */}
                     <span className="block px-3.5 pt-4 pb-1 text-[10px] font-bold text-text-secondary/60 uppercase tracking-wider">
-                        Menu Utama
+                        Transaksi
                     </span>
 
                     {/* Daftar Peminjaman */}
@@ -186,7 +212,7 @@ export default function Sidebar({ className = "" }) {
 
                     {/* Group Label */}
                     <span className="block px-3.5 pt-4 pb-1 text-[10px] font-bold text-text-secondary/60 uppercase tracking-wider">
-                        Menu Utama
+                        Layanan
                     </span>
 
                     {/* Katalog Alat */}
@@ -227,13 +253,23 @@ export default function Sidebar({ className = "" }) {
         >
             {/* Header Switcher */}
             <div className="p-3 mx-2 my-2 rounded-xl flex items-center justify-between hover:bg-app-bg cursor-pointer border border-transparent hover:border-border-subtle/40 transition-all duration-200">
-                <div className="flex items-center gap-2.5">
-                    <div className="bg-emerald-600 rounded-lg p-2 text-white flex items-center justify-center shadow-md">
-                        <Wrench size={16} />
+                <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="bg-emerald-600 rounded-lg text-white flex items-center justify-center shadow-md w-9 h-9 overflow-hidden relative shrink-0">
+                        {settings.siteLogo ? (
+                            <img
+                                src={getLogoUrl(settings.siteLogo)}
+                                alt={settings.siteName}
+                                className="w-full h-full object-contain p-1"
+                            />
+                        ) : (
+                            <Wrench size={16} />
+                        )}
                     </div>
-                    <div className="flex flex-col text-left">
-                        <span className="text-xs font-bold text-text-primary tracking-tight">Pinjamku</span>
-                        <span className="text-[10px] text-text-secondary/60 font-semibold uppercase tracking-wider">
+                    <div className="flex flex-col text-left min-w-0">
+                        <span className="text-xs font-bold text-text-primary tracking-tight truncate">
+                            {settings.siteName}
+                        </span>
+                        <span className="text-[10px] text-text-secondary/60 font-semibold uppercase tracking-wider truncate">
                             {userRole === "admin" ? "Enterprise" : userRole === "petugas" ? "Officer Panel" : "Borrower Panel"}
                         </span>
                     </div>
