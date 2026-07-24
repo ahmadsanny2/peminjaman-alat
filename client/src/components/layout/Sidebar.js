@@ -49,7 +49,6 @@ export default function Sidebar({ className = "" }) {
                         <button
                             onClick={() => setIsManageDataOpen(!isManageDataOpen)}
                             className={`w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium transition-all duration-200 cursor-pointer ${
-                                isManageDataOpen ||
                                 pathname === "/admin/management-categories" ||
                                 pathname === "/admin/management-tools" ||
                                 pathname === "/admin/management-users"
