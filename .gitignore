@@ -1,1 +1,4 @@
 *.md
+.agents
+.codex
+.impeccable
