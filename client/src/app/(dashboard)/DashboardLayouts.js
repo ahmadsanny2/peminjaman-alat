@@ -4,17 +4,31 @@ import Sidebar from "@/components/layout/Sidebar";
 import { useSidebar } from "@/hooks/useSidebar";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { Calendar, PanelLeft, Sun, Moon } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function DashboardLayout({ children }) {
     const { sidebar, setSidebar } = useSidebar();
     const { isDark, toggle } = useDarkMode();
+    const [currentDate, setCurrentDate] = useState("");
+
+    useEffect(() => {
+        setCurrentDate(new Date().toLocaleDateString("id-ID", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour12: false,
+        }));
+    }, []);
 
     return (
         <div className="bg-app-bg text-text-primary flex h-screen overflow-hidden font-sans transition-colors duration-200">
 
             {/* Sidebar */}
             <Sidebar
-                className={`${sidebar ? "lg:hidden max-lg:fixed max-lg:top-0 max-lg:left-0" : "max-lg:hidden"}`}
+                className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
+                    sidebar ? "translate-x-0" : "-translate-x-full"
+                }`}
             />
 
             <div className="flex-1 flex flex-col overflow-hidden">
@@ -46,13 +60,7 @@ export default function DashboardLayout({ children }) {
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-app-bg rounded-xl text-xs font-semibold text-text-secondary border border-border-subtle/80">
                             <Calendar size={14} className="text-emerald-600" />
                             <span>
-                                {new Date().toLocaleDateString("id-ID", {
-                                    weekday: "long",
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                    hour12: false,
-                                })}
+                                {currentDate || "Memuat tanggal..."}
                             </span>
                         </div>
                     </div>
