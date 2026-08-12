@@ -171,7 +171,8 @@ export default {
 
             if (req.file) {
                 if (tool.image) {
-                    const oldPath = path.join("public", tool.image);
+                    const fileName = path.basename(tool.image);
+                    const oldPath = path.join(process.cwd(), "public", "uploads", fileName);
                     if (fs.existsSync(oldPath)) {
                         fs.unlinkSync(oldPath);
                     }
@@ -219,11 +220,8 @@ export default {
 
 
             if (tool.image) {
-                const cleanImagePath = tool.image.startsWith('/')
-                    ? tool.image.substring(1)
-                    : tool.image;
-
-                const filePath = path.resolve(process.cwd(), "public", cleanImagePath);
+                const fileName = path.basename(tool.image);
+                const filePath = path.resolve(process.cwd(), "public", "uploads", fileName);
 
                 console.log("Mencoba menghapus file di:", filePath);
 
