@@ -1,4 +1,4 @@
-import { User } from "../models/index.js";
+import { User, sequelize } from "../models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { recordActivity } from "../utils/logger.js";
@@ -6,9 +6,11 @@ import { recordActivity } from "../utils/logger.js";
 export default {
     async register(req, res) {
         const { fullName, username, password, confirmPassword, role } = req.body;
+        const transaction = await sequelize.transaction();
 
         try {
             if (password !== confirmPassword) {
+                await transaction.rollback();
                 return res.status(400).json({
                     message: "Passwords don't match, double-check them!",
                 });
@@ -25,6 +27,7 @@ export default {
             });
 
             if (existingUser) {
+                await transaction.rollback();
                 return res.status(409).json({
                     message: "That username is already taken, try another one!",
                 });
@@ -38,13 +41,16 @@ export default {
                 username,
                 password: hashedPassword,
                 role,
-            });
+            }, { transaction });
 
             await recordActivity(
                 newUser.id,
                 "REGISTER",
-                `${newUser.fullName} just joined the system.`
-            )
+                `${newUser.fullName} just joined the system.`,
+                transaction
+            );
+            
+            await transaction.commit();
 
             res.status(201).json({
                 message: "Nice! User registered successfully.",
@@ -56,6 +62,7 @@ export default {
                 },
             });
         } catch (error) {
+            await transaction.rollback();
             res.status(500).json({
                 message: "Oops, something went wrong while registering the user.",
                 error: error.message,
