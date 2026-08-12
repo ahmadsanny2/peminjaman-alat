@@ -19,8 +19,8 @@ export default {
             }
 
             if (page && limit) {
-                page = parseInt(page);
-                limit = parseInt(limit);
+                page = parseInt(page) || 1;
+                limit = parseInt(limit) || 10;
 
                 queryOptions.limit = limit;
                 queryOptions.offset = (page - 1) * limit;
@@ -81,8 +81,8 @@ export default {
         }
 
         if (page && limit) {
-            page = parseInt(page);
-            limit = parseInt(limit);
+            page = parseInt(page) || 1;
+            limit = parseInt(limit) || 10;
 
             queryOptions.limit = limit;
             queryOptions.offset = (page - 1) * limit;
