@@ -1,6 +1,6 @@
 const Option = ({ optionValue, optionName }) => {
     return (
-        <option className="text-black" value={optionValue}>{optionName}</option>
+        <option className="bg-card-bg text-text-primary" value={optionValue}>{optionName}</option>
     )
 }
 
