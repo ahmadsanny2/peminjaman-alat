@@ -2,30 +2,30 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
     username: z.string().trim().min(1, {
-        message: "Please enter your username.",
+        message: "Silakan masukkan username Anda.",
     }),
     password: z.string().min(1, {
-        message: "Please enter your password.",
+        message: "Silakan masukkan password Anda.",
     }),
 });
 export const registerSchema = z
     .object({
-        fullName: z.string().trim().min(3, "Full name must be at least 3 characters."),
+        fullName: z.string().trim().min(3, "Nama lengkap minimal 3 karakter."),
         username: z
             .string()
             .trim()
-            .min(4, "Username must be at least 4 characters")
-            .regex(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores are allowed."),
+            .min(4, "Username minimal 4 karakter.")
+            .regex(/^[a-zA-Z0-9_]+$/, "Username hanya boleh memuat huruf, angka, dan garis bawah (_)."),
         password: z
             .string()
-            .min(8, "Password must be at least 8 characters.")
-            .regex(/[a-z]/, "Include at least one lowercase letter.")
-            .regex(/[A-Z]/, "Include at least one uppercase letter.")
-            .regex(/[0-9]/, "Include at least one number")
-            .regex(/[^a-zA-Z0-9]/, "Include at least one special character"),
-        confirmPassword: z.string().min(1, "Please confirm your password"),
+            .min(8, "Password minimal 8 karakter.")
+            .regex(/[a-z]/, "Sertakan minimal satu huruf kecil.")
+            .regex(/[A-Z]/, "Sertakan minimal satu huruf besar.")
+            .regex(/[0-9]/, "Sertakan minimal satu angka.")
+            .regex(/[^a-zA-Z0-9]/, "Sertakan minimal satu simbol khusus (@#$%^&*)."),
+        confirmPassword: z.string().min(1, "Silakan konfirmasi password Anda."),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords don't match",
+        message: "Konfirmasi password tidak cocok.",
         path: ["confirmPassword"],
     });
