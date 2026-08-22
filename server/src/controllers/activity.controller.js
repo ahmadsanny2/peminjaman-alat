@@ -22,13 +22,11 @@ export default {
                 queryOptions.where.action = activity
             }
 
-            if (page && limit) {
-                page = parseInt(page);
-                limit = parseInt(limit);
+            const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+            const parsedLimit = Math.max(1, parseInt(limit, 10) || 10);
 
-                queryOptions.limit = limit;
-                queryOptions.offset = (page - 1) * limit;
-            }
+            queryOptions.limit = parsedLimit;
+            queryOptions.offset = (parsedPage - 1) * parsedLimit;
 
             const { count, rows } = await ActivityLog.findAndCountAll({
                 ...queryOptions,
@@ -43,8 +41,8 @@ export default {
 
             res.status(200).json({
                 totalItems: count,
-                totalPages: Math.ceil(count / limit),
-                currentPage: page,
+                totalPages: Math.ceil(count / parsedLimit) || 1,
+                currentPage: parsedPage,
                 data: rows,
             });
 
