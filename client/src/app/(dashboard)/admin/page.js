@@ -57,7 +57,7 @@ export default function AdminDashboardPage() {
 
             {/* Error Response */}
             {error && (
-                <div className="bg-rose-50 border border-rose-200 p-4 rounded-xl flex items-start gap-3 text-rose-700 text-sm">
+                <div className="bg-rose-500/10 border border-rose-500/20 p-4 rounded-xl flex items-start gap-3 text-rose-600 dark:text-rose-400 text-sm">
                     <AlertCircle className="text-rose-500 mt-0.5 shrink-0" size={18} />
                     <p>{error}</p>
                 </div>
@@ -71,23 +71,23 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Procedure */}
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs mt-6 space-y-3">
-                <h2 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            <div className="bg-card-bg p-6 rounded-2xl border border-border-subtle shadow-xs mt-6 space-y-3">
+                <h2 className="text-base font-bold text-text-primary tracking-tight flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     Prosedur Konfigurasi Sistem
                 </h2>
-                <ol className="list-decimal list-inside space-y-2.5 text-slate-600 text-sm pl-1">
+                <ol className="list-decimal list-inside space-y-2.5 text-text-secondary text-sm pl-1">
                     <li className="leading-relaxed">
                         Konfigurasikan entitas referensi pada menu{" "}
-                        <strong className="text-slate-800 font-semibold">Manajemen Kategori</strong> terlebih dahulu.
+                        <strong className="text-text-primary font-semibold">Manajemen Kategori</strong> terlebih dahulu.
                     </li>
                     <li className="leading-relaxed">
                         Registrasikan spesifikasi fisik barang pada menu{" "}
-                        <strong className="text-slate-800 font-semibold">Manajemen Alat</strong>.
+                        <strong className="text-text-primary font-semibold">Manajemen Alat</strong>.
                     </li>
                     <li className="leading-relaxed">
                         Pantau dan validasi arus keluar-masuk barang melalui menu{" "}
-                        <strong className="text-slate-800 font-semibold">Transaksi Peminjaman</strong>.
+                        <strong className="text-text-primary font-semibold">Transaksi Peminjaman</strong>.
                     </li>
                 </ol>
             </div>
