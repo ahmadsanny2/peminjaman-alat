@@ -11,6 +11,7 @@ import HeaderForm from "@/components/Form/HeaderForm";
 import Label from "@/components/Form/Label";
 import Alert from "@/components/Alert";
 import HeaderPage from "@/components/HeaderPage";
+import { getImageUrl } from "@/lib/image";
 
 export default function CatalogContent() {
     // Catalog Tools Data
@@ -74,18 +75,25 @@ export default function CatalogContent() {
                         className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden flex flex-col transition-all duration-300 hover:shadow-md hover:-translate-y-1"
                     >
                         <div className="flex flex-col flex-1 p-3">
-                            <div className="overflow-hidden rounded-xl bg-app-bg mb-3">
-                                <Image
-                                    src={`http://localhost:5000${tool.image}`}
-                                    alt={tool.name}
-                                    width={500}
-                                    height={500}
-                                    className="w-full h-48 object-cover rounded-xl hover:scale-105 transition-transform duration-500"
-                                    loading="lazy"
-                                />
+                            <div className="overflow-hidden rounded-xl bg-app-bg mb-3 flex items-center justify-center min-h-48">
+                                {getImageUrl(tool.image) ? (
+                                    <Image
+                                        src={getImageUrl(tool.image)}
+                                        alt={tool.name}
+                                        width={500}
+                                        height={500}
+                                        className="w-full h-48 object-cover rounded-xl hover:scale-105 transition-transform duration-500"
+                                        unoptimized
+                                    />
+                                ) : (
+                                    <div className="w-full h-48 flex flex-col items-center justify-center text-text-secondary/40">
+                                        <Package size={36} />
+                                        <span className="text-xs mt-1">No Image</span>
+                                    </div>
+                                )}
                             </div>
                             <div className="px-1 space-y-1.5">
-                                <span className="inline-block text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                                <span className="inline-block text-[11px] font-bold text-text-secondary bg-app-bg border border-border-subtle px-2.5 py-0.5 rounded-full">
                                     {tool.Category?.name || "Tanpa Kategori"}
                                 </span>
                                 <h3 className="text-sm font-bold text-text-primary leading-snug line-clamp-2">
@@ -176,14 +184,22 @@ export default function CatalogContent() {
                     <form onSubmit={onSubmit} className="space-y-4">
                         <input type="hidden" {...register("toolId")} />
 
-                        <div className="overflow-hidden rounded-xl bg-app-bg border border-border-subtle max-h-56">
-                            <Image
-                                src={`http://localhost:5000${selectedTool.image}`}
-                                alt={selectedTool.name}
-                                width={500}
-                                height={500}
-                                className="w-full h-56 object-cover rounded-xl"
-                            />
+                        <div className="overflow-hidden rounded-xl bg-app-bg border border-border-subtle max-h-56 flex items-center justify-center">
+                            {getImageUrl(selectedTool.image) ? (
+                                <Image
+                                    src={getImageUrl(selectedTool.image)}
+                                    alt={selectedTool.name}
+                                    width={500}
+                                    height={500}
+                                    className="w-full h-56 object-cover rounded-xl"
+                                    unoptimized
+                                />
+                            ) : (
+                                <div className="w-full h-40 flex flex-col items-center justify-center text-text-secondary/40">
+                                    <Package size={36} />
+                                    <span className="text-xs mt-1">No Image</span>
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -206,6 +222,9 @@ export default function CatalogContent() {
                                 max={maxDay}
                                 disabled={isSubmitting}
                             />
+                            <p className="text-[11px] text-text-secondary mt-1.5">
+                                *Maksimal durasi peminjaman adalah 7 hari.
+                            </p>
                             {errors.expectedReturnDate && (
                                 <span className="text-rose-500 text-xs mt-1 block">
                                     {errors.expectedReturnDate.message}
