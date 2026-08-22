@@ -18,13 +18,11 @@ export default {
                 };
             }
 
-            if (page && limit) {
-                page = parseInt(page) || 1;
-                limit = parseInt(limit) || 10;
+            const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+            const parsedLimit = Math.max(1, parseInt(limit, 10) || 10);
 
-                queryOptions.limit = limit;
-                queryOptions.offset = (page - 1) * limit;
-            }
+            queryOptions.limit = parsedLimit;
+            queryOptions.offset = (parsedPage - 1) * parsedLimit;
 
             const { count, rows } = await Loan.findAndCountAll({
                 ...queryOptions,
@@ -49,8 +47,8 @@ export default {
             res.status(200).json({
                 message: "Got all the loan records for you.",
                 totalItems: count,
-                totalPages: Math.ceil(count / limit),
-                currentPage: page,
+                totalPages: Math.ceil(count / parsedLimit) || 1,
+                currentPage: parsedPage,
                 data: rows,
             });
         } catch (error) {
@@ -80,13 +78,11 @@ export default {
             queryOptions.where.status = status;
         }
 
-        if (page && limit) {
-            page = parseInt(page) || 1;
-            limit = parseInt(limit) || 10;
+        const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+        const parsedLimit = Math.max(1, parseInt(limit, 10) || 10);
 
-            queryOptions.limit = limit;
-            queryOptions.offset = (page - 1) * limit;
-        }
+        queryOptions.limit = parsedLimit;
+        queryOptions.offset = (parsedPage - 1) * parsedLimit;
 
         try {
             const { count, rows } = await Loan.findAndCountAll({
@@ -102,8 +98,8 @@ export default {
             res.status(200).json({
                 message: "Here’s a list of the tools you've borrowed.",
                 totalItems: count,
-                totalPages: Math.ceil(count / limit),
-                currentPage: page,
+                totalPages: Math.ceil(count / parsedLimit) || 1,
+                currentPage: parsedPage,
                 data: rows,
             });
         } catch (error) {
@@ -190,8 +186,6 @@ export default {
 
     async cancelLoan(req, res) {
         const { id } = req.params;
-        const officerId = req.user.id;
-
         const transaction = await sequelize.transaction();
 
         try {
@@ -204,6 +198,14 @@ export default {
                 });
             }
 
+            // Validasi IDOR: pastikan hanya peminjam yang bersangkutan yang dapat membatalkan
+            if (loan.borrowerId !== req.user.id) {
+                await transaction.rollback();
+                return res.status(403).json({
+                    message: "Access denied. You do not have permission to cancel this loan request.",
+                });
+            }
+
             if (loan.status !== "pending") {
                 await transaction.rollback();
                 return res.status(400).json({
@@ -212,17 +214,10 @@ export default {
             }
 
             const tool = await Tool.findByPk(loan.toolId, { transaction });
-            if (!tool) {
-                await transaction.rollback();
-                return res.status(400).json({
-                    message: "Tool is not available",
-                });
-            }
 
             await loan.update(
                 {
                     status: "canceled",
-                    officerId,
                 },
                 {
                     transaction,
@@ -234,10 +229,10 @@ export default {
             await recordActivity(
                 req.user.id,
                 "CANCEL LOAN APPLICATION",
-                `${req.user.fullName} canceled a loan request for: ${tool.name}`,
+                `${req.user.fullName} canceled a loan request for: ${tool?.name || "Tool"}`,
             );
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: "Loan request canceled.",
             });
         } catch (error) {
@@ -272,7 +267,12 @@ export default {
                 });
             }
 
-            const tool = await Tool.findByPk(loan.toolId, { transaction });
+            // Pessimistic locking to prevent race condition on concurrent approvals
+            const tool = await Tool.findByPk(loan.toolId, {
+                transaction,
+                lock: transaction.LOCK.UPDATE,
+            });
+
             if (!tool || tool.stock < 1) {
                 await transaction.rollback();
 
@@ -336,12 +336,6 @@ export default {
             }
 
             const tool = await Tool.findByPk(loan.toolId, { transaction });
-            if (!tool) {
-                await transaction.rollback();
-                return res.status(400).json({
-                    message: "Tool is not available",
-                });
-            }
 
             await loan.update(
                 {
@@ -358,10 +352,10 @@ export default {
             await recordActivity(
                 req.user.id,
                 "REJECT LOAN APPLICATION",
-                `${req.user.fullName} rejected a loan request for: ${tool.name}`,
+                `${req.user.fullName} rejected a loan request for: ${tool?.name || "Tool"}`,
             );
 
-            return res.status(201).json({
+            return res.status(200).json({
                 message: "Loan request rejected.",
             });
         } catch (error) {
@@ -388,16 +382,23 @@ export default {
                 });
             }
 
+            // Validasi IDOR: pastikan hanya peminjam yang bersangkutan yang dapat mengembalikan
+            if (loan.borrowerId !== req.user.id) {
+                await transaction.rollback();
+                return res.status(403).json({
+                    message: "Access denied. You do not have permission to return this loan.",
+                });
+            }
+
             const tool = await Tool.findByPk(loan.toolId, { transaction });
 
-
-            const imagePath = req.file ? `/uploads/${req.file.filename}` : null
+            const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
 
             await loan.update(
                 {
                     status: "verifying",
                     actualReturnDate: actualReturnDate,
-                    image: imagePath
+                    image: imagePath,
                 },
                 { transaction },
             );
