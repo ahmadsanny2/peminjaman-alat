@@ -24,10 +24,7 @@ api.interceptors.response.use(
         const isLoginPage =
             typeof window !== "undefined" && window.location.pathname === "/login";
 
-        if (
-            error.response &&
-            (error.response.status === 401 || error.response.status === 403)
-        ) {
+        if (error.response && error.response.status === 401) {
             Cookies.remove("token");
             Cookies.remove("user");
 
