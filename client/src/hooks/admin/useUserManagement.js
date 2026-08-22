@@ -84,7 +84,7 @@ export const useUserManagement = () => {
         e.preventDefault();
 
         if (!formData.fullName || !formData.role) {
-            alert("Nama Lengkap dan Role harus diisi!");
+            setError("Nama Lengkap dan Role harus diisi!");
             return;
         }
 
@@ -105,8 +105,7 @@ export const useUserManagement = () => {
 
             setSuccess(response?.data?.message);
         } catch (err) {
-            setError(err.response?.data?.message);
-            setShowForm(false);
+            setError(err.response?.data?.message || "Gagal memperbarui data pengguna.");
         } finally {
             setIsLoading(false);
         }
