@@ -23,13 +23,11 @@ export default {
                 queryOptions.where.role = role
             }
 
-            if (page && limit) {
-                page = parseInt(page)
-                limit = parseInt(limit)
+            const parsedPage = Math.max(1, parseInt(page, 10) || 1);
+            const parsedLimit = Math.max(1, parseInt(limit, 10) || 10);
 
-                queryOptions.limit = limit
-                queryOptions.offset = (page - 1) * limit
-            }
+            queryOptions.limit = parsedLimit;
+            queryOptions.offset = (parsedPage - 1) * parsedLimit;
 
             const { count, rows } = await User.findAndCountAll({
                 ...queryOptions,
@@ -38,8 +36,8 @@ export default {
             res.status(200).json({
                 message: "Successfully fetched the user list.",
                 totalItems: count,
-                totalPages: Math.ceil(count / limit),
-                currentPage: page,
+                totalPages: Math.ceil(count / parsedLimit) || 1,
+                currentPage: parsedPage,
                 data: rows
             });
         } catch (error) {
@@ -72,7 +70,7 @@ export default {
                 });
             }
 
-            if (user.id === req.user.id) {
+            if (user.id === req.user.id && user.role !== role) {
                 return res.status(403).json({
                     message:
                         "Denied! You can't change your own role.",
