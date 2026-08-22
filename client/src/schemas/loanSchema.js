@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const loanRequestSchema = z.object({
-    toolId: z.string().uuid({
-        message: "Invalid tool ID.",
+    toolId: z.string({
+        message: "ID alat tidak valid.",
     }),
     expectedReturnDate: z.string().refine(
         (dateString) => {
@@ -12,7 +12,7 @@ export const loanRequestSchema = z.object({
             return selectedDate >= new Date(today.setHours(0, 0, 0, 0));
         },
         {
-            message: "Expected return date must be today or in the future.",
+            message: "Tenggat pengembalian harus hari ini atau di masa mendatang.",
         },
     ),
 });
