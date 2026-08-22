@@ -5,10 +5,31 @@ import { recordActivity } from "../utils/logger.js";
 
 export default {
     async register(req, res) {
-        const { fullName, username, password, confirmPassword, role } = req.body;
+        const { fullName, username, password, confirmPassword } = req.body;
         const transaction = await sequelize.transaction();
 
         try {
+            if (!fullName || typeof fullName !== "string" || fullName.trim().length < 3) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Full name must be at least 3 characters.",
+                });
+            }
+
+            if (!username || typeof username !== "string" || username.trim().length < 4) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Username must be at least 4 characters.",
+                });
+            }
+
+            if (!password || !confirmPassword) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Password and confirmation password are required.",
+                });
+            }
+
             if (password !== confirmPassword) {
                 await transaction.rollback();
                 return res.status(400).json({
@@ -17,13 +38,17 @@ export default {
             }
 
             const formattedFullName = fullName
+                .trim()
                 .toLowerCase()
-                .split(" ")
+                .split(/\s+/)
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                 .join(" ");
 
+            const cleanUsername = username.trim().toLowerCase();
+
             const existingUser = await User.findOne({
-                where: { username },
+                where: { username: cleanUsername },
+                transaction,
             });
 
             if (existingUser) {
@@ -36,11 +61,12 @@ export default {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
 
+            // Selalu tetapkan role sebagai peminjam untuk pendaftaran publik (Cegah Privilege Escalation)
             const newUser = await User.create({
                 fullName: formattedFullName,
-                username,
+                username: cleanUsername,
                 password: hashedPassword,
-                role,
+                role: "peminjam",
             }, { transaction });
 
             await recordActivity(
