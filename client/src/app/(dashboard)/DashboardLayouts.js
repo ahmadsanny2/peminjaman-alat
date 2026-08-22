@@ -26,9 +26,8 @@ export default function DashboardLayout({ children }) {
 
             {/* Sidebar */}
             <Sidebar
-                className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
-                    sidebar ? "translate-x-0" : "-translate-x-full"
-                }`}
+                className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${sidebar ? "translate-x-0" : "-translate-x-full"
+                    }`}
             />
 
             <div className="flex-1 flex flex-col overflow-hidden">
