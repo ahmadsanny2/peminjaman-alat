@@ -15,12 +15,13 @@ import {
     ClipboardList,
     ActivitySquare,
     Settings,
+    X,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useSettings } from "@/context/SettingsContext";
 
-export default function Sidebar({ className = "" }) {
+export default function Sidebar({ className = "", onClose }) {
     const { pathname, userName, userRole, handleLogout } = useSidebar();
     const { settings, getLogoUrl } = useSettings();
     const [isManageDataOpen, setIsManageDataOpen] = useState(true);
@@ -249,10 +250,10 @@ export default function Sidebar({ className = "" }) {
 
     return (
         <aside
-            className={`bg-card-bg w-64 z-20 text-text-secondary min-h-screen flex flex-col shadow-xl border-r border-border-subtle transition-colors duration-200 ${className}`}
+            className={`bg-card-bg w-64 text-text-secondary h-screen flex flex-col shadow-xl border-r border-border-subtle transition-all duration-300 ease-in-out shrink-0 ${className}`}
         >
             {/* Header Switcher */}
-            <div className="p-3 mx-2 my-2 rounded-xl flex items-center justify-between hover:bg-app-bg cursor-pointer border border-transparent hover:border-border-subtle/40 transition-all duration-200">
+            <div className="p-3 mx-2 my-2 rounded-xl flex items-center justify-between border border-transparent transition-all duration-200">
                 <div className="flex items-center gap-2.5 min-w-0">
                     <div className="bg-emerald-600 rounded-lg text-white flex items-center justify-center shadow-md w-9 h-9 overflow-hidden relative shrink-0">
                         {settings.siteLogo ? (
@@ -274,7 +275,18 @@ export default function Sidebar({ className = "" }) {
                         </span>
                     </div>
                 </div>
-                <ChevronsUpDown size={14} className="text-text-secondary/60 shrink-0" />
+                {onClose ? (
+                    <button
+                        onClick={onClose}
+                        className="lg:hidden p-1.5 text-text-secondary hover:text-text-primary hover:bg-app-bg rounded-lg transition-colors cursor-pointer"
+                        title="Tutup Menu"
+                        aria-label="Tutup Sidebar"
+                    >
+                        <X size={18} />
+                    </button>
+                ) : (
+                    <ChevronsUpDown size={14} className="text-text-secondary/60 shrink-0" />
+                )}
             </div>
 
             {/* Menu Navigation */}
