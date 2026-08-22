@@ -53,7 +53,7 @@ export default function ActivityLogContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell colspan="5" className="text-center">
+                <TableCell colSpan={5} className="text-center">
                     Sedang mengambil data...
                 </TableCell>
             </tr>
@@ -61,7 +61,7 @@ export default function ActivityLogContent() {
     } else if (logs.length === 0) {
         content = (
             <tr>
-                <TableCell colspan="5" className="text-center">
+                <TableCell colSpan={5} className="text-center">
                     Belum ada aktivitas yang direkam oleh sistem.
                 </TableCell>
             </tr>
@@ -70,7 +70,7 @@ export default function ActivityLogContent() {
         content = logs.map((log, index) => {
             const no = index + 1 + (page - 1) * limit;
             return (
-                <tr key={log.id} className="hover:bg-slate-50 transition-colors">
+                <tr key={log.id} className="hover:bg-app-bg/50 transition-colors">
 
                     {/* No */}
                     <TableCell className="w-20 text-center">{no}</TableCell>
@@ -82,19 +82,19 @@ export default function ActivityLogContent() {
 
                     {/* User */}
                     <TableCell className="min-w-50 text-center">
-                        <div className="font-semibold">{log.actor?.fullName}</div>
-                        <div className="text-[10px] uppercase">{log.actor?.role}</div>
+                        <div className="font-semibold text-text-primary">{log.actor?.fullName}</div>
+                        <div className="text-[10px] uppercase text-text-secondary">{log.actor?.role}</div>
                     </TableCell>
 
                     {/* Activity */}
                     <TableCell className="min-w-50 text-center font-semibold text-xs">
-                        <span className="bg-slate-100 px-2 py-1 rounded border border-slate-200">
+                        <span className="bg-app-bg text-text-primary px-2.5 py-1 rounded-lg border border-border-subtle font-medium">
                             {log.action}
                         </span>
                     </TableCell>
 
                     {/* Description */}
-                    <TableCell className="min-w-100 text-left">{log.description}</TableCell>
+                    <TableCell className="min-w-100 text-left text-text-secondary">{log.description}</TableCell>
                 </tr>
             );
         });
@@ -112,7 +112,7 @@ export default function ActivityLogContent() {
 
                 {/* Error Response */}
                 {error && (
-                    <div className="bg-rose-50 text-rose-700 p-4 rounded-xl border border-rose-200 flex gap-3 text-sm">
+                    <div className="bg-rose-500/10 text-rose-600 dark:text-rose-400 p-4 rounded-xl border border-rose-500/20 flex gap-3 text-sm">
                         <AlertCircle size={18} className="mt-0.5 shrink-0 text-rose-500" /> <span>{error}</span>
                     </div>
                 )}
@@ -129,7 +129,7 @@ export default function ActivityLogContent() {
                     {dataActivity.map((activity) => (
                         <option
                             key={activity}
-                            className="bg-white text-slate-800"
+                            className="bg-card-bg text-text-primary"
                             value={activity}
                         >
                             {activity}
@@ -138,10 +138,10 @@ export default function ActivityLogContent() {
                 </FilterAndSearchData>
 
                 {/* Table Data Log Activity */}
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm text-slate-600">
-                            <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                        <table className="w-full text-left text-sm text-text-secondary">
+                            <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                 <tr>
                                     {tableTH.map((th, index) => (
                                         <TableCell
@@ -154,7 +154,7 @@ export default function ActivityLogContent() {
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">{content}</tbody>
+                            <tbody className="divide-y divide-border-subtle/50">{content}</tbody>
                         </table>
                     </div>
                 </div>
