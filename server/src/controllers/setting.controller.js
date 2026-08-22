@@ -47,7 +47,8 @@ export default {
             if (req.file) {
                 // Delete old logo file if exists and starts with /uploads/
                 if (settings.siteLogo && settings.siteLogo.startsWith("/uploads/")) {
-                    const oldPath = path.join("public", settings.siteLogo);
+                    const fileName = path.basename(settings.siteLogo);
+                    const oldPath = path.resolve(process.cwd(), "public/uploads", fileName);
                     if (fs.existsSync(oldPath)) {
                         fs.unlinkSync(oldPath);
                     }
