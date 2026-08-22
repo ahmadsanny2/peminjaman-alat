@@ -11,7 +11,21 @@ export function proxy(request) {
         try {
             user = JSON.parse(userCookie);
         } catch (error) {
-            console.error(error);
+            user = null;
+        }
+    }
+
+    if (token) {
+        try {
+            const parts = token.split(".");
+            if (parts.length === 3) {
+                const payload = JSON.parse(Buffer.from(parts[1], "base64").toString("utf-8"));
+                if (payload && payload.role) {
+                    user = { ...user, ...payload };
+                }
+            }
+        } catch (_) {
+            // fallback to cookie
         }
     }
 
