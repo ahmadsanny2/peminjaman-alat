@@ -95,7 +95,7 @@ export default function LoanTransactionHistoryContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell colspan="8" className="text-center">
+                <TableCell colSpan={9} className="text-center">
                     Data riwayat transaksi peminjaman sedang memuat...
                 </TableCell>
             </tr>
@@ -103,7 +103,7 @@ export default function LoanTransactionHistoryContent() {
     } else if (myLoans.length === 0) {
         content = (
             <tr>
-                <TableCell colspan="8" className="text-center">
+                <TableCell colSpan={9} className="text-center">
                     Data riwayat transaksi peminjaman belum ada.
                 </TableCell>
             </tr>
@@ -112,7 +112,7 @@ export default function LoanTransactionHistoryContent() {
         content = myLoans.map((loan, index) => {
             const no = index + 1 + (page - 1) * limit;
             return (
-                <tr key={loan.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={loan.id} className="hover:bg-app-bg/50 transition-colors">
                     {/* Number */}
                     <TableCell className="text-center">{no}</TableCell>
 
@@ -227,10 +227,10 @@ export default function LoanTransactionHistoryContent() {
                 </FilterAndSearchData>
 
                 {/* Main Content */}
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left text-sm text-slate-600">
-                            <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                        <table className="w-full text-left text-sm text-text-secondary">
+                            <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                 <tr className="">
                                     {tableTH.map((th, index) => (
                                         <TableCell
@@ -243,7 +243,7 @@ export default function LoanTransactionHistoryContent() {
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">{content}</tbody>
+                            <tbody className="divide-y divide-border-subtle/50">{content}</tbody>
                         </table>
                     </div>
                 </div>
@@ -253,15 +253,15 @@ export default function LoanTransactionHistoryContent() {
                     <Modal
                         customClass={
                             showForm
-                                ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50"
+                                ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50 backdrop-blur-xs"
                                 : "hidden"
                         }
                         isOpen={showForm}
                         onClose={closeReturnForm}
                     >
-                        <div className="flex items-center gap-2 mb-4 border-b pb-2">
-                            <Package size={25} className="text-blue-600" />
-                            <h1 className="max-md:text-lg text-xl font-semibold text-slate-800 flex items-center gap-1.5">
+                        <div className="flex items-center gap-2 mb-4 border-b border-border-subtle pb-2">
+                            <Package size={25} className="text-emerald-600" />
+                            <h1 className="max-md:text-lg text-xl font-semibold text-text-primary flex items-center gap-1.5">
                                 Form Pengembalian Alat
                             </h1>
                         </div>
@@ -271,27 +271,27 @@ export default function LoanTransactionHistoryContent() {
                             <input type="hidden" value={selectedLoan.id} />
 
                             <div>
-                                <label className="block text-xs font-medium text-slate-700 mb-1">
+                                <label className="block text-xs font-semibold text-text-secondary mb-1">
                                     Nama Alat
                                 </label>
                                 <input
                                     type="text"
                                     value={selectedLoan.Tool?.name || "Instrumen tidak diketahui"}
-                                    className="w-full p-2.5 border bg-slate-50 text-slate-500 rounded-lg outline-none text-sm border-slate-300"
+                                    className="w-full p-2.5 border bg-app-bg text-text-secondary rounded-xl outline-none text-sm border-border-subtle"
                                     disabled
                                 />
                             </div>
 
                             {/* Input Tanggal Dikembalikan */}
                             <div>
-                                <label className="block text-xs font-medium text-slate-700 mb-1">
+                                <label className="block text-xs font-semibold text-text-secondary mb-1">
                                     Tanggal Dikembalikan (Aktual)
                                 </label>
                                 <input
                                     type="date"
-                                    name="actualReturnDate" // Pastikan name sesuai dengan yg diekstrak di handleChange
+                                    name="actualReturnDate"
                                     onChange={handleChange}
-                                    className="w-full p-2 border text-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm border-slate-300 bg-white"
+                                    className="w-full p-2.5 border text-text-primary rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm border-border-subtle bg-app-bg"
                                     disabled={isProcessing}
                                     required
                                 />
@@ -299,15 +299,15 @@ export default function LoanTransactionHistoryContent() {
 
                             {/* Input File Gambar */}
                             <div>
-                                <label className="block text-xs font-medium text-slate-700 mb-1">
+                                <label className="block text-xs font-semibold text-text-secondary mb-1">
                                     Unggah Bukti Pengembalian (Wajib)
                                 </label>
                                 <input
                                     type="file"
-                                    name="image" // Pastikan name="image"
+                                    name="image"
                                     accept="image/*"
-                                    onChange={handleChange} // Menggunakan handleChange dari hook
-                                    className="w-full p-2 border text-slate-700 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm border-slate-300 bg-white"
+                                    onChange={handleChange}
+                                    className="w-full p-2 border text-text-primary rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-sm border-border-subtle bg-app-bg file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600/10 file:text-emerald-600"
                                     disabled={isProcessing}
                                     required
                                 />
@@ -316,8 +316,8 @@ export default function LoanTransactionHistoryContent() {
                             <div className="flex items-center gap-2 pt-2">
                                 <button
                                     type="submit"
-                                    disabled={isProcessing} // Menggunakan isProcessing
-                                    className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white p-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
+                                    disabled={isProcessing}
+                                    className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 text-white p-2.5 rounded-xl text-sm font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors cursor-pointer shadow-md shadow-emerald-600/20"
                                 >
                                     {isProcessing ? (
                                         "Memproses..."
@@ -330,7 +330,7 @@ export default function LoanTransactionHistoryContent() {
                                 <button
                                     type="button"
                                     onClick={closeReturnForm}
-                                    className="text-slate-500 bg-slate-100 hover:text-slate-700 hover:bg-slate-200 cursor-pointer p-2.5 rounded-lg transition-colors"
+                                    className="text-text-secondary bg-app-bg border border-border-subtle hover:text-text-primary hover:bg-card-bg cursor-pointer p-2.5 rounded-xl transition-colors"
                                     title="Batal"
                                 >
                                     <X size={18} />
