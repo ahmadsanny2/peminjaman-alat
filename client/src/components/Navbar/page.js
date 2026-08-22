@@ -46,7 +46,7 @@ const Navbar = () => {
     },
     {
       name: "Tentang",
-      url: "#about",
+      url: "#tentang",
       icon: <Info size={18} />,
     },
   ];
