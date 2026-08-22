@@ -2,17 +2,20 @@ import Image from "next/image";
 import Modal from "../Modal";
 import { Package } from "lucide-react";
 import HeaderForm from "../Form/HeaderForm";
+import { getImageUrl } from "@/lib/image";
 
 const ProofImageReturnLoan = ({
     showProofModal,
     closeProofModal,
     selectedLoan,
 }) => {
+    const imageUrl = getImageUrl(selectedLoan?.image);
+
     return (
         <Modal
             customClass={
                 showProofModal
-                    ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm"
+                    ? "fixed inset-0 h-full flex items-center justify-center z-50 bg-black/50 backdrop-blur-xs"
                     : "hidden"
             }
             isOpen={showProofModal}
@@ -20,36 +23,36 @@ const ProofImageReturnLoan = ({
         >
             {/* Header */}
             <HeaderForm
-                icon={<Package size={24} className="text-blue-600" />}
+                icon={<Package size={24} className="text-emerald-600" />}
                 title="Bukti Pengembalian Alat"
-                className="border-b pb-3"
+                className="border-b border-border-subtle pb-3"
             />
 
             <div className="space-y-4">
-                <div className="relative w-full h-64 bg-slate-100 rounded-xl border border-slate-200 overflow-hidden flex items-center justify-center">
-                    {selectedLoan.image ? (
+                <div className="relative w-full h-64 bg-app-bg rounded-xl border border-border-subtle overflow-hidden flex items-center justify-center">
+                    {imageUrl ? (
                         <Image
-                            src={`http://localhost:5000/${selectedLoan.image.replace(/^\//, "")}`}
-                            alt={selectedLoan.Tool?.name || "Bukti"}
+                            src={imageUrl}
+                            alt={selectedLoan?.Tool?.name || "Bukti"}
                             fill
                             className="object-contain p-2"
                             unoptimized
                         />
                     ) : (
-                        <span className="text-sm text-slate-400 font-medium">
+                        <span className="text-sm text-text-secondary/60 font-medium">
                             Visual tidak tersedia
                         </span>
                     )}
                 </div>
 
                 <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-semibold text-text-secondary mb-1">
                         Nama Alat
                     </label>
                     <input
                         type="text"
-                        value={selectedLoan.Tool?.name || "Instrumen tidak diketahui"}
-                        className="w-full p-2.5 border bg-slate-50 text-slate-600 font-medium rounded-lg outline-none text-sm border-slate-300"
+                        value={selectedLoan?.Tool?.name || "Instrumen tidak diketahui"}
+                        className="w-full p-2.5 border bg-app-bg text-text-secondary font-medium rounded-xl outline-none text-sm border-border-subtle"
                         disabled
                     />
                 </div>
@@ -57,7 +60,7 @@ const ProofImageReturnLoan = ({
                 <div className="flex justify-end pt-2">
                     <button
                         onClick={closeProofModal}
-                        className="px-5 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium text-sm rounded-lg transition-colors cursor-pointer"
+                        className="px-5 py-2.5 bg-card-bg border border-border-subtle text-text-secondary hover:text-text-primary hover:bg-app-bg font-semibold text-sm rounded-xl transition-colors cursor-pointer"
                     >
                         Tutup
                     </button>
