@@ -114,7 +114,7 @@ export default function UserManagementContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell className="text-center" colspan="5">
+                <TableCell className="text-center" colSpan={5}>
                     Sedang mengambil data users...
                 </TableCell>
             </tr>
@@ -122,7 +122,7 @@ export default function UserManagementContent() {
     } else if (users.length === 0) {
         content = (
             <tr>
-                <TableCell className="text-center" colspan="5">
+                <TableCell className="text-center" colSpan={5}>
                     Belum ada pengguna pada sistem ini.
                 </TableCell>
             </tr>
@@ -135,7 +135,7 @@ export default function UserManagementContent() {
                 return (
                     <tr
                         key={user.id}
-                        className="hover:bg-slate-50/80 transition-colors"
+                        className="hover:bg-app-bg/50 transition-colors"
                     >
                         <TableCell className="w-20 text-center">{no}</TableCell>
                         <TableCell className="min-w-50 text-left">{user.fullName}</TableCell>
@@ -203,17 +203,17 @@ export default function UserManagementContent() {
                             <option
                                 key={index}
                                 value={role.toLowerCase()}
-                                className="bg-white/20 text-black"
+                                className="bg-card-bg text-text-primary"
                             >
                                 {role}
                             </option>
                         ))}
                     </FilterAndSearchData>
 
-                    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-slate-600">
-                                <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                            <table className="w-full text-sm text-text-secondary">
+                                <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                     <tr className="">
                                         {tableTH.map((th, index) => (
                                             <TableCell key={index} isHeader={true} className={th.className}>
@@ -222,7 +222,7 @@ export default function UserManagementContent() {
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">
+                                <tbody className="divide-y divide-border-subtle/50">
                                     {content}
                                 </tbody>
                             </table>
