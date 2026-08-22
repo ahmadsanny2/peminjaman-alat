@@ -24,11 +24,15 @@ export function useSidebar() {
     useEffect(() => {
         const userCookie = Cookies.get("user");
         if (userCookie) {
-            const parsedUser = JSON.parse(userCookie);
-            setTimeout(() => {
-                setUserRole(parsedUser.role);
-                setUserName(parsedUser.fullName);
-            }, 0);
+            try {
+                const parsedUser = JSON.parse(userCookie);
+                if (parsedUser) {
+                    setUserRole(parsedUser.role || "");
+                    setUserName(parsedUser.fullName || "");
+                }
+            } catch (err) {
+                console.error("Error parsing user cookie:", err);
+            }
         }
     }, []);
 
