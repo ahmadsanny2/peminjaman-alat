@@ -91,7 +91,7 @@ export default function LoanRequestsContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell colspan="10" className="text-center">
+                <TableCell colSpan={10} className="text-center">
                     Sedang mengambil data...
                 </TableCell>
             </tr>
@@ -99,7 +99,7 @@ export default function LoanRequestsContent() {
     } else if (loans.length === 0) {
         content = (
             <tr>
-                <TableCell colspan="10" className="text-center">
+                <TableCell colSpan={10} className="text-center">
                     Tidak ada data peminjaman alat.
                 </TableCell>
             </tr>
@@ -108,7 +108,7 @@ export default function LoanRequestsContent() {
         content = loans.map((loan, index) => {
             const no = index + 1 + (page - 1) * limit;
             return (
-                <tr key={loan.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={loan.id} className="hover:bg-app-bg/50 transition-colors">
                     {/* Number */}
                     <TableCell className="w-20 text-center">{no}</TableCell>
 
@@ -235,20 +235,20 @@ export default function LoanRequestsContent() {
                 />
 
                 {/* Main Content */}
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                     <div className="overflow-x-auto">
                         {/* Loan Request History Data */}
-                        <table className="w-full text-left text-sm text-slate-600">
-                            <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                        <table className="w-full text-left text-sm text-text-secondary">
+                            <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                 <tr>
                                     {tableTH.map((th, index) => (
-                                        <TableCell key={index} className={th.className}>
+                                        <TableCell key={index} isHeader={true} className={th.className}>
                                             {th.name}
                                         </TableCell>
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">{content}</tbody>
+                            <tbody className="divide-y divide-border-subtle/50">{content}</tbody>
                         </table>
 
                         {/* Proof Image Return Loan */}
