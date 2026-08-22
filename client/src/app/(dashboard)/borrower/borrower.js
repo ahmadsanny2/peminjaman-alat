@@ -75,12 +75,12 @@ export default function BorrowerDashboardContent() {
 
             {/* Quick Action Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
-                <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-3">
-                    <h2 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                <div className="bg-card-bg p-6 rounded-2xl border border-border-subtle shadow-xs hover:shadow-md transition-all space-y-3">
+                    <h2 className="text-base font-bold text-text-primary tracking-tight flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500" />
                         Eksplorasi Katalog Alat
                     </h2>
-                    <p className="text-slate-600 text-sm leading-relaxed">
+                    <p className="text-text-secondary text-sm leading-relaxed">
                         Tinjau spesifikasi, ketersediaan stok, dan deskripsi instrumen fisik yang tersedia untuk dipinjam.
                     </p>
                     <Link
@@ -92,12 +92,12 @@ export default function BorrowerDashboardContent() {
                     </Link>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition-all space-y-3">
-                    <h2 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                <div className="bg-card-bg p-6 rounded-2xl border border-border-subtle shadow-xs hover:shadow-md transition-all space-y-3">
+                    <h2 className="text-base font-bold text-text-primary tracking-tight flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-indigo-500" />
                         Pantau Status Transaksi
                     </h2>
-                    <p className="text-slate-600 text-sm leading-relaxed">
+                    <p className="text-text-secondary text-sm leading-relaxed">
                         Verifikasi persetujuan dari petugas dan unggah bukti pengembalian alat sesuai tenggat waktu.
                     </p>
                     <Link
