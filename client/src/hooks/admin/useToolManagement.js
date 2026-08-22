@@ -134,8 +134,7 @@ export function useTool() {
             !formData.categoryId ||
             (!formData.image && !isEditing)
         ) {
-            setError("All fields are required");
-            resetForm();
+            setError("Semua field formulir wajib diisi.");
             return;
         }
 
