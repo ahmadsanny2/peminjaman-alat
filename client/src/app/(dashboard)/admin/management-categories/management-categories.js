@@ -68,7 +68,7 @@ export default function CategoryManagementContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell colspan="4" className="text-center">
+                <TableCell colSpan={4} className="text-center">
                     Sedang mengambil data...
                 </TableCell>
             </tr>
@@ -76,7 +76,7 @@ export default function CategoryManagementContent() {
     } else if (categories.length === 0) {
         content = (
             <tr>
-                <TableCell colspan="4" className="text-center">
+                <TableCell colSpan={4} className="text-center">
                     Belum ada kategori terdaftar.
                 </TableCell>
             </tr>
@@ -87,7 +87,7 @@ export default function CategoryManagementContent() {
             return (
                 <tr
                     key={category.id}
-                    className="hover:bg-slate-50/80 transition-colors"
+                    className="hover:bg-app-bg/50 transition-colors"
                 >
                     {/* No */}
                     <TableCell className="w-20 text-center">{no}</TableCell>
@@ -218,10 +218,10 @@ export default function CategoryManagementContent() {
                     </Modal>
 
                     {/* Table Data Category */}
-                    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-slate-600">
-                                <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                            <table className="w-full text-sm text-text-secondary">
+                                <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                     <tr>
                                         {tableTH.map((th, index) => (
                                             <TableCell
@@ -234,7 +234,7 @@ export default function CategoryManagementContent() {
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody className="">{content}</tbody>
+                                <tbody className="divide-y divide-border-subtle/50">{content}</tbody>
                             </table>
 
                             <ConfirmationModal
