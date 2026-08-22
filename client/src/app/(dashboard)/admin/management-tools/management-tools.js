@@ -96,7 +96,7 @@ export default function ToolManagementContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell colspan="7" className="text-center">
+                <TableCell colSpan={7} className="text-center">
                     Sedang mengambil data...
                 </TableCell>
             </tr>
@@ -104,7 +104,7 @@ export default function ToolManagementContent() {
     } else if (tools.length === 0) {
         content = (
             <tr>
-                <TableCell colspan="7" className="text-center">
+                <TableCell colSpan={7} className="text-center">
                     Belum ada alat yang terdaftar.
                 </TableCell>
             </tr>
@@ -113,7 +113,7 @@ export default function ToolManagementContent() {
         content = tools.map((tool, index) => {
             const no = index + 1 + (page - 1) * limit;
             return (
-                <tr key={tool.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={tool.id} className="hover:bg-app-bg/50 transition-colors">
                     <TableCell className="w-20 text-center">{no}</TableCell>
                     <TableCell className="">{tool.name}</TableCell>
                     <TableCell className="">{tool.description}</TableCell>
@@ -244,7 +244,7 @@ export default function ToolManagementContent() {
                                             name="categoryId"
                                             value={formData.categoryId}
                                             onChange={handleChange}
-                                            className="w-full pl-9 p-2.5 border rounded-lg text-sm text-slate-700"
+                                            className="w-full pl-9 p-2.5 border rounded-lg text-sm text-text-primary bg-card-bg"
                                             disabled={isLoading}
                                         >
                                             <Option optionName="Pilih Kategori" optionValue="" />
@@ -257,11 +257,6 @@ export default function ToolManagementContent() {
                                             ))}
                                         </Select>
                                     </div>
-                                    {error.categoryId && (
-                                        <span className="text-red-500 text-xs mt-1 block">
-                                            {errors.categoryId.message}
-                                        </span>
-                                    )}
                                 </div>
 
                                 <div className="flex gap-2">
@@ -289,11 +284,6 @@ export default function ToolManagementContent() {
                                                 ))}
                                             </Select>
                                         </div>
-                                        {error.categoryId && (
-                                            <span className="text-red-500 text-xs mt-1 block">
-                                                {error.categoryId.message}
-                                            </span>
-                                        )}
                                     </div>
 
                                     {/* Input Stock Tools */}
@@ -390,10 +380,10 @@ export default function ToolManagementContent() {
                     </Modal>
 
                     {/* Table Data Tools */}
-                    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                    <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left text-sm text-slate-600">
-                                <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                            <table className="w-full text-left text-sm text-text-secondary">
+                                <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                     <tr>
                                         {tableTH.map((th, index) => (
                                             <TableCell
@@ -406,7 +396,7 @@ export default function ToolManagementContent() {
                                         ))}
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100">{content}</tbody>
+                                <tbody className="divide-y divide-border-subtle/50">{content}</tbody>
                             </table>
 
                             <ConfirmationModal
