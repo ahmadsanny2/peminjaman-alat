@@ -62,7 +62,7 @@ export default function LoanManagementContent() {
     if (isLoading) {
         content = (
             <tr>
-                <TableCell colspan="8" className="text-center">
+                <TableCell colSpan={6} className="text-center">
                     Sedang mengambil data...
                 </TableCell>
             </tr>
@@ -70,7 +70,7 @@ export default function LoanManagementContent() {
     } else if (loans.length === 0) {
         content = (
             <tr>
-                <TableCell colspan="8" className="text-center">
+                <TableCell colSpan={6} className="text-center">
                     Belum ada riwayat peminjaman alat.
                 </TableCell>
             </tr>
@@ -79,20 +79,20 @@ export default function LoanManagementContent() {
         content = loans.map((loan, index) => {
             const no = index + 1 + (page - 1) * limit;
             return (
-                <tr key={loan.id} className="hover:bg-slate-50/80 transition-colors">
+                <tr key={loan.id} className="hover:bg-app-bg/50 transition-colors">
                     {/* No */}
                     <TableCell className="text-center">{no}</TableCell>
 
                     {/* Borrower Name */}
                     <TableCell className="text-center">
-                        <div className="font-semibold">
+                        <div className="font-semibold text-text-primary">
                             {loan.borrower?.fullName || "Identitas tidak dikenal"}
                         </div>
-                        <div className="">@{loan.borrower?.username || "unknown"}</div>
+                        <div className="text-xs text-text-secondary">@{loan.borrower?.username || "unknown"}</div>
                     </TableCell>
 
                     {/* Name Tool */}
-                    <TableCell className="">
+                    <TableCell className="text-text-primary">
                         {loan.Tool?.name || "Nama alat tidak ada."}
                     </TableCell>
 
@@ -127,7 +127,7 @@ export default function LoanManagementContent() {
 
                 {/* Error Response */}
                 {error && (
-                    <div className="bg-rose-50 text-rose-700 p-4 rounded-xl border border-rose-200 text-sm flex items-start gap-3">
+                    <div className="bg-rose-500/10 text-rose-600 dark:text-rose-400 p-4 rounded-xl border border-rose-500/20 text-sm flex items-start gap-3">
                         <AlertCircle className="mt-0.5 text-rose-500 shrink-0" size={18} />
                         <span>{error}</span>
                     </div>
@@ -141,11 +141,11 @@ export default function LoanManagementContent() {
                 />
 
                 {/* Main Content */}
-                <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div className="bg-card-bg rounded-2xl border border-border-subtle shadow-xs overflow-hidden">
                     <div className="overflow-x-auto">
                         {/* Table Data Loan Transaction History */}
-                        <table className="w-full text-left text-sm text-slate-600">
-                            <thead className="bg-slate-100/80 border-b border-slate-200/80 text-slate-800 font-semibold">
+                        <table className="w-full text-left text-sm text-text-secondary">
+                            <thead className="bg-app-bg border-b border-border-subtle text-text-primary font-bold">
                                 <tr>
                                     {tableTH.map((th, index) => (
                                         <TableCell
@@ -158,7 +158,7 @@ export default function LoanManagementContent() {
                                     ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">{content}</tbody>
+                            <tbody className="divide-y divide-border-subtle/50">{content}</tbody>
                         </table>
                     </div>
                 </div>
